@@ -6,6 +6,7 @@ printed for information and never fail the run.
 """
 import argparse
 import json
+import os
 import sys
 
 ENVELOPE = {"schema_version": int, "type": str, "ts_ns": int, "pid": int,
@@ -32,6 +33,20 @@ SENS_EXACT = {"/etc/shadow", "/etc/gshadow", "/etc/passwd", "/etc/sudoers"}
 SENS_PREFIX = ("/etc/sudoers.d/", "/root/.ssh/")
 HOME_USER_SCAN = 32
 PRIV_SYSCALLS = {"setuid", "setreuid", "setresuid", "setgid", "setresgid"}
+
+#write-intent list from src/sensitive_paths.h and also a path that is on it alone is only reported for an open that asks for write access
+WRITE_EXACT = {"/etc/ld.so.preload", "/etc/crontab", "/etc/rc.local", "/etc/profile", "/etc/bash.bashrc"}
+WRITE_PREFIX = ("/etc/cron.d/", "/etc/cron.hourly/", "/etc/cron.daily/", "/etc/cron.weekly/", "/etc/cron.monthly/",
+                "/var/spool/cron/", "/etc/systemd/system/", "/usr/lib/systemd/system/", "/lib/systemd/system/",
+                "/etc/init.d/", "/etc/profile.d/", "/etc/ld.so.conf.d/", "/etc/pam.d/", "/etc/update-motd.d/")
+WRITE_HOME_EXACT = {".bashrc", ".bash_profile", ".bash_login", ".profile", ".bash_logout", ".zshrc"}
+WRITE_HOME_PREFIX = (".config/systemd/user/", ".config/autostart/")
+O_CREAT, O_TRUNC, O_APPEND = 0o100, 0o1000, 0o2000
+
+D8_HOME = "/home/evt_d8user"
+D8_CRON = "/etc/cron.d/evt_d8_cron"
+D8_UNIT = "/etc/systemd/system/evt_d8_unit.service"
+D8_USER_UNIT = D8_HOME + "/.config/systemd/user/evt_d8.service"
 
 results = []
 
@@ -130,6 +145,116 @@ def is_sensitive(path):
         path[k:k + 6] == "/.ssh/" for k in range(6, 6 + HOME_USER_SCAN))
 
 
+def is_write_intent(path):
+    if path in WRITE_EXACT or path.startswith(WRITE_PREFIX):
+        return True
+    rest = None
+    if path.startswith("/root/"):
+        rest = path[6:]
+    elif path.startswith("/home/"):
+        for k in range(6, 6 + HOME_USER_SCAN):
+            if k >= len(path):
+                return False
+            if path[k] == "/":
+                rest = path[k + 1:]
+                break
+    return rest is not None and (rest in WRITE_HOME_EXACT or rest.startswith(WRITE_HOME_PREFIX))
+
+
+def wants_write(flags):
+    return flags & 3 in (1, 2) or bool(flags & (O_CREAT | O_TRUNC | O_APPEND))
+
+
+def argv_pids(events, argv):
+    return {e["pid"] for e in events if e["type"] == "exec_attempt" and e["argv"] == argv}
+
+
+def stats_of(path):
+    out = {}
+    with open(path, encoding="utf-8", errors="replace") as f:
+        for line in f:
+            if "file_stats" in line:
+                out = dict(kv.split("=", 1) for kv in line.split() if "=" in kv)
+    return out
+
+
+def paired_write_checks(label, events, has_ret, stats_file=None):
+    """checks for the write-intent cases (a) and (c) in one paired run which is used for both the exit mode and the entry mode run"""
+    fo = [e for e in events if e["type"] == "file_open"]
+
+    def good(e):
+        return wants_write(e["flags"]) and (e["ret"] >= 0 if has_ret else "ret" not in e)
+    for what, path in (("cron file", D8_CRON), (".bashrc", D8_HOME + "/.bashrc"), (".profile", D8_HOME + "/.profile"),
+                       ("user unit file", D8_USER_UNIT)):
+        g = [e for e in fo if e["path"] == path]
+        check("write-intent (%s): a write to the %s gives one file_open with write flags" % (label, what),
+              len(g) == 1 and good(g[0]), "%s" % [(e["flags"], e.get("ret")) for e in g])
+    pids = cat_pids(events, D8_HOME + "/.bashrc")
+    check("write-intent (%s): cat of the fake .bashrc gives no file_open" % label,
+          len(pids) == 1 and not [e for e in fo if e["pid"] in pids], "%d cat runs" % len(pids))
+    if stats_file:
+        st = stats_of(stats_file)
+        only = [e for e in fo if not is_sensitive(e["path"])]
+        check("write-intent (%s): write_list_emitted equals the write-list-only file_open events" % label,
+              st.get("write_list_emitted") == str(len(only)),
+              "counter %s, events %d" % (st.get("write_list_emitted"), len(only)))
+        info("write-intent (%s): write_list_skipped_readonly=%s" % (label, st.get("write_list_skipped_readonly")))
+
+
+def write_checks(events, fo, a):
+    """checks for the write-intent cases (a) to (g) in main run"""
+    soft = [(e["path"], e["flags"]) for e in fo if not is_sensitive(e["path"]) and not wants_write(e["flags"])]
+    check("write-intent: a path on the write-intent list only is reported only for a write open", not soft,
+          "%s" % soft[:5])
+
+    def create_trunc(e):
+        return e["flags"] & 3 == 1 and e["flags"] & O_CREAT and e["flags"] & O_TRUNC and e.get("ret", -1) >= 0
+    for what, path in (("(a) cron file", D8_CRON), ("(b) unit file", D8_UNIT)):
+        g = [e for e in fo if e["path"] == path]
+        check("write-intent %s: a redirect gives one file_open with create, truncate and write-only flags" % what,
+              len(g) == 1 and create_trunc(g[0]), "%s" % [(e["flags"], e.get("ret")) for e in g])
+    for name, path in (("(c) .bashrc", D8_HOME + "/.bashrc"), ("(c) .profile", D8_HOME + "/.profile"),
+                       ("(c) user unit file", D8_USER_UNIT)):
+        g = [e for e in fo if e["path"] == path]
+        check("write-intent %s: a redirect gives one file_open with write flags" % name,
+              len(g) == 1 and wants_write(g[0]["flags"]) and g[0].get("ret", -1) >= 0,
+              "%s" % [(e["flags"], e.get("ret")) for e in g])
+    pids = cat_pids(events, D8_HOME + "/.bashrc")
+    check("write-intent (c): cat of the fake .bashrc gives no file_open",
+          len(pids) == 1 and not [e for e in fo if e["pid"] in pids], "%d cat runs" % len(pids))
+    for argv in (["/bin/cat", "/etc/ld.so.preload"], ["/bin/cat", "/etc/profile"], ["/bin/cat", "/etc/pam.d/sudo"],
+                 ["/bin/ls", "/etc/cron.d"]):
+        pids = argv_pids(events, argv)
+        check("write-intent (d): %s gives no file_open" % " ".join(argv),
+              len(pids) == 1 and not [e for e in fo if e["pid"] in pids],
+              "%d runs, %d events" % (len(pids), len([e for e in fo if e["pid"] in pids])))
+    for marker, path, failing in (("EVT_D8_PRELOAD", "/etc/ld.so.preload", True), ("EVT_D8_RCLOCAL", "/etc/rc.local", True),
+                                  ("EVT_D8_PROFILE", "/etc/profile", False)):
+        pids = {e["pid"] for e in with_marker(events, "exec_attempt", marker)}
+        if not pids:
+            info("write-intent (e): %s was skipped because the file exists" % path)
+            continue
+        g = [e for e in fo if e["pid"] in pids and e["path"] == path]
+        ok = len(pids) == 1 and len(g) == 1 and g[0]["flags"] & 3 == 2 and not g[0]["flags"] & (O_CREAT | O_TRUNC)
+        ok = ok and ((g[0]["ret"] < 0) if failing else (g[0]["ret"] >= 0))
+        check("write-intent (e): python3 open(%s, 'r+') gives one read-write file_open with a %s return value"
+              % (path, "negative" if failing else "non-negative"), ok, "%s" % [(e["flags"], e.get("ret")) for e in g])
+    g = [e for e in fo if e["path"] == D8_HOME + "/.bash_logout"]
+    check("write-intent (f): echo >> gives one file_open with append, create and write-only flags",
+          len(g) == 1 and g[0]["flags"] & 3 == 1 and bool(g[0]["flags"] & O_APPEND) and bool(g[0]["flags"] & O_CREAT),
+          "%s" % [e["flags"] for e in g])
+    pids = cat_pids(events, "/etc/shadow")
+    g = [e for e in fo if e["path"] == "/etc/shadow" and e["pid"] in pids]
+    check("write-intent (g): the existing list still reports a read-only open (cat /etc/shadow)",
+          len(pids) == 1 and len(g) == 1 and g[0]["flags"] & 3 == 0, "%d events" % len(g))
+    check("write-intent: the cron file and the unit file were removed again",
+          not os.path.exists(D8_CRON) and not os.path.exists(D8_UNIT))
+    for path, existed in (("/etc/ld.so.preload", a.preload_existed), ("/etc/rc.local", a.rclocal_existed)):
+        if existed >= 0:
+            check("write-intent (e): %s was not created or removed by the run" % path,
+                  os.path.exists(path) == bool(existed))
+
+
 def cat_pids(events, path):
     """Pids that ran /bin/cat on the given path."""
     return {e["pid"] for e in events if e["type"] == "exec_attempt" and
@@ -163,6 +288,10 @@ def main():
     ap.add_argument("--net6-port", type=int, default=0)
     ap.add_argument("--file-exit", help="events from a paired run in the default (exit) mode")
     ap.add_argument("--file-entry", help="events from a paired run with --file-at-entry")
+    ap.add_argument("--exit-stats", help="loader stderr of the paired exit mode run, for the file_stats line")
+    ap.add_argument("--entry-stats", help="loader stderr of the paired entry mode run, for the file_stats line")
+    ap.add_argument("--preload-existed", type=int, default=-1, help="1 if /etc/ld.so.preload existed before the run, 0 if not")
+    ap.add_argument("--rclocal-existed", type=int, default=-1, help="1 if /etc/rc.local existed before the run, 0 if not")
     a = ap.parse_args()
 
     events, bad = load(a.events)
@@ -280,8 +409,8 @@ def main():
 
     #file_open
     fo = [e for e in events if e["type"] == "file_open"]
-    stray = [e["path"] for e in fo if not is_sensitive(e["path"])]
-    check("file_open: every reported path is on the sensitive list", not stray, "%s" % stray[:5])
+    stray = [e["path"] for e in fo if not is_sensitive(e["path"]) and not is_write_intent(e["path"])]
+    check("file_open: every reported path is on the sensitive list or the write-intent list", not stray, "%s" % stray[:5])
     check("file_open: default (exit) mode records a return value", bool(fo) and all("ret" in e for e in fo))
     mk = [e for e in fo if e["path"] == "/root/.ssh/evt_missing_key"]
     check("file_open: a missing listed path has a negative return value",
@@ -301,6 +430,8 @@ def main():
         got = [e for e in fo if e["path"] == path and e["pid"] in pids]
         check("file_open: a listed path that does not exist is still reported (%s)" % path,
               len(pids) == 1 and len(got) == 1, "%d cat runs, %d events" % (len(pids), len(got)))
+
+    write_checks(events, fo, a)
 
     #net_connect
     nc = [e for e in events if e["type"] == "net_connect"]
@@ -369,6 +500,7 @@ def main():
                   not [e for e in fo3 if e["pid"] in cat_pids(ev3, "/etc/os-release")])
             check("file_open (exit mode): no records were dropped",
                   not [e for e in ev3 if e["type"] == "lost"])
+            paired_write_checks("exit mode", ev3, True, a.exit_stats)
 
     #file_open with the path read at entry
     if a.file_entry:
@@ -388,6 +520,7 @@ def main():
                   not [e for e in fo4 if e["pid"] in cat_pids(ev4, "/etc/os-release")])
             check("file_open (entry mode): no records were dropped",
                   not [e for e in ev4 if e["type"] == "lost"])
+            paired_write_checks("entry mode", ev4, False, a.entry_stats)
 
     #BCC comparison
     try:

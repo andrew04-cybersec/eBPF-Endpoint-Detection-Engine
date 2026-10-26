@@ -1,6 +1,6 @@
 #!/bin/bash
-#run the loader, execute a fixed workload, stop the loader, validate the output.
-#WSL usage:  sudo bash tests/run_test.sh        (set NO_BCC=1 to skip the BCC comparison)
+#run the loader and execute a fixed workload, then stop the loader and validate the output
+#WSL usage: sudo bash tests/run_test.sh (set NO_BCC=1 to skip the BCC comparison)
 #output is saved under tests/out/<timestamp>/ and is kept as evidence.
 set -u
 cd "$(dirname "$0")/.." || exit 2
@@ -14,6 +14,26 @@ if [ ! -x "$LOADER" ]; then
 	echo "build first: make" >&2
 	exit 2
 fi
+
+#write-intent cases use these names and the script refuses to run if any of them exist and then finally will remove what it made on every exit path
+D8_HOME=/home/evt_d8user
+D8_CRON=/etc/cron.d/evt_d8_cron
+D8_UNIT=/etc/systemd/system/evt_d8_unit.service
+D8_HOME_MADE=0
+for p in "$D8_HOME" "$D8_CRON" "$D8_UNIT"; do
+	if [ -e "$p" ]; then
+		echo "$p already exists, so it is not touched; remove it by hand and run again" >&2
+		exit 2
+	fi
+done
+PRELOAD_EXISTED=0
+RCLOCAL_EXISTED=0
+[ -e /etc/ld.so.preload ] && PRELOAD_EXISTED=1
+[ -e /etc/rc.local ] && RCLOCAL_EXISTED=1
+d8_cleanup() {
+	rm -f "$D8_CRON" "$D8_UNIT"
+	[ "$D8_HOME_MADE" = 1 ] && rm -rf "$D8_HOME"
+}
 
 MAX_ARGS=$(awk '/#define ARGV_MAX_ARGS/ {print $3}' src/common.h)
 ARG_CAP=$(awk '/#define ARGV_ARG_CAP/ {print $3}' src/common.h)
@@ -33,6 +53,7 @@ mkdir -p "$OUT"
 PIDS=()
 cleanup() {
 	for p in "${PIDS[@]}"; do kill -INT "$p" 2>/dev/null; done
+	d8_cleanup
 }
 trap cleanup EXIT
 
@@ -80,6 +101,37 @@ file_cmds() {
 #plain opens so the entry and exit modes see the same load
 load_cmds() {
 	for _ in $(seq 1 20); do /bin/ls /usr/lib > /dev/null; done
+}
+
+d8_home_setup() {
+	D8_HOME_MADE=1
+	mkdir -p "$D8_HOME/.config/systemd/user"
+}
+
+#write-intent cases (a) and (c): a cron file written by redirect and removed then files in the fake home (nothing is enabled or started)
+write_ac_cmds() {
+	d8_home_setup
+	echo "# evt_d8 cron" > "$D8_CRON"
+	rm -f "$D8_CRON"
+	echo "# evt_d8" > "$D8_HOME/.bashrc"
+	echo "# evt_d8" > "$D8_HOME/.profile"
+	echo "# evt_d8" > "$D8_HOME/.config/systemd/user/evt_d8.service"
+	/bin/cat "$D8_HOME/.bashrc" > /dev/null
+}
+
+#write-intent cases (a) to (f); the opens of the existing files in (e) use r+ which cannot create or truncate a file and /etc/ld.so.preload and /etc/rc.local are only touched if they do not exist
+write_cmds() {
+	write_ac_cmds
+	printf '[Unit]\nDescription=evt_d8 test unit\n' > "$D8_UNIT"
+	rm -f "$D8_UNIT"
+	/bin/cat /etc/ld.so.preload > /dev/null 2>&1 || true
+	/bin/cat /etc/profile > /dev/null
+	/bin/cat /etc/pam.d/sudo > /dev/null 2>&1 || true
+	/bin/ls /etc/cron.d > /dev/null
+	[ -e /etc/ld.so.preload ] || python3 -c "open('/etc/ld.so.preload','r+')" EVT_D8_PRELOAD 2> /dev/null || true
+	[ -e /etc/rc.local ] || python3 -c "open('/etc/rc.local','r+')" EVT_D8_RCLOCAL 2> /dev/null || true
+	python3 -c "open('/etc/profile','r+').close()" EVT_D8_PROFILE
+	echo "# evt_d8 append" >> "$D8_HOME/.bash_logout"
 }
 
 #listener and client in one process... prints the port (or 0 if the address is unavailable)
@@ -140,6 +192,7 @@ LONG=$(head -c $((ARG_CAP + 50)) /dev/zero | tr '\0' 'A')
 /bin/echo EVT_BADUTF8 $'\xff\xfe' > /dev/null
 file_cmds
 load_cmds
+write_cmds
 NET4_PORT=$(python3 -c "$NET_PY" EVT_NET4 127.0.0.1)
 NET6_PORT=$(python3 -c "$NET_PY" EVT_NET6 ::1)
 echo "net4_port: $NET4_PORT" >> "$OUT/env.txt"
@@ -171,10 +224,12 @@ stop_loader
 start_loader "$OUT/events_fileexit.jsonl" "$OUT/loader_fileexit.stderr" || exit 1
 file_cmds
 load_cmds
+write_ac_cmds
 stop_loader
 start_loader "$OUT/events_fileentry.jsonl" "$OUT/loader_fileentry.stderr" --file-at-entry || exit 1
 file_cmds
 load_cmds
+write_ac_cmds
 stop_loader
 
 #validate
@@ -185,7 +240,9 @@ python3 tests/validate.py "$OUT/events.jsonl" --threads-all "$OUT/events_threads
 	"${BCC_ARGS[@]}" --max-args "$MAX_ARGS" --arg-cap "$ARG_CAP" --burst "$BURST" \
 	--sudo-uid "${SUDO_UID:-0}" --sudo-gid "${SUDO_GID:-0}" \
 	--net4-port "${NET4_PORT:-0}" --net6-port "${NET6_PORT:-0}" \
-	--file-exit "$OUT/events_fileexit.jsonl" --file-entry "$OUT/events_fileentry.jsonl" | tee "$OUT/report.txt"
+	--file-exit "$OUT/events_fileexit.jsonl" --file-entry "$OUT/events_fileentry.jsonl" \
+	--exit-stats "$OUT/loader_fileexit.stderr" --entry-stats "$OUT/loader_fileentry.stderr" \
+	--preload-existed "$PRELOAD_EXISTED" --rclocal-existed "$RCLOCAL_EXISTED" | tee "$OUT/report.txt"
 STATUS=${PIPESTATUS[0]}
 grep -H file_stats "$OUT"/loader*.stderr | tee -a "$OUT/report.txt"
 

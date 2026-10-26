@@ -239,11 +239,73 @@ static __always_inline bool is_sensitive(const char *p)
 	return false;
 }
 
+/*true if the open flags ask for write access (a write-only or read-write mode, or create, truncate or append)*/
+static __always_inline bool flags_request_write(int flags)
+{
+	int mode = flags & EVT_O_ACCMODE;
+
+	return mode == EVT_O_WRONLY || mode == EVT_O_RDWR ||
+	       (flags & (EVT_O_CREAT | EVT_O_TRUNC | EVT_O_APPEND));
+}
+
+/*the home-relative names and prefixes of the write-intent list are tested at p[off..] and off is a constant once the callers are unrolled*/
+static __always_inline bool is_home_write_target(const char *p, int off)
+{
+#define X(lit) if (at_prefix(p, off, lit, sizeof(lit) - 1) && p[off + sizeof(lit) - 1] == 0) return true;
+	WRITE_INTENT_HOME_EXACT(X)
+#undef X
+#define X(lit) if (at_prefix(p, off, lit, sizeof(lit) - 1)) return true;
+	WRITE_INTENT_HOME_PREFIX(X)
+#undef X
+	return false;
+}
+
+/*
+the write-intent list
+the switch on the second byte is an early exit so most paths leave after two byte compares and do not reach the long comparisons
+*/
+static __always_inline bool is_write_intent_path(const char *p)
+{
+	if (p[0] != '/')
+		return false;
+	switch (p[1]) {
+	case 'e':
+	case 'v':
+	case 'u':
+	case 'l':
+	case 'r':
+	case 'h':
+		break;
+	default:
+		return false;
+	}
+#define X(lit) if (at_prefix(p, 0, lit, sizeof(lit) - 1) && p[sizeof(lit) - 1] == 0) return true;
+	WRITE_INTENT_EXACT(X)
+#undef X
+#define X(lit) if (at_prefix(p, 0, lit, sizeof(lit) - 1)) return true;
+	WRITE_INTENT_PREFIX(X)
+#undef X
+	if (at_prefix(p, 0, "/root/", 6))
+		return is_home_write_target(p, 6);
+	if (at_prefix(p, 0, "/home/", 6)) {
+		/*the user directory ends at the first slash... the name is tested right after it*/
+#pragma unroll
+		for (int k = 6; k < 6 + HOME_USER_SCAN; k++) {
+			if (p[k] == 0)
+				return false;
+			if (p[k] == '/')
+				return is_home_write_target(p, k + 1);
+		}
+	}
+	return false;
+}
+
 /*filter the path and emit a file_open record if it is on the list*/
 static __always_inline int file_check_and_emit(const char *path, int oflags, bool has_ret, long ret)
 {
 	char peek[FILE_PEEK] = {};
 	struct rec_file_open *e;
+	bool write_list_only = false;
 	long n;
 
 	stat_inc(STAT_OPENAT_SEEN);
@@ -252,8 +314,16 @@ static __always_inline int file_check_and_emit(const char *path, int oflags, boo
 		stat_inc(STAT_OPENAT_BLANK);
 		return 0;
 	}
-	if (!is_sensitive(peek))
-		return 0;
+	if (!is_sensitive(peek)) {
+		/*a path on the write-intent list is only reported just for a write open*/
+		if (!is_write_intent_path(peek))
+			return 0;
+		if (!flags_request_write(oflags)) {
+			stat_inc(STAT_WRITE_LIST_SKIPPED);
+			return 0;
+		}
+		write_list_only = true;
+	}
 
 	e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
 	if (!e) {
@@ -275,6 +345,8 @@ static __always_inline int file_check_and_emit(const char *path, int oflags, boo
 	}
 
 	stat_inc(STAT_FILE_EMITTED);
+	if (write_list_only)
+		stat_inc(STAT_WRITE_LIST_EMITTED);
 	bpf_ringbuf_submit(e, 0);
 	return 0;
 }

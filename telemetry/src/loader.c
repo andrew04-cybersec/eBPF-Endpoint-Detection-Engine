@@ -346,11 +346,14 @@ static void print_file_stats(int map_fd, int ncpu, __u64 *vals, bool at_exit)
 		for (i = 0; i < ncpu; i++)
 			tot[k] += vals[i];
 	}
-	fprintf(stderr, "loader: file_stats mode=%s openat_seen=%llu openat_blank=%llu file_open_emitted=%llu\n",
+	fprintf(stderr, "loader: file_stats mode=%s openat_seen=%llu openat_blank=%llu file_open_emitted=%llu"
+		" write_list_emitted=%llu write_list_skipped_readonly=%llu\n",
 		at_exit ? "exit" : "entry",
 		(unsigned long long)tot[STAT_OPENAT_SEEN],
 		(unsigned long long)tot[STAT_OPENAT_BLANK],
-		(unsigned long long)tot[STAT_FILE_EMITTED]);
+		(unsigned long long)tot[STAT_FILE_EMITTED],
+		(unsigned long long)tot[STAT_WRITE_LIST_EMITTED],
+		(unsigned long long)tot[STAT_WRITE_LIST_SKIPPED]);
 }
 
 static int print_fn(enum libbpf_print_level level, const char *fmt, va_list args)

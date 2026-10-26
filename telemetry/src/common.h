@@ -19,6 +19,14 @@
 #define FILE_PATH_CAP 256	/*bytes of path kept in the record (includes NUL)*/
 #define HOME_USER_SCAN 32	/*how far into /home/ the filter looks for /.ssh/*/
 
+/*open flag bits are tested by the write-intent filter which are the Linux x86-64 values in octal; the names are kept apart from O_* so the loader can include the fcntl headers*/
+#define EVT_O_ACCMODE 03
+#define EVT_O_WRONLY 01
+#define EVT_O_RDWR 02
+#define EVT_O_CREAT 0100
+#define EVT_O_TRUNC 01000
+#define EVT_O_APPEND 02000
+
 /*names kept apart from AF_INET so loader can include the socket headers*/
 #define EVT_AF_INET 2
 #define EVT_AF_INET6 10
@@ -28,6 +36,8 @@ enum {
 	STAT_OPENAT_SEEN,
 	STAT_OPENAT_BLANK,
 	STAT_FILE_EMITTED,
+	STAT_WRITE_LIST_EMITTED,
+	STAT_WRITE_LIST_SKIPPED,
 	STAT_COUNT,
 };
 
