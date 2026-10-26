@@ -10,7 +10,9 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 #include <sys/prctl.h>
+#include <sys/socket.h>
 #include <sys/syscall.h>
 #include <linux/types.h>
 #include <bpf/bpf.h>
@@ -234,11 +236,61 @@ static int handle_event(void *ctx, void *data, size_t size)
 		put_identity(b, h);
 		break;
 	}
+	case REC_FILE_OPEN: {
+		const struct rec_file_open *e = data;
+
+		if (size < sizeof(*e))
+			goto bad;
+		put_envelope(b, "file_open", h);
+		jput(b, ",\"path\":", 8);
+		jstr(b, e->path, FILE_PATH_CAP);
+		jprintf(b, ",\"path_truncated\":%s,\"flags\":%d",
+			tf(h->flags & FLAG_FILENAME_TRUNC), e->open_flags);
+		if (h->flags & FLAG_HAS_RET)
+			jprintf(b, ",\"ret\":%d", e->ret);
+		put_identity(b, h);
+		break;
+	}
+	case REC_NET_CONNECT: {
+		const struct rec_net_connect *e = data;
+		char addr[INET6_ADDRSTRLEN];
+		int af = e->family == EVT_AF_INET6 ? AF_INET6 : AF_INET;
+
+		if (size < sizeof(*e))
+			goto bad;
+		if (!inet_ntop(af, e->addr, addr, sizeof(addr)))
+			goto bad;
+		put_envelope(b, "net_connect", h);
+		jprintf(b, ",\"family\":%u,\"remote_addr\":\"%s\",\"remote_port\":%u",
+			e->family, addr, e->port);
+		put_identity(b, h);
+		break;
+	}
+	case REC_PRIV_CHANGE: {
+		static const char *const names[] = {
+			[PRIV_SETUID] = "setuid", [PRIV_SETREUID] = "setreuid",
+			[PRIV_SETRESUID] = "setresuid", [PRIV_SETGID] = "setgid",
+			[PRIV_SETRESGID] = "setresgid",
+		};
+		const struct rec_priv_change *e = data;
+		unsigned int i;
+
+		if (size < sizeof(*e) || e->syscall >= sizeof(names) / sizeof(names[0]) ||
+		    !names[e->syscall] || e->nids > 3)
+			goto bad;
+		put_envelope(b, "priv_change", h);
+		jprintf(b, ",\"syscall\":\"%s\",\"ids\":[", names[e->syscall]);
+		for (i = 0; i < e->nids; i++)
+			jprintf(b, "%s%u", i ? "," : "", e->ids[i]);
+		jput(b, "]", 1);
+		put_identity(b, h);
+		break;
+	}
 	default:
 		goto bad;
 	}
 
-	if (h->type != REC_EXIT)
+	if (h->type == REC_EXEC_ATTEMPT || h->type == REC_EXEC_SUCCESS || h->type == REC_FILE_OPEN)
 		jprintf(b, ",\"user_read_failed\":%s", tf(h->flags & FLAG_READ_FAILED));
 	jprintf(b, ",\"lossy_encoding\":%s}", tf(b->lossy));
 	emit(b);
@@ -281,6 +333,26 @@ static void report_lost(int map_fd, int ncpu, __u64 *vals, __u64 *last)
 	*last = total;
 }
 
+/*prints the openat counters on stderr*/
+static void print_file_stats(int map_fd, int ncpu, __u64 *vals, bool at_exit)
+{
+	__u64 tot[STAT_COUNT] = {};
+	__u32 k;
+	int i;
+
+	for (k = 0; k < STAT_COUNT; k++) {
+		if (bpf_map_lookup_elem(map_fd, &k, vals))
+			return;
+		for (i = 0; i < ncpu; i++)
+			tot[k] += vals[i];
+	}
+	fprintf(stderr, "loader: file_stats mode=%s openat_seen=%llu openat_blank=%llu file_open_emitted=%llu\n",
+		at_exit ? "exit" : "entry",
+		(unsigned long long)tot[STAT_OPENAT_SEEN],
+		(unsigned long long)tot[STAT_OPENAT_BLANK],
+		(unsigned long long)tot[STAT_FILE_EMITTED]);
+}
+
 static int print_fn(enum libbpf_print_level level, const char *fmt, va_list args)
 {
 	if (level == LIBBPF_DEBUG && !verbose)
@@ -298,6 +370,7 @@ static void usage(const char *prog)
 	fprintf(stderr,
 		"usage: %s [options]\n"
 		"  -t, --all-thread-exits   report every thread exit, not one per process\n"
+		"  -e, --file-at-entry      read file_open paths at sys_enter_openat, not at exit\n"
 		"  -r, --ringbuf-bytes N    override the ring buffer size (power of two)\n"
 		"  -v, --verbose            libbpf debug output on stderr\n"
 		"  -h, --help               this text\n", prog);
@@ -307,11 +380,13 @@ int main(int argc, char **argv)
 {
 	static const struct option opts[] = {
 		{ "all-thread-exits", no_argument, NULL, 't' },
+		{ "file-at-entry", no_argument, NULL, 'e' },
 		{ "ringbuf-bytes", required_argument, NULL, 'r' },
 		{ "verbose", no_argument, NULL, 'v' },
 		{ "help", no_argument, NULL, 'h' },
 		{ 0 }
 	};
+	bool file_at_exit = true;
 	bool all_threads = false;
 	unsigned long rb_bytes = 0;
 	struct exec_exit_bpf *skel;
@@ -320,10 +395,13 @@ int main(int argc, char **argv)
 	__u64 *vals = NULL, last_drops = 0;
 	int c, err, ncpu;
 
-	while ((c = getopt_long(argc, argv, "tr:vh", opts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ter:vh", opts, NULL)) != -1) {
 		switch (c) {
 		case 't':
 			all_threads = true;
+			break;
+		case 'e':
+			file_at_exit = false;
 			break;
 		case 'r':
 			rb_bytes = strtoul(optarg, NULL, 0);
@@ -347,6 +425,9 @@ int main(int argc, char **argv)
 	skel->rodata->all_thread_exits = all_threads;
 	if (rb_bytes)
 		bpf_map__set_max_entries(skel->maps.rb, rb_bytes);
+	bpf_program__set_autoload(skel->progs.handle_openat_entry, !file_at_exit);
+	bpf_program__set_autoload(skel->progs.handle_openat_save, file_at_exit);
+	bpf_program__set_autoload(skel->progs.handle_openat_exit, file_at_exit);
 
 	err = exec_exit_bpf__load(skel);
 	if (err) {
@@ -390,6 +471,7 @@ int main(int argc, char **argv)
 	/*drain what is left before exiting*/
 	ring_buffer__consume(rb);
 	report_lost(bpf_map__fd(skel->maps.drops), ncpu, vals, &last_drops);
+	print_file_stats(bpf_map__fd(skel->maps.file_stats), ncpu, vals, file_at_exit);
 
 out:
 	free(vals);

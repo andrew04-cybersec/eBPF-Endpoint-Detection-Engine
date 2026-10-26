@@ -24,7 +24,7 @@ $(BUILD):
 $(BUILD)/vmlinux.h: | $(BUILD)
 	$(BPFTOOL) btf dump file /sys/kernel/btf/vmlinux format c > $@.tmp && mv $@.tmp $@
 
-$(BUILD)/exec_exit.bpf.o: src/exec_exit.bpf.c src/common.h $(BUILD)/vmlinux.h
+$(BUILD)/exec_exit.bpf.o: src/exec_exit.bpf.c src/common.h src/sensitive_paths.h $(BUILD)/vmlinux.h
 	$(CLANG) -g -O2 -target bpf -D__TARGET_ARCH_$(ARCH) -I$(BUILD) -Isrc -c $< -o $@
 	$(LLVM_STRIP) -g $@
 
