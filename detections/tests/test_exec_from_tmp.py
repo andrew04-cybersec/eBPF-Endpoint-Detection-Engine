@@ -208,7 +208,7 @@ class Together(unittest.TestCase):
         self.assertEqual(stats["alerts"], {"exec_from_tmp": 1, "shell_from_service": 1})
 
     def test_unevaluable_reasons_are_summarized(self):
-        _, graph, ctx, stats = run_events(exec_of("./x") + exec_of("", pid=201, start=30))
+        _, graph, ctx, stats = only_tmp(exec_of("./x") + exec_of("", pid=201, start=30))
         text = "\n".join(runner.summary_lines(graph, ctx, stats))
         self.assertIn("unevaluable: 2", text)
         self.assertIn("relative_path 1", text)

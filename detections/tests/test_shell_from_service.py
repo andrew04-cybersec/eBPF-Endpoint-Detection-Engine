@@ -62,7 +62,8 @@ def run_events(events, **kwargs):
 class Rule(unittest.TestCase):
 
     def test_service_parent_spawning_a_shell_alerts(self):
-        alerts, _, ctx, stats = run_events(service() + shell_from(100, marker="EVT"))
+        alerts, _, ctx, stats = run_events(service() + shell_from(100, marker="EVT"),
+                                           detections=[runner.shell_from_service.detect])
         self.assertEqual(len(alerts), 1)
         a = alerts[0]
         for field in REQUIRED:
@@ -87,7 +88,7 @@ class Rule(unittest.TestCase):
         self.assertEqual(len(alerts), len(names))
 
     def test_non_service_parent_does_not_alert(self):
-        alerts, _, ctx, _ = run_events(service("python3") + shell_from(100))
+        alerts, _, ctx, _ = run_events(service("python3") + shell_from(100), detections=[runner.shell_from_service.detect])
         self.assertEqual(alerts, [])
         self.assertEqual(ctx["counts"].get("unevaluable", 0), 0)
 
@@ -145,7 +146,8 @@ class Unevaluable(unittest.TestCase):
         self.assertTrue(graph.nodes["999:unknown"].placeholder)
 
     def test_shell_with_no_known_parent(self):
-        alerts, _, ctx, _ = run_events(shell_from(1, pid=300, start=30) + shell_from(0, pid=301, start=31))
+        alerts, _, ctx, _ = run_events(shell_from(1, pid=300, start=30) + shell_from(0, pid=301, start=31),
+                                       detections=[runner.shell_from_service.detect])
         self.assertEqual(alerts, [])
         self.assertEqual(ctx["counts"]["unevaluable_no_parent"], 2)
 
@@ -236,7 +238,7 @@ class CommandLine(unittest.TestCase):
         self.assertIn("ALERT 1  shell_from_service  [technique unassigned]", done.stderr)
         self.assertIn("events processed: 5", done.stderr)
         self.assertIn("alerts emitted: 1, shell_from_service 1", done.stderr)
-        self.assertIn("unevaluable: 2, ancestry_incomplete 1, placeholder_parent 1", done.stderr)
+        self.assertIn("unevaluable: 3, ancestry_incomplete 1, no_parent 1, placeholder_parent 1", done.stderr)
         self.assertIn("lost events: 0", done.stderr)
 
     def test_from_stdin_with_outputs_disabled_or_redirected(self):
