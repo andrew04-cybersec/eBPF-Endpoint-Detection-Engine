@@ -25,8 +25,9 @@ import unusual_ancestry  # noqa: E402
 import sensitive_file_access  # noqa: E402
 import rapid_spawn  # noqa: E402
 import outbound_after_exec  # noqa: E402
+import persistence  # noqa: E402
 
-DETECTIONS = [shell_from_service.detect, exec_from_tmp.detect, download_chmod_exec.detect, unusual_ancestry.detect, sensitive_file_access.detect, rapid_spawn.detect, outbound_after_exec.detect]
+DETECTIONS = [shell_from_service.detect, exec_from_tmp.detect, download_chmod_exec.detect, unusual_ancestry.detect, sensitive_file_access.detect, rapid_spawn.detect, outbound_after_exec.detect, persistence.detect]
 
 #first guess: exec_attempt events kept for the evidence of a later exec_success
 MAX_PENDING_ATTEMPTS = 4096
