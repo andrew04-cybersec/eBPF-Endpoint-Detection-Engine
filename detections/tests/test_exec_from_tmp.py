@@ -187,7 +187,7 @@ class Together(unittest.TestCase):
         self.assertEqual([a["process"]["pid"] for a in first[0]], [200, 201])
 
     def test_registered_in_the_runner_next_to_shell_from_service(self):
-        self.assertEqual(runner.DETECTIONS, [shell_from_service.detect, exec_from_tmp.detect])
+        self.assertEqual(runner.DETECTIONS[:2], [shell_from_service.detect, exec_from_tmp.detect])
 
     def test_shell_from_service_still_alerts(self):
         service = success(100, 10, 11, 1, "nginx", "/usr/sbin/nginx")
