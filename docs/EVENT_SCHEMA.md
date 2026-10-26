@@ -1,8 +1,8 @@
 # eBPF Endpoint Detection Engine: Event Schema (v1)
 
-**Status:** draft specification, written before implementation. Nothing here has been implemented or tested.
+**Status:** draft specification, updated to match the code in `telemetry/` (`src/common.h`, `src/exec_exit.bpf.c`, `src/loader.c`) and one test run. The run covered one kernel and one fixed workload. Behavior beyond it is untested. `file_open`, `net_connect`, and `priv_change` were exercised in a second test run, run 041442 (see Labels), and only the cases that a note cites to that run are Observed. The rest is Planned or Inferred.
 
-**Labels:** the same as `docs/ARCHITECTURE.md`. *Observed* restates findings recorded there from tracing on WSL2 Ubuntu 24.04 (kernel 6.6.87.2-microsoft-standard-WSL2); this document adds no observations. *Planned* is intended design, not built. *Inferred* is believed, not verified. Every field below is *Planned* unless a note says otherwise. How these events feed the normalizer and process graph is described in ARCHITECTURE.md sections 3 to 5.
+**Labels:** *Observed* means seen in the output of the test run `telemetry/tests/out/20261026-021946`, called "run 021946" below (22 checks, 0 failed, kernel 6.6.87.2-microsoft-standard-WSL2, BCC comparison skipped). *Observed* is also used for notes that cite the test run `telemetry/tests/out/20261026-041442`, called "run 041442" (38 checks, 0 failed), and only for `file_open`, `net_connect`, and `priv_change`. Nothing else is labeled Observed. *Planned* is design, or implemented behavior that run 021946 does not show. *Inferred* is believed, not verified, and includes findings that `docs/ARCHITECTURE.md` records from earlier tracing, which are cited by section. Every field below is *Planned* unless a note says otherwise. How these events feed the normalizer and process graph is described in ARCHITECTURE.md sections 3 to 5.
 
 **Layers:** *Planned:* the raw layer is JSON lines printed by the C loader, one UTF-8 object per line. The normalized layer is Python normalizer output, described only as a delta in section 10.
 
@@ -17,9 +17,9 @@ Every raw event carries these fields.
 | `schema_version` | integer | LOADER | required | Major version. The value for this document is 1. |
 | `type` | string | PROG tag per hook, rendered by LOADER | required | An event type name from section 2. |
 | `ts_ns` | integer | PROG, kernel monotonic clock | required | Not wall-clock time. The normalizer converts it. |
-| `pid` | integer | TASK `tgid` | required | |
-| `tid` | integer | TASK `pid` | required | The kernel's name for the thread id. |
-| `comm` | string | TASK `comm` | required | *Observed:* at exec entry this is the pre-exec program name. |
+| `pid` | integer | TASK `tgid` (read with the pid/tgid helper) | required | |
+| `tid` | integer | TASK `pid` (read with the pid/tgid helper) | required | The kernel's name for the thread id. *Observed:* in all-thread mode, one process produced exit events with four distinct `tid` values. |
+| `comm` | string | TASK `comm` | required | *Observed:* the `exec_attempt` for `grep` had `comm` `bash` and the matching `exec_success` had `comm` `grep` (run 021946, events.jsonl lines 2 and 3). |
 
 *Inferred:* a tracepoint's `pid` is a kernel task pid (a thread id), so envelope `pid` and `tid` come from the task and not from the hook argument.
 
@@ -29,7 +29,7 @@ Tables list fields in addition to the envelope.
 
 ### 2.1 `exec_attempt`
 
-*Observed:* `syscalls:sys_enter_execve` fires on every exec attempt, successful or not, exposes `filename` and `argv` as user-space pointers, and carries no result.
+*Inferred* (ARCHITECTURE.md section 3.1): `syscalls:sys_enter_execve` fires on every exec attempt, successful or not, exposes `filename` and `argv` as user-space pointers, and carries no result. *Observed:* in run 021946 every `exec_success` had an earlier `exec_attempt` for the same pid, and a nonexistent path produced an `exec_attempt` with no `exec_success` (events.jsonl line 8).
 
 | Field | JSON type | Source | Required | Notes |
 |---|---|---|---|---|
@@ -37,33 +37,36 @@ Tables list fields in addition to the envelope.
 | `filename_truncated` | boolean | PROG | required | |
 | `argv` | array of string | HOOK `argv`, read by PROG | required | May be empty. See section 4. |
 | `argv_truncated` | boolean | PROG | required | |
-| `ppid`, `uid`, `gid` | integer | TASK | required | Section 3. |
-| `start_time_ns` | integer | TASK | optional | Section 3. |
-| `user_read_failed`, `lossy_encoding` | boolean | PROG, LOADER | optional | Sections 5 and 8. |
+| `ppid`, `uid`, `gid`, `start_time_ns` | integer | TASK | required | Section 3. |
+| `user_read_failed`, `lossy_encoding` | boolean | PROG, LOADER | optional, always printed | *Observed:* both appear on every `exec_attempt` line in run 021946. |
 
 ### 2.2 `exec_success`
 
-*Observed:* `sched:sched_process_exec` fires only on a successful exec and exposes the final filename, `pid`, and `old_pid`, but not `argv`, parent pid, or uid.
+*Inferred* (ARCHITECTURE.md section 3.1): `sched:sched_process_exec` fires only on a successful exec and exposes the final filename, `pid`, and `old_pid`, but not `argv`, parent pid, or uid.
 
 | Field | JSON type | Source | Required | Notes |
 |---|---|---|---|---|
 | `filename` | string | HOOK `filename` | required | Final filename of the executed program. |
 | `filename_truncated` | boolean | PROG | required | |
 | `old_pid` | integer | HOOK `old_pid` | required | |
-| `ppid`, `uid`, `gid` | integer | TASK | required | Section 3. |
-| `start_time_ns` | integer | TASK | optional | Section 3. |
-| `user_read_failed`, `lossy_encoding` | boolean | PROG, LOADER | optional | Sections 5 and 8. |
+| `ppid`, `uid`, `gid`, `start_time_ns` | integer | TASK | required | Section 3. |
+| `user_read_failed`, `lossy_encoding` | boolean | PROG, LOADER | optional, always printed | *Observed:* both appear on every `exec_success` line in run 021946. |
 
 This event has no `argv`. *Planned:* the normalizer takes argument data from the matching `exec_attempt`.
 
 ### 2.3 `exit`
 
-*Observed:* `sched:sched_process_exit` marks the end of a process, and the exit code and signal have to be read from the task.
+*Inferred* (ARCHITECTURE.md section 3.1): `sched:sched_process_exit` marks the end of a process, and the exit code and signal have to be read from the task. *Observed:* in all-thread mode the hook produced one event per thread (four exit events, four distinct `tid`, for a process with three extra threads).
 
 | Field | JSON type | Source | Required | Notes |
 |---|---|---|---|---|
-| `exit_code` | integer | TASK `exit_code` | required | Meaning undecided. See section 9. |
-| `ppid`, `uid`, `gid`, `start_time_ns` | integer | TASK | optional | Whether exit events need them is decided at the telemetry task. |
+| `exit_code` | integer | TASK `exit_code` | required | Raw kernel value. See section 9. |
+| `exit_status` | integer | LOADER, decoded from `exit_code` | required | See section 9. |
+| `exit_signal` | integer | LOADER, decoded from `exit_code` | required | See section 9. |
+| `ppid`, `uid`, `gid`, `start_time_ns` | integer | TASK | required | Section 3. |
+| `lossy_encoding` | boolean | LOADER | optional, always printed | `exit` carries no `user_read_failed`, because it reads no user-space string. |
+
+**One exit per process.** *Planned:* by default the eBPF program emits `exit` only for the last thread of a process. It detects this by the thread group's live-thread count being zero, and a small map stops two threads that exit together from both reporting. The loader option `--all-thread-exits` (`-t`) reports every thread instead. *Observed:* for a process with three extra threads, default mode produced exactly one exit event and all-thread mode produced four (report.txt lines 20 and 28). The case where the thread group leader exits before the other threads is not tested.
 
 ### 2.4 `lost`
 
@@ -73,46 +76,90 @@ A loader-generated report that the ring buffer dropped records. It is not emitte
 |---|---|---|---|---|
 | `dropped` | integer | LOADER, from a drop counter | required | Records dropped since the previous `lost` event, or since loader start. |
 
-The envelope of this type is loader-generated: `pid`, `tid`, and `comm` describe the loader process, and `ts_ns` is read by the loader at report time. The mechanism that produces the drop count is not decided. *Inferred:* a failed ring buffer reservation is seen only by the eBPF program, so it would count failures in a map the loader reads. *Planned:* the normalizer treats `lost` as a gap, and any inference across a gap, including `exec_failed`, is unreliable.
+The envelope of this type is loader-generated: `pid`, `tid`, and `comm` describe the loader process, and `ts_ns` is read by the loader at report time. `lost` carries no identity fields, `user_read_failed`, or `lossy_encoding`. *Planned:* the eBPF program counts failed ring buffer reservations in a per-CPU map and the loader reports increases. *Observed:* run 021946 had no `lost` events, so this path was not exercised. *Planned:* the normalizer treats `lost` as a gap, and any inference across a gap, including `exec_failed`, is unreliable.
 
-### 2.5 Reserved types
+### 2.5 `file_open`
 
-*Planned:* names are reserved and field lists are provisional. No hook is chosen yet (ARCHITECTURE.md sections 3.2 and 10), so no source can be named. *Observed:* `openat` fires on every file open by every process, so file events must be narrow.
+*Planned:* the eBPF program attaches to `syscalls:sys_enter_openat` and `syscalls:sys_exit_openat` and filters in the kernel, so only opens of paths on the list in `telemetry/src/sensitive_paths.h` produce an event. The list is the exact paths `/etc/shadow`, `/etc/gshadow`, `/etc/passwd`, and `/etc/sudoers`, the prefixes `/etc/sudoers.d/` and `/root/.ssh/`, and any path of the form `/home/<user>/.ssh/` (the user part is limited by `HOME_USER_SCAN`). Only an absolute path string matches, so a relative path opened through a directory descriptor does not. The `open` and `openat2` syscalls are not hooked. *Inferred* (ARCHITECTURE.md sections 2 and 3.2): the probe still runs on every open, so the filter limits output, not the cost of the probe.
 
-| Type | Provisional fields (JSON type) |
-|---|---|
-| `file_open` | `path` (string), `path_truncated` (boolean), `flags` (integer) |
-| `net_connect` | `family` (integer), `remote_addr` (string), `remote_port` (integer) |
-| `priv_change` | `old_uid`, `new_uid`, `old_gid`, `new_gid` (integer) |
+*Planned:* by default the program saves the arguments at entry and reads the path at `sys_exit_openat`, so the record carries `ret`. With the loader option `--file-at-entry` (`-e`) it reads the path at `sys_enter_openat` instead, and the record has no `ret`. The loader prints a `file_stats` line on stderr at shutdown with `mode`, `openat_seen`, `openat_blank` (failed or empty path reads), and `file_open_emitted`, so the two modes can be compared.
+
+*Observed* (run 041442, `file_stats` lines): in entry mode `openat_blank` was 95 of 3094 `openat_seen` in the main run, 28 of 982 in the paired run, and 3 of 115 in the thread run. In exit mode on the same commands it was 0 of 986. The `openat_seen` totals of the two paired runs differ, so they are not the same set of calls. *Inferred* (ARCHITECTURE.md sections 4 and 9): the blank reads at entry are because the memory page is not loaded yet at syscall entry. The run did not test that cause. The cost of exit mode was not measured.
+
+| Field | JSON type | Source | Required | Notes |
+|---|---|---|---|---|
+| `path` | string | HOOK `filename`, read by PROG | required | Cut at `FILE_PATH_CAP`. Empty if the read failed. |
+| `path_truncated` | boolean | PROG | required | |
+| `flags` | integer | HOOK `flags` | required | The open flags as passed. |
+| `ret` | integer | HOOK `ret` of `sys_exit_openat` | optional | Present by default, absent with `--file-at-entry`. Negative values are errors. *Observed* (run 041442, paired exit-mode run): `/etc/shadow` had a `ret` of zero or more and a missing listed path a negative `ret`. |
+| `ppid`, `uid`, `gid`, `start_time_ns` | integer | TASK | required | Section 3. |
+| `user_read_failed`, `lossy_encoding` | boolean | PROG, LOADER | optional, always printed | |
+
+### 2.6 `net_connect`
+
+*Planned:* the program attaches to `syscalls:sys_enter_connect`, reads the socket address from user memory, and emits only for address families 2 (IPv4) and 10 (IPv6). Other families are dropped in the kernel. An address shorter than its family's structure is ignored. There is no return value in v1, so a failed connect is reported like a successful one. A connect on a datagram socket is reported too. *Observed* (run 041442): a connect to 127.0.0.1 and a connect to ::1, each to a local listener, were each reported once with the right family, address, and port.
+
+| Field | JSON type | Source | Required | Notes |
+|---|---|---|---|---|
+| `family` | integer | HOOK address family, read by PROG | required | 2 or 10. |
+| `remote_addr` | string | HOOK address, formatted by LOADER | required | Dotted decimal for IPv4, colon text for IPv6. |
+| `remote_port` | integer | HOOK address, read by PROG | required | Host byte order. |
+| `ppid`, `uid`, `gid`, `start_time_ns` | integer | TASK | required | Section 3. |
+| `lossy_encoding` | boolean | LOADER | optional, always printed | Applies to `comm` only. |
+
+### 2.7 `priv_change`
+
+*Planned:* the program attaches to `syscalls:sys_enter_setuid`, `setreuid`, `setresuid`, `setgid`, and `setresgid`. It records the syscall name and the requested ids, not the result, so a call that the kernel rejects is still reported. `setregid`, `setfsuid`, `setfsgid`, `setgroups`, and `capset` are not hooked. This replaces the provisional `old_uid` and `new_uid` fields of an earlier draft, because the hooks see requests, not old and new values. *Observed* (run 041442): `setpriv --reuid` was reported with the requested uid, and a python process that called `setgid`, `setresgid`, `setreuid`, `setresuid`, and `setuid` was reported with those five syscalls in that order and the requested ids.
+
+| Field | JSON type | Source | Required | Notes |
+|---|---|---|---|---|
+| `syscall` | string | PROG, from the hook | required | One of `setuid`, `setreuid`, `setresuid`, `setgid`, `setresgid`. |
+| `ids` | array of integer | HOOK arguments | required | The requested ids in argument order: one for `setuid` and `setgid`, two for `setreuid`, three for `setresuid` and `setresgid`. A value of 4294967295 is the unsigned form of -1, meaning leave unchanged. |
+| `ppid`, `uid`, `gid`, `start_time_ns` | integer | TASK | required | Section 3. These are the ids before the call. |
+| `lossy_encoding` | boolean | LOADER | optional, always printed | Applies to `comm` only. |
 
 ## 3. Process identity
 
+*Planned:* `ppid`, `uid`, `gid`, and `start_time_ns` are required on `exec_attempt`, `exec_success`, `exit`, `file_open`, `net_connect`, and `priv_change`, and with the envelope `tid` and `comm` every process record carries them, following ARCHITECTURE.md section 3.1. *Observed:* run 021946 passed the field check for the first three types. *Observed:* run 041442 passed the same check for all six types.
+
 | Field | Source | Notes |
 |---|---|---|
-| `ppid` | TASK `real_parent->tgid` | *Observed:* a bpftrace probe read it through BTF. The read in the eBPF C program is *Planned*. |
-| `uid` | TASK credentials | *Observed:* a bpftrace probe read it. The eBPF read is *Planned*. Which uid variant (real, effective) is undecided. |
-| `gid` | TASK credentials | *Planned.* Same open variant question. |
-| `start_time_ns` | TASK start time | *Planned.* Optional until the pid reuse question is answered. With `pid` it would key a process node (ARCHITECTURE.md section 5). Field and clock undecided. |
+| `ppid` | TASK `real_parent->tgid` | *Observed:* `ls` had the `sh` process as its parent in the shell chain check. |
+| `uid` | TASK `real_cred` uid, the real uid | *Observed:* the `exec_success` for a command started through `setpriv` as uid 1000 carried `uid` 1000. The effective uid is not captured (*Planned*). |
+| `gid` | TASK `real_cred` gid, the real gid | *Planned.* No test checked a non-root gid. |
+| `start_time_ns` | TASK `group_leader->start_time`, on the same monotonic clock as `ts_ns` | *Observed:* the `exec_attempt`, `exec_success`, and `exit` of one process carried the same value (for example pid 5232, lines 2 to 4). It is the start of the thread group leader. |
 
-*Inferred:* pids are reused (stated in ARCHITECTURE.md section 5), so `pid` alone is not a safe key. Behavior under reuse is untested. *Planned:* promoting `start_time_ns` to required is a breaking change (section 7).
+*Inferred:* pids are reused (stated in ARCHITECTURE.md section 5), so `pid` alone is not a safe key. Behavior under reuse is untested. *Planned:* `start_time_ns` is required in v1 so that `pid` plus `start_time_ns` can key a process node (ARCHITECTURE.md section 5). It was optional in an earlier draft, and it and the `exit` identity fields were made required before any consumer existed.
 
 ## 4. `argv` and `envp`
 
 *Planned:* `argv` is an array of strings in the order the caller passed them. `argv_truncated` is true if trailing arguments are omitted or any element was shortened. The loader does not build a command line; the normalizer does.
 
-*Planned:* `envp` is not captured by default and v1 has no `envp` field. *Inferred:* the environment often holds secrets such as tokens and passwords. *Inferred:* `envp` is available at the same hook (ARCHITECTURE.md section 10, where capturing it is listed as not yet considered). An opt-in field could be added later without a major version change.
+*Planned:* `envp` is not captured by default and v1 has no `envp` field. *Observed:* no line in run 021946 contained an `envp` field. *Inferred:* the environment often holds secrets such as tokens and passwords. *Inferred:* `envp` is available at the same hook (ARCHITECTURE.md section 10, where capturing it is listed as not yet considered). An opt-in field could be added later without a major version change.
 
-## 5. Truncation and failed reads
+## 5. Truncation, caps, and failed reads
 
-*Planned:* every variable-length field has a boolean flag, true when the value is a prefix of, or is missing data from, the original: `filename_truncated`, `argv_truncated`, and `path_truncated` (provisional). *Inferred:* `comm` is bounded by the kernel and has no flag.
+*Planned:* every variable-length field has a boolean flag, true when the value is a prefix of, or is missing data from, the original: `filename_truncated`, `argv_truncated`, and `path_truncated`. *Inferred:* `comm` is bounded by the kernel and has no flag.
 
-This document sets no numeric caps. They are decided at the telemetry task, after measurement. *Inferred:* caps must exist because ARCHITECTURE.md section 3.3 calls for fixed-size ring buffer records.
+**Caps.** *Planned:* the caps are constants in `telemetry/src/common.h`. They are first values chosen without any measurement, and they are to be revisited after measurement.
 
-*Planned:* if the eBPF program cannot read a user-space string, the required string field is empty and `user_read_failed` is true. *Observed:* paths read at `sys_enter_openat` were sometimes blank in bpftrace. *Inferred:* the memory page was not yet loaded at syscall entry. Whether `sys_enter_execve` is affected is unchecked, so an empty `filename` is not proof of an empty program name.
+| Constant | Value | Meaning |
+|---|---|---|
+| `FILENAME_CAP` | 256 | Bytes of `filename`, including the terminating NUL |
+| `ARGV_MAX_ARGS` | 16 | Arguments captured per `exec_attempt` |
+| `ARGV_ARG_CAP` | 128 | Bytes per argument, including the NUL (127 bytes of text) |
+| `RINGBUF_BYTES` | 4194304 | Ring buffer size (`1u << 22`) |
+| `FILE_PATH_CAP` | 256 | Bytes of `path` in `file_open`, including the NUL |
+| `FILE_PEEK` | 128 | Bytes of the path the kernel filter examines |
+| `HOME_USER_SCAN` | 32 | How far into a `/home/` path the filter looks for `/.ssh/` |
+
+*Planned:* an argument of exactly 127 bytes is also flagged truncated, because the read cannot tell it from a longer one. *Observed:* in run 021946 a call with more than 16 arguments came back with 16 and `argv_truncated` true, a long argument came back cut to 127 bytes with `argv_truncated` true, the burst of 50 short commands had no truncation flag set, and the `python3 -c` script argument was cut and flagged (events.jsonl line 183). *Inferred:* caps must exist because ARCHITECTURE.md section 3.3 calls for fixed-size ring buffer records.
+
+**Failed reads.** *Planned:* if the eBPF program cannot read a user-space string, the required string field is empty and `user_read_failed` is true. *Inferred* (ARCHITECTURE.md sections 4 and 9): paths read at `sys_enter_openat` were sometimes blank in bpftrace, because the memory page was not yet loaded at syscall entry. *Observed:* no event in run 021946 had `user_read_failed` true. That is one workload, so an empty `filename` is still not proof of an empty program name.
 
 ## 6. Exec failure
 
-*Planned:* the v1 raw schema has no return code field. The normalizer derives `exec_failed`: an `exec_attempt` is failed if no `exec_success` with the same pid arrives before the next `exec_attempt` or `exit` for that pid. *Inferred:* a dropped `exec_success` or pid reuse can make this wrong.
+*Planned:* the v1 raw schema has no return code field. The normalizer derives `exec_failed`: an `exec_attempt` is failed if no `exec_success` with the same pid arrives before the next `exec_attempt` or `exit` for that pid. *Observed:* the nonexistent path in run 021946 was the only attempt without a success, and its `exit` followed with `exit_status` 127 (report.txt lines 6 to 9). *Inferred:* a dropped `exec_success` or pid reuse can make this wrong.
 
 *Open question:* a `sys_exit_execve` hook could report the return value instead. It is listed in ARCHITECTURE.md section 10, is untested, and would be additive.
 
@@ -124,13 +171,13 @@ This document sets no numeric caps. They are decided at the telemetry task, afte
 
 ## 8. Encoding of non-UTF8 bytes
 
-*Planned:* this is a proposal, not a decision. Paths and arguments are byte strings and need not be valid UTF-8, but every line must stay valid JSON. The loader decodes string fields as UTF-8, replaces each invalid byte or sequence with U+FFFD, and sets `lossy_encoding` to true on the event if it replaced anything. The rule is lossy. A lossless companion (for example hexadecimal text of the raw bytes) is left to the telemetry task and would be additive.
+*Planned:* paths and arguments are byte strings and need not be valid UTF-8, but every line must stay valid JSON. The loader decodes string fields as UTF-8, replaces each invalid byte or sequence with U+FFFD, and sets `lossy_encoding` to true on the event if it replaced anything. The rule is lossy. A lossless companion (for example hexadecimal text of the raw bytes) is left to a later task and would be additive. *Observed:* an argument containing the two bytes `0xff 0xfe` came back as two U+FFFD characters with `lossy_encoding` true, and every line in the run parsed as strict JSON (report.txt lines 1 and 24).
 
 ## 9. `exit_code`
 
-*Inferred:* the kernel stores exit status in an encoded form that packs the exit status and the terminating signal together, and a tool or shell can decode it. *Observed:* `exitsnoop` and the `bootstrap` example reported the exit code and signal (ARCHITECTURE.md section 3.1), but they may report decoded values, so that does not show what the raw field holds.
+*Observed:* `exit_code` is the raw kernel value, with the exit status shifted left by 8 bits and the terminating signal in the low bits. In run 021946, `exit 7` gave `exit_code` 1792 (0x700), a process killed with signal 9 gave `exit_code` 9, and the child of the failed exec gave `exit_code` 32512 (127 shifted left by 8) (report.txt lines 8, 16, and 18).
 
-This document does not decide the representation. It must be verified at the telemetry task by reading the field on the target kernel. Until then `exit_code` is a required integer that consumers must not interpret.
+*Planned:* the loader prints `exit_code` unchanged and adds `exit_status` (`(exit_code >> 8) & 0xff`) and `exit_signal` (`exit_code & 0x7f`). *Observed:* the decoded values matched in those three cases: status 7 and signal 0, status 0 and signal 9, and status 127 and signal 0. *Inferred:* the kernel's core dump flag (bit 0x80) is not decoded, and no test produced it.
 
 ## 10. Normalized events, delta only
 
@@ -147,16 +194,16 @@ This document does not decide the representation. It must be verified at the tel
 *Constructed example, not captured output.* An `exec_attempt`:
 
 ```
-{"schema_version":1,"type":"exec_attempt","ts_ns":1000000000,"pid":2001,"tid":2001,"comm":"bash","filename":"/usr/bin/ls","filename_truncated":false,"argv":["ls","-l"],"argv_truncated":false,"ppid":1900,"uid":1000,"gid":1000}
+{"schema_version":1,"type":"exec_attempt","ts_ns":1000000000,"pid":2001,"tid":2001,"comm":"bash","filename":"/usr/bin/ls","filename_truncated":false,"argv":["ls","-l"],"argv_truncated":false,"ppid":1900,"uid":1000,"gid":1000,"start_time_ns":900000000,"user_read_failed":false,"lossy_encoding":false}
 ```
 
-## 12. Deferred to the telemetry task
+## 12. Deferred
 
-- Numeric caps for `filename`, `argv` element length, and `argv` element count.
+- Measuring and revisiting the caps in section 5.
 - Whether to add a `sys_exit_execve` hook, and coverage of `execveat`.
-- Raw or decoded `exit_code`, and whether a separate signal field is needed.
-- Which uid and gid variant is recorded, and the `start_time_ns` field and clock.
 - Lossy or lossless handling of non-UTF8 bytes.
-- The drop counter mechanism, ring buffer behavior when the consumer falls behind, and whether the loader clock matches the kernel clock for `lost`.
-- The join key for attempts and successes, including exec from a non-leader thread, and how per-thread exit events map to process end.
-- Hooks and final field lists for `file_open`, `net_connect`, and `priv_change`.
+- Ring buffer behavior when the consumer falls behind, whether the loader clock matches the kernel clock for `lost`, and a test that forces drops.
+- The join key for attempts and successes, including exec from a non-leader thread, and the case where the thread group leader exits first.
+- The cause of the blank path reads at entry, and the cost of the exit-mode default for `file_open`.
+- Coverage of `open`, `openat2`, and relative paths for `file_open`, a return value for `net_connect`, and the privilege calls listed as not hooked in section 2.7.
+- Whether the sensitive path list is the right one.
