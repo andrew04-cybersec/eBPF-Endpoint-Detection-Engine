@@ -124,6 +124,8 @@ Ten detections are planned, matching the roadmap. The goal is depth on each one,
 
 Detections 1 through 4, 6, and 10 depend only on process events, so they can be built in the first telemetry phase. Detections 5, 7, 8, and 9 wait on the later telemetry.
 
+*Planned:* detection 1 is implemented as `shell_from_service` in `detections/`, with a small runner that feeds normalized events through the graph and the detections and emits alerts (section 7). It fires when a shell is executed by a process whose `comm` is on an inferred list of service names. It cannot judge a shell whose parent is a placeholder, and it will raise false alarms where a service legitimately runs a shell. Its ATT&CK technique is left null until the mapping task. It has run over constructed fixtures and one saved events file, which contains no service parents, and a live test script exists and has not been run. The rule and its limits are in `docs/EVENT_SCHEMA.md` section 15.
+
 ## 7. Alerts
 
 Each alert is a JSON object carrying the detection name, the ATT&CK technique, a timestamp, the triggering process, its ancestry, and the evidence that fired the rule, and the same information is rendered as readable lines on the command line. The exact format is *Planned* and is finalized alongside the event schema.
