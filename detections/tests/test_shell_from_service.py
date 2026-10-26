@@ -178,7 +178,8 @@ class Unevaluable(unittest.TestCase):
         odd = [{"schema_version": 1, "type": "exec_success", "exe": 7},
                {"schema_version": 1, "type": "exec_success", "exe": "/bin/sh", "pid": "x"},
                {"schema_version": 1, "type": "exec_success", "filename": "/bin/sh", "pid": 5, "start_time_ns": 6}]
-        alerts, _, ctx, stats = run_events(service() + odd + shell_from(100))
+        alerts, _, ctx, stats = run_events(service() + odd + shell_from(100),
+                                           detections=[runner.shell_from_service.detect])
         self.assertEqual(len(alerts), 1)
         self.assertEqual(stats["detection_errors"], 0)
         self.assertEqual(ctx["counts"]["unevaluable"], 2)

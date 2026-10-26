@@ -19,8 +19,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import alert  # noqa: E402
 import process_graph  # noqa: E402
 import shell_from_service  # noqa: E402
+import exec_from_tmp  # noqa: E402
 
-DETECTIONS = [shell_from_service.detect]
+DETECTIONS = [shell_from_service.detect, exec_from_tmp.detect]
 
 #first guess: exec_attempt events kept for the evidence of a later exec_success
 MAX_PENDING_ATTEMPTS = 4096
