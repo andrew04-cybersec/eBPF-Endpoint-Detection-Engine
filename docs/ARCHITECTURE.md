@@ -78,6 +78,8 @@ The parent pid, uid, command name, and timestamps are read inside the eBPF progr
 
 These are not yet explored and the hook points will be chosen when each is implemented. The constraint that applies now comes from the research: *Observed:* `openat` fires on every file open by every process, a single short command produced dozens of opens (shared libraries and locale files), and a plain `ls -l` opens `/etc/passwd` on its own to resolve user names. File telemetry therefore has to be narrow, and any sensitive-file detection has to use process context and not the path alone.
 
+*Planned:* a second kernel-side list, the write-intent list, widens the file filter to persistence locations (cron directories, systemd unit directories, `/etc/ld.so.preload`, shell startup files, and the like). A path that is on that list alone is reported only when the open flags request a write, because those paths are opened read-only constantly. This is telemetry for the persistence detection in section 6, which is not built yet. The probe still fires on every open, so the extra comparisons add cost per open, and that cost has not been measured. The program with the wider filter has been compiled, and it has not been loaded into the kernel, so verifier acceptance is unverified. The list and the flag rule are in `docs/EVENT_SCHEMA.md` section 2.5.
+
 ### 3.3 Design principles from the research
 
 - Prefer rare events (fork, exec, exit) over hot ones.
