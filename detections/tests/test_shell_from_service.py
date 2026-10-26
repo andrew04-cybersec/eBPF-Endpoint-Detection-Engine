@@ -138,7 +138,7 @@ class Rule(unittest.TestCase):
 class Unevaluable(unittest.TestCase):
 
     def test_placeholder_parent(self):
-        alerts, graph, ctx, _ = run_events(shell_from(999))
+        alerts, graph, ctx, _ = run_events(shell_from(999), detections=[runner.shell_from_service.detect])
         self.assertEqual(alerts, [])
         self.assertEqual(ctx["counts"]["unevaluable"], 1)
         self.assertEqual(ctx["counts"]["unevaluable_placeholder_parent"], 1)
@@ -236,7 +236,7 @@ class CommandLine(unittest.TestCase):
         self.assertIn("ALERT 1  shell_from_service  [technique unassigned]", done.stderr)
         self.assertIn("events processed: 5", done.stderr)
         self.assertIn("alerts emitted: 1, shell_from_service 1", done.stderr)
-        self.assertIn("unevaluable: 1, placeholder_parent 1", done.stderr)
+        self.assertIn("unevaluable: 2, ancestry_incomplete 1, placeholder_parent 1", done.stderr)
         self.assertIn("lost events: 0", done.stderr)
 
     def test_from_stdin_with_outputs_disabled_or_redirected(self):
