@@ -226,3 +226,25 @@ The envelope of this type is loader-generated: `pid`, `tid`, and `comm` describe
 - The cause of the blank path reads at entry, and the cost of the exit-mode default for `file_open`.
 - Coverage of `open`, `openat2`, and relative paths for `file_open`, a return value for `net_connect`, and the privilege calls listed as not hooked in section 2.7.
 - Whether the sensitive path list is the right one.
+
+## 13. Process graph
+
+*Planned:* the graph is built by `graph/process_graph.py` from normalized events (section 10). It has been exercised by unit tests on constructed fixtures and run over one saved events file, and it has not been part of a recorded pipeline run, so nothing in this section is Observed. Every item can change. It consumes events and defines no new event type.
+
+**Nodes.** One node per process key. A node holds `pid`, `start_time_ns`, the `ppid` first seen, `uid` and `gid` as first seen, `comm` as last seen, first and last `ts_ns`, an exec history, an exit record, and lists of `file_open`, `net_connect`, and `priv_change` entries. An exec in place (the same key with a second `exec_success`) adds a history entry to the same node, because `pid` and `start_time_ns` do not change across an exec (section 3). A history entry has `exe`, `cmdline`, `ts_ns`, `failed`, and for a derived `exec_failed` also `reason`. An `exec_attempt` is not a history entry. Only its outcome is. The exit record keeps the first `exit` seen, and later ones (all-thread mode) are counted as repeat exits.
+
+**Parent link.** An event gives `ppid` and no parent start time, so the parent is resolved when a node is first created: it is the known process with that pid and the latest `start_time_ns` that is not later than the child's. A candidate that exited before the child started is rejected. *Inferred:* the link can be wrong when pids are reused and the real parent was never seen, and nothing in the input can show that. Each node records how its link was made: `observed` (the parent node already existed), `placeholder`, or `late` (a placeholder later replaced by the real parent). A `ppid` of 0, or of 1 with no known pid 1 node, ends the chain as a root and makes no placeholder.
+
+**Placeholders.** A parent that is not known gets a placeholder node with the key `<pid>:unknown`, no start time, and `placeholder` true. It means the parent started before the loader, forked without an exec, or was never recorded, and the input cannot tell these apart. There is one placeholder per pid. When a real process for that pid is later seen, the placeholder's children that started at or after it move to the real node, and the placeholder is dropped when it has no children left. Placeholders are not evicted.
+
+**Edges.** An edge is made once, when the child node is created. A later event for the node with a different `ppid` (usually a reparent after the parent exited) is added to the node's `ppid_changes` list and no edge is made or changed.
+
+**Queries.** `ancestry(key)` returns the chain, process first, and a stop reason: `root`, `placeholder`, `cycle`, `depth_cap`, `parent_missing` (the parent node was evicted), `no_parent_info` (no `ppid` was recorded), or `unknown_key`. It tracks visited nodes and a depth cap, so it always ends. `children(key)` lists the children in the order first seen. `find_by_pid(pid, ts_ns)` returns the process with the latest start not after `ts_ns`, or none if that process had exited before `ts_ns`.
+
+**Events not attached.** `lost` events are counted, with the total of `dropped`, and belong to no node. An event with no usable `pid` and `start_time_ns` is counted as `missing_identity` and not attached. An event whose `process_key` differs from the key built from its `pid` and `start_time_ns` is counted as `key_mismatch`, and the built key is used.
+
+**Bounds.** All values are first guesses and none has been measured. `MAX_NODES` is 100000: when it is exceeded the oldest exited nodes are evicted first, and a live node is never evicted, so the graph can stay over the limit (counted as `over_limit_while_live`). A child of an evicted parent keeps its parent key, and ancestry stops with `parent_missing`. `MAX_EVENTS_PER_LIST` is 200 for each list of each node: the first entries are kept and the rest are counted as dropped, per node and in total. `MAX_ANCESTRY_DEPTH` is 64.
+
+**Anomalies.** Counted and never fatal: `bad_json_lines`, `invalid_utf8_lines`, `not_an_object`, `unsupported_schema_version` (the event is skipped), `unknown_event_type`, `missing_identity`, `key_mismatch`, `malformed_field`, and `ppid_missing`. The summary also gives node, edge, placeholder, exited, and evicted counts, edges by link kind, drops per list, and events by type.
+
+**Not done.** Edges from a process to files and sockets are stored as per-node lists and not as separate nodes. Querying children within a time window is not implemented. A window can be applied to the child list by the caller using each child's first-seen time. Detections and alerts are not part of the graph.

@@ -103,6 +103,8 @@ The graph holds processes as nodes and relationships as edges.
 
 *Observed:* the chain `bash`, then `sh`, then `cat` was reconstructed correctly from parent pids in every tool, which is the basis for ancestry. Because pids are reused by the kernel, *Planned:* nodes are identified by pid together with start time and not by pid alone. Behavior under pid reuse has not been tested.
 
+*Planned:* the graph is a standard-library Python module in `graph/`. It reads normalized JSON lines, keeps one node per process key, links each node to one parent, and answers ancestry, children, and pid-at-time queries. The parent is found from `ppid` alone, which names no start time, so the link is inferred and can be wrong under pid reuse. A parent that was never seen is a placeholder node, and the edge is marked as such. The graph has been run over constructed fixtures in unit tests and over one saved events file, not over a live pipeline, and the pid reuse handling has only been tested on constructed cases. The rules, bounds, and counters are in `docs/EVENT_SCHEMA.md` section 13. It contains no detections.
+
 ## 6. Detections
 
 Ten detections are planned, matching the roadmap. The goal is depth on each one, including how it can be evaded and what it misses, and not a long list. ATT&CK technique mappings are assigned in the dedicated mapping task and are intentionally left blank here.
