@@ -128,6 +128,8 @@ Detections 1 through 4, 6, and 10 depend only on process events, so they can be 
 
 Each alert is a JSON object carrying the detection name, the ATT&CK technique, a timestamp, the triggering process, its ancestry, and the evidence that fired the rule, and the same information is rendered as readable lines on the command line. The exact format is *Planned* and is finalized alongside the event schema.
 
+*Planned:* the output layer is a standard-library Python module in `alerts/`. Detections will call a builder that copies the triggering process, its ancestry from the graph, and the evidence events into a plain dict, and a sink that writes it as one JSON line and as readable lines on a second stream. The technique field is null until the ATT&CK mapping task assigns techniques (section 6), and `ts_ns` is the kernel monotonic value because the wall-clock conversion is still open. The module has been run over constructed fixtures and one saved events file with a test-only trigger, not with any detection. The field list and rules are in `docs/EVENT_SCHEMA.md` section 14.
+
 ## 8. Evaluation plan
 
 Evaluation is a required part of the project. The plan is to run twenty to thirty controlled attack simulations and a benign workload baseline, and to report the following, whether or not the results are flattering:

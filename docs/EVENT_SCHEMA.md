@@ -248,3 +248,31 @@ The envelope of this type is loader-generated: `pid`, `tid`, and `comm` describe
 **Anomalies.** Counted and never fatal: `bad_json_lines`, `invalid_utf8_lines`, `not_an_object`, `unsupported_schema_version` (the event is skipped), `unknown_event_type`, `missing_identity`, `key_mismatch`, `malformed_field`, and `ppid_missing`. The summary also gives node, edge, placeholder, exited, and evicted counts, edges by link kind, drops per list, and events by type.
 
 **Not done.** Edges from a process to files and sockets are stored as per-node lists and not as separate nodes. Querying children within a time window is not implemented. A window can be applied to the child list by the caller using each child's first-seen time. Detections and alerts are not part of the graph.
+
+## 14. Alerts
+
+*Planned:* the alert format is defined by `alerts/alert.py`. It has been exercised by unit tests on constructed fixtures and by one alert built from a saved events file with a test-only trigger, and it has not been used by any detection or in a recorded pipeline run, so nothing in this section is Observed. Every item can change. No detection, technique mapping, suppression, or wall-clock conversion exists.
+
+**Stream.** One JSON object per line, ASCII-safe, keys sorted, no NaN or Infinity. A second rendering gives the same information as readable lines. The sink can disable either output. An alert that cannot be encoded as strict JSON is counted and skipped.
+
+**Fields.**
+
+| Field | JSON type | Notes |
+|---|---|---|
+| `alert_schema_version` | integer | 1. Versioning follows section 7. |
+| `alert_seq` | integer | Per-run sequence starting at 1, stamped by the sink when the builder left it null. No random ids, so the same input gives the same output. |
+| `detection` | string | The name the detection passes in. |
+| `technique` | string or null | Always null for now. *Planned:* the ATT&CK mapping is a separate task (ARCHITECTURE.md section 6), so no technique id is invented here. The readable form says "technique unassigned". |
+| `ts_ns` | integer or null | The `ts_ns` of the triggering event, kernel monotonic time, not wall-clock. The conversion is an open question (section 10) and is not decided here. |
+| `process` | object | `process_key`, `pid`, `ppid`, `comm`, `exe`, `cmdline`, `uid`, `gid`, and `placeholder`. `exe` and `cmdline` are from the latest entry of the node's exec history. A value that is unknown is null. |
+| `ancestry` | array of object | The graph's chain, process first, each entry shaped like `process`. A placeholder parent has `placeholder` true and null fields. Capped at `MAX_ANCESTRY_ENTRIES` (32, unmeasured). |
+| `ancestry_stop` | string | The graph's stop reason from section 13, or `unknown_key` when the process is not in the graph. |
+| `evidence` | array of object | Deep copies of the events that fired the rule, in the order given. Capped at `MAX_EVIDENCE_EVENTS` (10, unmeasured). |
+| `evidence_dropped` | integer | How many evidence events were beyond the cap. |
+| `data_quality` | object | See below. |
+
+**`data_quality`.** `lost_events_seen` is the number of `lost` events the graph has counted in the whole run so far, not only for this process, because a `lost` event names no process. `ancestry_complete` is true only if `ancestry_stop` is `root` and the chain was not cut by the cap. `ancestry_truncated` is true if the cap cut the chain. `process_in_graph` is false if the triggering process has no node, in which case `process` is filled from the triggering event only and `ancestry` is empty.
+
+**Readable form.** In order: detection name and technique, `ts_ns`, the process with its command line, the ancestry as a chain, the evidence in a short form, then warning lines for a process missing from the graph, incomplete ancestry, and lost events. Text from events is escaped (control characters and non-ASCII), so a command line cannot change the terminal.
+
+**Viewer.** `alerts/alert.py` reads alert lines from a file or standard input and prints the readable form. Lines that are not JSON objects are skipped and counted.
