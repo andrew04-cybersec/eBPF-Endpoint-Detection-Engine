@@ -91,6 +91,8 @@ The normalizer turns the loader's raw JSON lines into one consistent record per 
 
 Known data-quality problems it must handle, all from the research: *Observed:* a process name read at exec entry is the old program's name, a path read at syscall entry sometimes came back empty in bpftrace, and shell aliases change the logged command line (`ls` became `ls --color=auto`). *Inferred:* the empty paths are caused by the path's memory page not yet being loaded when the probe reads it at syscall entry, which BCC's `opensnoop` did not show.
 
+*Planned:* the normalizer is a standard-library Python program in `normalizer/`. It reads loader JSON lines from standard input or a file and writes normalized JSON lines to standard output or a file, in the same order, and prints a summary of counts and anomalies to standard error. It keys each process by pid together with start time (section 5), joins an `exec_attempt` to its `exec_success` by that key, and derives an `exec_failed` event when an attempt is followed by another attempt or an exit from the same process with no success between. It keeps every input field, adds the process key, and passes `file_open`, `net_connect`, `priv_change`, and `lost` through. It has not been run as part of a recorded pipeline. The field list and rules are in `docs/EVENT_SCHEMA.md` section 10.
+
 ## 5. Process graph
 
 The graph holds processes as nodes and relationships as edges.

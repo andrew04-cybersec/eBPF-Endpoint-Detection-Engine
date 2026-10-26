@@ -181,13 +181,32 @@ The envelope of this type is loader-generated: `pid`, `tid`, and `comm` describe
 
 ## 10. Normalized events, delta only
 
-*Planned until the normalizer task; every item can change.*
+*Planned:* the normalized layer is written by `normalizer/normalize.py`. It has been exercised by unit tests on constructed fixtures and run over a saved `events.jsonl`, and it has not been part of a recorded pipeline run, so nothing in this section is Observed. Every item can change.
 
-- One record per process event, joining `exec_attempt` and `exec_success` by pid.
-- `exec_failed` derived as in section 6.
-- Command line built from `argv`; quoting rule undecided.
-- `ts_ns` converted to a single reported format; format undecided.
-- Process key of `pid` plus `start_time_ns`, if section 3 is resolved.
+**Stream.** One output line per accepted input line, in input order, with every input field kept unchanged. The one addition to the order is that a derived `exec_failed` event is written immediately before the event that revealed it. The normalized layer uses the same envelope, with `schema_version` 1.
+
+**Added fields.**
+
+| Field | Types | Notes |
+|---|---|---|
+| `process_key` | all | String `<pid>:<start_time_ns>`, for example `5903:19760834152510`. It is null for `lost` (the pid is the loader's and there is no start time) and for any event whose `pid` or `start_time_ns` is missing or not an integer. |
+| `exe` | `exec_attempt`, `exec_success`, `exec_failed` | The `filename`. For an attempt it is the path as passed. For a success it is the final path. |
+| `cmdline` | `exec_attempt`, `exec_success`, `exec_failed` | The `argv` elements joined by single spaces with no quoting, so an argument that contains a space cannot be told apart in `cmdline`. `argv` is the exact form. |
+| `argv`, `argv_truncated` | `exec_success` | Copied from the matching `exec_attempt`. `argv` is empty when there is none. |
+| `attempt_joined` | `exec_success` | True if the argument data came from a pending attempt of the same process key. |
+| `exit_status`, `exit_signal` | `exit` | Kept as the loader printed them. If the loader did not give them, they are decoded from `exit_code` as in section 9. |
+
+**Join.** An `exec_success` takes its `argv` from the pending `exec_attempt` with the same process key. This refines section 6, which joins by pid: the key includes `start_time_ns` so that a reused pid is a different process.
+
+**`exec_failed`.** An `exec_attempt` is pending until the next event of its process key. It becomes `exec_failed` if that event is another `exec_attempt` (`reason` is `next_attempt`, the shape of a shell searching PATH) or an `exit` (`reason` is `exit`). An `exec_success` clears it. The event is a copy of the attempt with `type` changed, so it keeps the attempt's `ts_ns`, `filename`, `argv`, `exe`, `cmdline`, and identity fields, plus `reason` and `gap_uncertain`. `gap_uncertain` is true if a `lost` event arrived between the attempt and the decision, because the dropped record could have been the success (section 2.4).
+
+**End of input.** An attempt still pending when the input ends is not turned into `exec_failed`, because the input does not show how it ended and the loader may simply have been stopped before the result. It is counted in the summary as pending. Its `exec_attempt` line was already written, so no information is lost.
+
+**Anomalies.** The normalizer never stops on a bad line. It counts, and prints in the summary: lines that are not a JSON object (`bad_json_lines`), lines that are not valid UTF-8 (`invalid_utf8_lines`, the bad bytes are replaced), a `schema_version` that is missing or not 1 (`unsupported_schema_version`, the event is dropped, as section 7 says), an unknown `type` (`unknown_event_type`, the event is passed through with its `process_key`), a missing identity field (`missing_identity`), a field of the wrong type (`malformed_field`, the value is coerced for `argv` and `filename`), an `exec_success` with no pending attempt (`exec_success_without_attempt`), an `exit` for a key with no exec event (`exit_without_exec`), and an eviction from the tracking table (`state_evicted`). `exit_without_exec` covers two cases the input cannot tell apart: a process that started before the loader, and a process that forked and never called exec. A second `exit` for a key that already exited, as all-thread mode produces, is counted separately as a repeat exit and is not an anomaly. The summary also gives the count of each input type and the total of `dropped` over all `lost` events.
+
+**Bounds.** The tracking table holds at most 65536 processes and drops the least recently used one when full. That value is a first guess and has not been measured.
+
+**Not done.** `ts_ns` is passed through unchanged and is not converted to a wall-clock format, so the format question stays open.
 
 ## 11. Example
 
