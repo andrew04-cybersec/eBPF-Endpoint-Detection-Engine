@@ -51,7 +51,7 @@ The kernel side is an eBPF program written in C that hooks tracepoints and write
 |---|---|---|
 | Collection method | libbpf with CO-RE, in C | *Observed:* the `bootstrap` example from libbpf-bootstrap built and ran on this kernel with no BTF or permission errors. BCC tools also worked but compile at runtime. |
 | Language split | C for the kernel program and loader, Python for everything after | Matches the project's stated stack and keeps the detection logic quick to change. |
-| Stage handoff | JSON lines between the loader and the normalizer | *Planned:* recorded event files can be replayed into the normalizer, which lets each stage be tested on its own and lets the evaluation harness reuse saved runs. |
+| Stage handoff | JSON lines between the loader and the normalizer | *Observed:* the saved `events.jsonl` files of the evidence-eb-d1 to evidence-eb-d10 folders and of evidence-eb-d8-stage1 were replayed through the normalizer and the runner in the regression runs of the mapping and cleanup tasks, and two versions of the code gave the same alert streams apart from the fields that had been changed. *Planned:* the evaluation harness reuses saved runs the same way. |
 | Source of parent pid and uid | Read from the kernel task structure inside the eBPF program | *Observed:* a bpftrace probe read `real_parent->tgid` and `uid` successfully using BTF, with no kernel headers installed. |
 | Process-start hooks | Both the `execve` syscall entry and the successful-exec tracepoint | See section 3.1. |
 | Noisy events | Capture file opens narrowly, never system-wide | *Observed:* filters in bpftrace reduce printed output but the probe still fires on every event, so a hot event costs overhead regardless of the filter. |
@@ -76,7 +76,7 @@ The parent pid, uid, command name, and timestamps are read inside the eBPF progr
 
 ### 3.2 File, network, and privilege events (later phases)
 
-These are not yet explored and the hook points will be chosen when each is implemented. The constraint that applies now comes from the research: *Observed:* `openat` fires on every file open by every process, a single short command produced dozens of opens (shared libraries and locale files), and a plain `ls -l` opens `/etc/passwd` on its own to resolve user names. File telemetry therefore has to be narrow, and any sensitive-file detection has to use process context and not the path alone.
+The hooks for these events have since been chosen and built (`docs/EVENT_SCHEMA.md` sections 2.5 to 2.7), and they ran in the live tests saved in the evidence-eb-d5 folder (file opens, 33 checks, 0 failed), evidence-eb-d7 (network connects, 29 checks, 0 failed), evidence-eb-d8-stage1 (the wider file filter, 75 checks, 0 failed), and evidence-eb-d9 (privilege calls, 40 checks, 0 failed). The constraint that applies now comes from the research: *Observed:* `openat` fires on every file open by every process, a single short command produced dozens of opens (shared libraries and locale files), and a plain `ls -l` opens `/etc/passwd` on its own to resolve user names. File telemetry therefore has to be narrow, and any sensitive-file detection has to use process context and not the path alone.
 
 *Planned:* a second kernel-side list, the write-intent list, widens the file filter to persistence locations (cron directories, systemd unit directories, `/etc/ld.so.preload`, shell startup files, and the like). A path that is on that list alone is reported only when the open flags request a write, because those paths are opened read-only constantly. This is telemetry for the persistence detection in section 6, which is built, and its live test was run under sudo (the saved report in the evidence-eb-d8 folder shows 70 checks, 0 failed). The probe still fires on every open, so the extra comparisons add cost per open, and that cost has not been measured. *Observed:* the program with the wider filter was loaded by the kernel verifier and ran in the telemetry test run `20261026-150132`, saved in the evidence-eb-d8-stage1 folder (75 checks, 0 failed). In it, writes to a cron file, a systemd unit file, and shell startup files of a fake home each produced one `file_open`, and read-only opens of the write-intent paths produced none. Only the paths named in `docs/EVENT_SCHEMA.md` section 2.5 were exercised, and the added cost per open is still unmeasured. The list and the flag rule are in `docs/EVENT_SCHEMA.md` section 2.5.
 
@@ -109,7 +109,7 @@ The graph holds processes as nodes and relationships as edges.
 
 ## 6. Detections
 
-Ten detections are planned, matching the roadmap. The goal is depth on each one, including how it can be evaded and what it misses, and not a long list. The technique each detection puts on its alerts is set in `detections/attack_map.py`, and the last column shows it. The mapping is a design choice, and its confidence and verification are in `docs/EVENT_SCHEMA.md` section 25.
+Ten detections are implemented, matching the roadmap, and the live test of each ran under sudo with 0 failed checks (the evidence-eb-d1 to evidence-eb-d10 folders, with the check counts in section 7; the persistence test was run again in evidence-eb-mitre, 70 checks, 0 failed). The goal is depth on each one, including how it can be evaded and what it misses, and not a long list. The technique each detection puts on its alerts is set in `detections/attack_map.py`, and the last column shows it. The mapping is a design choice, and its confidence and verification are in `docs/EVENT_SCHEMA.md` section 25.
 
 | # | Detection | Telemetry it needs | ATT&CK |
 |---|---|---|---|
@@ -124,7 +124,7 @@ Ten detections are planned, matching the roadmap. The goal is depth on each one,
 | 9 | Privilege escalation | Privilege events, process events | T1068 (partial) |
 | 10 | Interpreter chains | Process events, ancestry | T1059 (direct) |
 
-Detections 1 through 4, 6, and 10 depend only on process events, so they can be built in the first telemetry phase. Detections 5, 7, 8, and 9 wait on the later telemetry.
+Detections 1 through 4, 6, and 10 depend only on process events. Detections 5, 7, 8, and 9 needed the file, network, and privilege telemetry, which now exists and ran in their live tests (evidence-eb-d5, d7, d8, and d9).
 
 *Planned:* detection 1 is implemented as `shell_from_service` in `detections/`, with a small runner that feeds normalized events through the graph and the detections and emits alerts (section 7). It fires when a shell is executed by a process whose `comm` is on an inferred list of service names. It cannot judge a shell whose parent is a placeholder, and it will raise false alarms where a service legitimately runs a shell. Its ATT&CK technique is T1059.004 Unix Shell (direct). T1505.003 Web Shell is related and is described in the docs only (`docs/EVENT_SCHEMA.md` section 25). It has run over constructed fixtures and one saved events file, which contains no service parents. *Observed:* its live test was run under sudo, and the saved report in the evidence-eb-d1 folder shows 19 checks, 0 failed. The rule and its limits are in `docs/EVENT_SCHEMA.md` section 15.
 
@@ -185,7 +185,7 @@ Because the loader emits JSON lines, an evaluation run can be recorded once and 
 - How many bytes of `argv` and how many arguments to capture, and what to do when they are truncated. `envp` is available at the same hook but capturing it has not been considered.
 - How to key nodes safely under pid reuse.
 - Whether a `fork` hook is needed at all, given that the parent pid can be read from the task.
-- Which hook points to use for network and privilege events.
+- Which hook points to use for network and privilege events. *Observed:* settled as `sys_enter_connect` and the five uid and gid syscalls (`docs/EVENT_SCHEMA.md` sections 2.6 and 2.7), which ran in the live tests saved in evidence-eb-d7 (29 checks, 0 failed) and evidence-eb-d9 (40 checks, 0 failed).
 - Whether to capture file paths at syscall entry or at exit, given the empty paths seen at entry.
 - Ring buffer sizing and what happens to events when the consumer falls behind.
 - Coverage of `execveat`, which is a separate tracepoint and was not tested.
