@@ -5,7 +5,13 @@ Usage: validate_live.py --events normalized.jsonl --alerts alerts.jsonl --servic
 """
 import argparse
 import json
+import os
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import attack_map  # noqa: E402
+import persistence  # noqa: E402
+from exec_from_tmp import clean_path  # noqa: E402
 
 REQUIRED = ("alert_schema_version", "alert_seq", "detection", "technique", "ts_ns", "process",
             "ancestry", "ancestry_stop", "evidence", "evidence_dropped", "data_quality")
@@ -44,6 +50,26 @@ def basename(path):
     return path.rsplit("/", 1)[-1] if isinstance(path, str) else ""
 
 
+def expected_technique(a):
+    """technique the mapping gives an alert and read from the alert's detection name and its evidence (path or program for the detections that map by category), None if it cant be worked out"""
+    name = a.get("detection")
+    evidence = a.get("evidence")
+    last = evidence[-1] if isinstance(evidence, list) and evidence and isinstance(evidence[-1], dict) else {}
+    category = None
+    if name == "sensitive_file_access" and isinstance(last.get("path"), str):
+        category = attack_map.sensitive_category(clean_path(last["path"]))
+    elif name == "persistence_write" and isinstance(last.get("path"), str):
+        category = persistence.category_of(clean_path(last["path"]))
+    elif name == "persistence_command":
+        category = basename(last.get("exe"))
+    return attack_map.technique_for(name, category)
+
+
+def technique_ok(a):
+    expected = expected_technique(a)
+    return expected is not None and a.get("technique") == expected
+
+
 def find_parent(events, exe, label):
     """find the process that exec'd exe and the shell exec_attempt that has it as parent; returns (pid, child pid) or None"""
     parents = [e for e in events if e.get("type") == "exec_success" and e.get("exe") == exe]
@@ -74,7 +100,7 @@ def main():
     check("every alert line is a JSON object", bad_alerts == 0, "%d alerts, %d bad lines" % (len(alerts), bad_alerts))
     missing = [a.get("alert_seq") for a in alerts if any(f not in a for f in REQUIRED)]
     check("every alert has every required field", not missing, "alerts missing a field: %s" % missing)
-    check("every alert has technique null", all(a.get("technique") is None for a in alerts))
+    check("every alert has the technique the mapping gives it", all(technique_ok(a) for a in alerts))
     check("every alert is named shell_from_service", all(a.get("detection") == "shell_from_service" for a in alerts))
     seqs = [a.get("alert_seq") for a in alerts]
     check("alert_seq counts 1..N in order", seqs == list(range(1, len(alerts) + 1)), "%s" % seqs[:10])

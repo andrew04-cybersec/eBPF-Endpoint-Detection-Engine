@@ -37,7 +37,7 @@ def main():
     check("every alert line is a JSON object", bad_alerts == 0, "%d alerts, %d bad lines" % (len(alerts), bad_alerts))
     missing = [a.get("alert_seq") for a in alerts if any(f not in a for f in v.REQUIRED)]
     check("every alert has every required field", not missing, "alerts missing a field: %s" % missing)
-    check("every alert has technique null", all(a.get("technique") is None for a in alerts))
+    check("every alert has the technique the mapping gives it", all(v.technique_ok(a) for a in alerts))
     seqs = [a.get("alert_seq") for a in alerts]
     check("alert_seq counts 1..N in order", seqs == list(range(1, len(alerts) + 1)), "%s" % seqs[:10])
     by_detection = {}
