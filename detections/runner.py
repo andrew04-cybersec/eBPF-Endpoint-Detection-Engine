@@ -64,12 +64,27 @@ def track_attempts(ctx, ev):
         attempts.pop(key, None)
 
 
+def detection_name(detect):
+    return getattr(detect, "__module__", None) or getattr(detect, "__name__", "detection")
+
+
+def attribute(counts, before, into):
+    """add what changed in the counters since the copy in before to the per-detection counters in into"""
+    for name, value in counts.items():
+        change = value - before.get(name, 0)
+        if change:
+            into[name] = into.get(name, 0) + change
+
+
 def run(inp, sink, detections=None, graph=None):
     """feed every line to the graph first and then to each detection so then it can emit what they return; will return with: (graph, ctx, stats)"""
     detections = DETECTIONS if detections is None else detections
     graph = process_graph.ProcessGraph() if graph is None else graph
     ctx = {"counts": {}, "attempts": OrderedDict()}
-    stats = {"events": 0, "alerts": {}, "detection_errors": 0}
+    stats = {"events": 0, "alerts": {}, "detection_errors": 0, "by_detection": {}}
+    names = [detection_name(d) for d in detections]
+    for name in names:
+        stats["by_detection"].setdefault(name, {"alerts": 0, "errors": 0, "counters": {}})
     for line in inp:
         #the graph parses the line too which keeps its line and anomaly counters complete at the cost of parsing twice in this case
         graph.ingest_line(line)
@@ -77,17 +92,23 @@ def run(inp, sink, detections=None, graph=None):
         if ev is None or type(ev.get("schema_version")) is not int or ev["schema_version"] != 1:
             continue
         stats["events"] += 1
-        for detect in detections:
+        for detect, who in zip(detections, names):
+            mine = stats["by_detection"][who]
+            before = dict(ctx["counts"])
             try:
                 found = detect(graph, ev, ctx)
             except Exception:
                 #one detection failing on an odd event shouldn't stop the stream so it is counted and reported instead
                 stats["detection_errors"] += 1
+                mine["errors"] += 1
+                attribute(ctx["counts"], before, mine["counters"])
                 continue
+            attribute(ctx["counts"], before, mine["counters"])
             if found is not None:
                 sent = sink.emit(found)
                 name = sent.get("detection")
                 stats["alerts"][name] = stats["alerts"].get(name, 0) + 1
+                mine["alerts"] += 1
         track_attempts(ctx, ev)
     return graph, ctx, stats
 
@@ -109,12 +130,40 @@ def summary_lines(graph, ctx, stats):
     return lines
 
 
+def unattributed(ctx, stats):
+    """counters in which the merged total is larger than what the detect() calls were credited with which only happens for a change made outside a detect() call"""
+    credited = {}
+    for d in stats["by_detection"].values():
+        for name, value in d["counters"].items():
+            credited[name] = credited.get(name, 0) + value
+    return {k: v - credited.get(k, 0) for k, v in sorted(ctx["counts"].items()) if v - credited.get(k, 0)}
+
+
+def detection_lines(ctx, stats):
+    lines = ["per detection, in registration order (a counter changed outside a detect() call is not attributed to any detection):"]
+    for name, d in stats["by_detection"].items():
+        counters = ", ".join("%s %d" % kv for kv in sorted(d["counters"].items()))
+        lines.append("  %s: alerts %d, errors %d%s" % (name, d["alerts"], d["errors"], ", counters: " + counters if counters else ""))
+    lines.append("counters not attributed to a detection: %d" % sum(unattributed(ctx, stats).values()))
+    return lines
+
+
+def stats_document(graph, ctx, stats):
+    """run totals and per-detection data as one dict with no clock values so its the same for the same input"""
+    g = graph.summary()
+    return {"events_processed": stats["events"], "alerts": dict(stats["alerts"]), "detection_errors": stats["detection_errors"],
+            "counters": dict(ctx["counts"]), "unattributed_counters": unattributed(ctx, stats),
+            "graph": {"nodes": g["nodes"], "edges": g["edges"], "placeholders": g["placeholders"], "lost_events": g["lost_events"]},
+            "detections": [dict(d, name=name) for name, d in stats["by_detection"].items()]}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Run detections over normalized JSON lines.")
     ap.add_argument("input", nargs="?", default="-", help="normalized JSON lines file, or - for standard input")
     ap.add_argument("-o", "--output", default="-", help="alert JSON lines file, or - for standard output")
     ap.add_argument("--no-json", action="store_true", help="do not write alert JSON lines")
     ap.add_argument("--no-cli", action="store_true", help="do not write the readable form to standard error")
+    ap.add_argument("--stats-json", help="also write the run totals and the per-detection data to this file as JSON")
     args = ap.parse_args(argv)
 
     opened = []
@@ -131,6 +180,10 @@ def main(argv=None):
         else:
             json_stream = open(args.output, "w", encoding="ascii")
             opened.append(json_stream)
+        stats_stream = None
+        if args.stats_json is not None:
+            stats_stream = open(args.stats_json, "w", encoding="ascii")
+            opened.append(stats_stream)
     except OSError as e:
         print("runner: %s" % e, file=sys.stderr)
         for f in opened:
@@ -144,10 +197,12 @@ def main(argv=None):
     sink = alert.AlertSink(json_stream, None if args.no_cli else sys.stderr)
     try:
         graph, ctx, stats = run(inp, sink)
+        if stats_stream is not None:
+            stats_stream.write(json.dumps(stats_document(graph, ctx, stats), sort_keys=True, indent=1, ensure_ascii=True, allow_nan=False) + "\n")
     finally:
         for f in opened:
             f.close()
-    print("\n".join(summary_lines(graph, ctx, stats)), file=sys.stderr)
+    print("\n".join(summary_lines(graph, ctx, stats) + detection_lines(ctx, stats)), file=sys.stderr)
     return 0
 
 
