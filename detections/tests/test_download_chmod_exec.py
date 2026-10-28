@@ -15,6 +15,7 @@ DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
 import download_chmod_exec as dce  # noqa: E402
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 
 REQUIRED = ("alert_schema_version", "alert_seq", "detection", "technique", "ts_ns", "process",
@@ -81,7 +82,7 @@ class Chain(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "download_chmod_exec")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("download_chmod_exec"))
         self.assertEqual(a["process"]["pid"], 400)
         self.assertEqual([e["argv"][0] for e in a["evidence"]], ["curl", "chmod", "/opt/work/app"])
         self.assertEqual(a["ts_ns"], 30 * SEC)

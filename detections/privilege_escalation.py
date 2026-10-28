@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alerts"))
 import alert  #noqa: E402
+import attack_map  #noqa: E402
 from download_chmod_exec import store_copy  #noqa: E402
 from rapid_spawn import count  #noqa: E402
 
@@ -55,7 +56,7 @@ def request_alert(graph, event, ctx, entry):
         count(ctx, "priv_expected_escalator")
         return None
     entry["alerted"] = True
-    return alert.build_alert(graph, DETECTION_NAME, event, [event])
+    return alert.build_alert(graph, DETECTION_NAME, event, [event], technique=attack_map.technique_for(DETECTION_NAME))
 
 
 def transition_alert(graph, event, ctx, entry):
@@ -69,7 +70,7 @@ def transition_alert(graph, event, ctx, entry):
         count(ctx, "priv_transition_expected")
         return None
     entry["alerted"] = True
-    return alert.build_alert(graph, DETECTION_NAME, event, [entry["last"], event])
+    return alert.build_alert(graph, DETECTION_NAME, event, [entry["last"], event], technique=attack_map.technique_for(DETECTION_NAME))
 
 
 def detect(graph, event, ctx):

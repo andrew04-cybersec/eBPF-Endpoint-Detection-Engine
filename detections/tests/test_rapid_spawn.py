@@ -15,6 +15,7 @@ DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
 import rapid_spawn as rs  # noqa: E402
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 
 REQUIRED = ("alert_schema_version", "alert_seq", "detection", "technique", "ts_ns", "process",
@@ -66,7 +67,7 @@ class Threshold(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "rapid_spawn")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("rapid_spawn"))
         self.assertEqual(a["process"]["pid"], 1000 + T - 1)
         self.assertEqual(a["ts_ns"], BASE + (T - 1) * MS)
         self.assertEqual(stats["alerts"], {"rapid_spawn": 1})

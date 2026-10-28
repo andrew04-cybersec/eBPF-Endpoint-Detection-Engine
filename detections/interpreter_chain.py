@@ -4,6 +4,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alerts"))
 import alert  # noqa: E402
+import attack_map  # noqa: E402
 from rapid_spawn import count  # noqa: E402
 from shell_from_service import basename  # noqa: E402
 from unusual_ancestry import watched  # noqa: E402
@@ -116,4 +117,4 @@ def detect(graph, event, ctx):
 
     attempt = ctx["attempts"].get(key)
     evidence = [attempt, event] if attempt is not None else [event]
-    return alert.build_alert(graph, DETECTION_NAME, event, evidence)
+    return alert.build_alert(graph, DETECTION_NAME, event, evidence, technique=attack_map.technique_for(DETECTION_NAME))

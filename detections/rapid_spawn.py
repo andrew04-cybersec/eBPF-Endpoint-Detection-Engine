@@ -5,6 +5,7 @@ from collections import OrderedDict, deque
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alerts"))
 import alert  # noqa: E402
+import attack_map  # noqa: E402
 from shell_from_service import unevaluable  # noqa: E402
 
 DETECTION_NAME = "rapid_spawn"
@@ -79,4 +80,4 @@ def detect(graph, event, ctx):
     if not entry["armed"]:
         return None
     entry["armed"] = False
-    return alert.build_alert(graph, DETECTION_NAME, event, [e for _, e in recent])
+    return alert.build_alert(graph, DETECTION_NAME, event, [e for _, e in recent], technique=attack_map.technique_for(DETECTION_NAME))

@@ -15,6 +15,7 @@ DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
 import outbound_after_exec as oae  # noqa: E402
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 
 REQUIRED = ("alert_schema_version", "alert_seq", "detection", "technique", "ts_ns", "process",
@@ -62,7 +63,7 @@ class Rule(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "outbound_after_exec")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("outbound_after_exec"))
         self.assertEqual(a["ts_ns"], BASE + SEC)
         self.assertEqual(a["process"]["pid"], 200)
         self.assertEqual([e["type"] for e in a["evidence"]], ["exec_success", "net_connect"])

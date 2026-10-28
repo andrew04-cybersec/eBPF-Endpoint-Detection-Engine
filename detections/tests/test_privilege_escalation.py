@@ -13,6 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
+import attack_map  #noqa: E402
 import runner  #noqa: E402
 import privilege_escalation as priv  #noqa: E402
 
@@ -64,7 +65,7 @@ class RequestSignal(unittest.TestCase):
         self.assertEqual([a["detection"] for a in alerts], ["privilege_escalation"] * 3)
         self.assertEqual(stats["detection_errors"], 0)
         for a, e in zip(alerts, events):
-            self.assertIsNone(a["technique"])
+            self.assertEqual(a["technique"], attack_map.technique_for("privilege_escalation"))
             self.assertEqual(a["process"]["uid"], 1000)
             self.assertEqual(a["evidence"], [e])
         self.assertEqual(priv_counts(ctx), {})

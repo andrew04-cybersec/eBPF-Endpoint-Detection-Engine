@@ -14,6 +14,7 @@ DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
 import interpreter_chain as ic  # noqa: E402
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 import shell_from_service as sfs  # noqa: E402
 
@@ -77,7 +78,7 @@ class Rule(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "interpreter_chain")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("interpreter_chain"))
         self.assertEqual([c["comm"] for c in a["ancestry"]], ["sh", "python3", "bash"])
         self.assertEqual(a["ancestry_stop"], "root")
         self.assertEqual([e["type"] for e in a["evidence"]], ["exec_success"])

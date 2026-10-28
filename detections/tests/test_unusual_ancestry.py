@@ -13,6 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 import unusual_ancestry as ua  # noqa: E402
 
@@ -58,7 +59,7 @@ class Rule(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "unusual_ancestry")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("unusual_ancestry"))
         self.assertEqual(a["process"]["pid"], 200)
         self.assertEqual([c["comm"] for c in a["ancestry"]], ["python3", "nginx"])
         self.assertEqual(a["ancestry_stop"], "root")

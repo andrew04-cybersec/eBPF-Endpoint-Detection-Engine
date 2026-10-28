@@ -5,6 +5,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alerts"))
 import alert  # noqa: E402
+import attack_map  # noqa: E402
 from exec_from_tmp import clean_path  # noqa: E402
 from shell_from_service import is_service, unevaluable  # noqa: E402
 
@@ -77,4 +78,5 @@ def detect(graph, event, ctx):
             if result["stop"] != "root":
                 unevaluable(ctx, "ancestry_incomplete")
             return None
-    return alert.build_alert(graph, DETECTION_NAME, event, [event])
+    technique = attack_map.technique_for(DETECTION_NAME, attack_map.sensitive_category(clean_path(path)))
+    return alert.build_alert(graph, DETECTION_NAME, event, [event], technique=technique)

@@ -6,6 +6,7 @@ from collections import OrderedDict
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alerts"))
 import alert  # noqa: E402
+import attack_map  # noqa: E402
 from exec_from_tmp import clean_path  # noqa: E402
 from rapid_spawn import count  # noqa: E402
 from shell_from_service import basename  # noqa: E402
@@ -153,7 +154,8 @@ def command_alert(graph, event, ctx):
         return None
     if not found:
         return None
-    return alert.build_alert(graph, COMMAND_DETECTION, event, [event])
+    return alert.build_alert(graph, COMMAND_DETECTION, event, [event],
+                             technique=attack_map.technique_for(COMMAND_DETECTION, basename(exe)))
 
 
 def detect(graph, event, ctx):
@@ -205,4 +207,5 @@ def detect(graph, event, ctx):
         seen[(key, path)] = True
         while len(seen) > MAX_SEEN_WRITES:
             seen.popitem(last=False)
-    return alert.build_alert(graph, FILE_DETECTION, event, [event])
+    return alert.build_alert(graph, FILE_DETECTION, event, [event],
+                             technique=attack_map.technique_for(FILE_DETECTION, category_of(path)))

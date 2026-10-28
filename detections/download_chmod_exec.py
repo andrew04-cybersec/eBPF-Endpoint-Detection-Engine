@@ -11,6 +11,7 @@ from collections import OrderedDict
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alerts"))
 import alert  # noqa: E402
+import attack_map  # noqa: E402
 from exec_from_tmp import clean_path  # noqa: E402
 from shell_from_service import basename, unevaluable  # noqa: E402
 
@@ -228,7 +229,8 @@ def match_exec(graph, event, ctx, state):
     if not (d_ts < c_ts < ts and ts - d_ts <= CHAIN_WINDOW_NS):
         return None
     return alert.build_alert(graph, DETECTION_NAME, event,
-                             [entry["event"], entry["chmod"]["event"], event])
+                             [entry["event"], entry["chmod"]["event"], event],
+                             technique=attack_map.technique_for(DETECTION_NAME))
 
 
 def track_download(graph, event, ctx, state, base, ts):

@@ -14,6 +14,7 @@ DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
 import exec_from_tmp  # noqa: E402
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 import shell_from_service  # noqa: E402
 
@@ -72,7 +73,7 @@ class Paths(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "exec_from_tmp")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("exec_from_tmp"))
         self.assertEqual([e["type"] for e in a["evidence"]], ["exec_attempt", "exec_success"])
         self.assertEqual(a["process"]["exe"], "/tmp/payload")
         self.assertEqual(stats["alerts"], {"exec_from_tmp": 1})

@@ -13,6 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 import sensitive_file_access as sfa  # noqa: E402
 
@@ -65,7 +66,7 @@ class Tier1(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "sensitive_file_access")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("sensitive_file_access", "shadow"))
         self.assertEqual(a["process"]["pid"], 200)
         self.assertEqual(len(a["evidence"]), 1)
         self.assertEqual((a["evidence"][0]["type"], a["evidence"][0]["path"], a["evidence"][0]["ret"]),

@@ -14,6 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
+import attack_map  #noqa: E402
 import runner  #noqa: E402
 import persistence as pers  #noqa: E402
 
@@ -232,7 +233,8 @@ class General(unittest.TestCase):
         self.assertEqual(len(alerts), 2)
         for a in alerts:
             self.assertTrue(all(f in a for f in REQUIRED))
-            self.assertIsNone(a["technique"])
+            self.assertEqual(a["technique"], attack_map.technique_for(
+                a["detection"], "systemctl" if a["detection"] == "persistence_command" else "cron"))
 
     def test_no_mutation_of_graph_or_events(self):
         events = self.events()

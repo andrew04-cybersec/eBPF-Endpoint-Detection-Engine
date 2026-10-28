@@ -15,6 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
+import attack_map  # noqa: E402
 import runner  # noqa: E402
 
 REQUIRED = ("alert_schema_version", "alert_seq", "detection", "technique", "ts_ns", "process",
@@ -69,7 +70,7 @@ class Rule(unittest.TestCase):
         for field in REQUIRED:
             self.assertIn(field, a)
         self.assertEqual(a["detection"], "shell_from_service")
-        self.assertIsNone(a["technique"])
+        self.assertEqual(a["technique"], attack_map.technique_for("shell_from_service"))
         self.assertEqual(a["alert_seq"], 1)
         self.assertEqual(a["process"]["comm"], "sh")
         self.assertEqual(a["process"]["ppid"], 100)
@@ -235,7 +236,7 @@ class CommandLine(unittest.TestCase):
         lines = done.stdout.splitlines()
         self.assertEqual(len(lines), 1)
         self.assertEqual(json.loads(lines[0])["detection"], "shell_from_service")
-        self.assertIn("ALERT 1  shell_from_service  [technique unassigned]", done.stderr)
+        self.assertIn("ALERT 1  shell_from_service  [%s]" % attack_map.technique_for("shell_from_service"), done.stderr)
         self.assertIn("events processed: 5", done.stderr)
         self.assertIn("alerts emitted: 1, shell_from_service 1", done.stderr)
         self.assertIn("unevaluable: 3, ancestry_incomplete 1, no_parent 1, placeholder_parent 1", done.stderr)
