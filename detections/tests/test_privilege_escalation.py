@@ -310,7 +310,7 @@ class Properties(unittest.TestCase):
 
     def test_registered_last_in_the_runner(self):
         self.assertEqual(runner.DETECTIONS[8].__module__, "privilege_escalation")
-        self.assertEqual(len(runner.DETECTIONS), 9)
+        self.assertEqual(len(runner.DETECTIONS), 10)
 
     def test_registration_changes_no_existing_count(self):
         lines = [(json.dumps(e) + "\n").encode() for e in self.stream()]
