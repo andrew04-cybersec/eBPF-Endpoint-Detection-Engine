@@ -77,6 +77,10 @@ def build_alert(graph, detection, trigger_event, evidence_events, technique=None
     in_graph = key in nodes
     if in_graph:
         process = process_entry(nodes[key])
+        #node keeps ids of first event of the process so the ids of the triggering event are used when it has integers (ancestry entries keep the node's ids)
+        for field in ("uid", "gid"):
+            if is_int(trigger.get(field)):
+                process[field] = trigger[field]
         result = graph.ancestry(key)
         chain = result.get("chain") or []
         stop = result.get("stop")
