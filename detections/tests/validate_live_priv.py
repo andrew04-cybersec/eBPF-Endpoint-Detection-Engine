@@ -86,7 +86,7 @@ def main():
 
     def show(label, a):
         ev = a["evidence"]
-        info("%s: alert %s, process %s, node uid %s (the uid of the first event of the process), evidence %s" % (
+        info("%s: alert %s, process %s, process uid %s (the uid of the triggering event), evidence %s" % (
              label, a.get("detection"), a["process"].get("comm"), a["process"].get("uid"), [(e.get("type"), e.get("syscall"), e.get("ids"), e.get("uid")) for e in ev]))
 
     def after(label, key, ts):

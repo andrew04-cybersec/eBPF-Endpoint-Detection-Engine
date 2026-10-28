@@ -62,17 +62,18 @@ def main():
     control = cases["control"]
     ran = exec_events(events, "exec_success", control["path"])
     check("control copy ran by absolute path", len(ran) == 1, "%d exec_success" % len(ran))
-    inside = [a for a in alerts if isinstance(a.get("process"), dict)
+    inside = [a for a in alerts if a.get("detection") == "exec_from_tmp" and isinstance(a.get("process"), dict)
               and str(a["process"].get("exe")).startswith(control["dir"] + "/")]
-    check("no alert for the control directory", len(inside) == 0, "%d alerts" % len(inside))
+    check("no exec_from_tmp alert for the control directory", len(inside) == 0, "%d alerts" % len(inside))
 
     failed = cases["failed"]
     attempts = exec_events(events, "exec_attempt", failed["path"])
     check("failed exec attempt was recorded", len(attempts) == 1, "%d exec_attempt" % len(attempts))
     check("failed exec has no exec_success", len(exec_events(events, "exec_success", failed["path"])) == 0)
     info("derived exec_failed events for it: %d" % len(exec_events(events, "exec_failed", failed["path"])))
-    bad = [a for a in alerts if isinstance(a.get("process"), dict) and failed["marker"] in str(a["process"].get("cmdline"))]
-    check("no alert for the failed exec", len(bad) == 0, "%d alerts" % len(bad))
+    bad = [a for a in alerts if a.get("detection") == "exec_from_tmp" and isinstance(a.get("process"), dict)
+           and failed["marker"] in str(a["process"].get("cmdline"))]
+    check("no exec_from_tmp alert for the failed exec", len(bad) == 0, "%d alerts" % len(bad))
 
     rel = cases["relative"]
     ran = [e for e in events if e.get("type") == "exec_success" and rel["marker"] in str(e.get("cmdline"))]

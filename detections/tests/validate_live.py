@@ -13,6 +13,8 @@ import attack_map  # noqa: E402
 import persistence  # noqa: E402
 from exec_from_tmp import clean_path  # noqa: E402
 
+NAME = "shell_from_service"
+
 REQUIRED = ("alert_schema_version", "alert_seq", "detection", "technique", "ts_ns", "process",
             "ancestry", "ancestry_stop", "evidence", "evidence_dropped", "data_quality")
 
@@ -101,10 +103,14 @@ def main():
     missing = [a.get("alert_seq") for a in alerts if any(f not in a for f in REQUIRED)]
     check("every alert has every required field", not missing, "alerts missing a field: %s" % missing)
     check("every alert has the technique the mapping gives it", all(technique_ok(a) for a in alerts))
-    check("every alert is named shell_from_service", all(a.get("detection") == "shell_from_service" for a in alerts))
     seqs = [a.get("alert_seq") for a in alerts]
     check("alert_seq counts 1..N in order", seqs == list(range(1, len(alerts) + 1)), "%s" % seqs[:10])
     info("total alerts in the run: %d (the machine may produce alerts of its own)" % len(alerts))
+    others = {}
+    for a in alerts:
+        if a.get("detection") != NAME:
+            others[a.get("detection")] = others.get(a.get("detection"), 0) + 1
+    info("alerts of other detections (the nginx-named copy runs from /tmp, so exec_from_tmp is expected): %s" % dict(sorted(others.items())))
     info("lost events in the normalized stream: %d" % sum(1 for e in events if e.get("type") == "lost"))
 
     service = find_parent(events, args.service_exe, "nginx-named")
@@ -114,7 +120,8 @@ def main():
     check("plain shell control ran", len(plain) == 1, "%d matching exec_success" % len(plain))
 
     def by_parent(pid):
-        return [a for a in alerts if isinstance(a.get("process"), dict) and a["process"].get("ppid") == pid]
+        return [a for a in alerts if a.get("detection") == NAME and isinstance(a.get("process"), dict)
+                and a["process"].get("ppid") == pid]
 
     if service:
         pid, child = service
@@ -132,10 +139,10 @@ def main():
     if control:
         mine = by_parent(control[0])
         check("no alert for the control parent", len(mine) == 0, "%d alerts" % len(mine))
-        marked = [a for a in alerts if "EVT_D1_CONTROL" in str(a.get("process", {}).get("cmdline"))]
+        marked = [a for a in alerts if a.get("detection") == NAME and "EVT_D1_CONTROL" in str(a.get("process", {}).get("cmdline"))]
         check("no alert for the control shell command", len(marked) == 0)
     if plain:
-        marked = [a for a in alerts if "EVT_D1_PLAIN" in str(a.get("process", {}).get("cmdline"))]
+        marked = [a for a in alerts if a.get("detection") == NAME and "EVT_D1_PLAIN" in str(a.get("process", {}).get("cmdline"))]
         check("no alert for the plain shell command", len(marked) == 0)
 
     if args.runner_stderr:

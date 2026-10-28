@@ -22,7 +22,7 @@ def alerts_of(alerts, detection, pid):
 
 
 def mentions(alerts, marker):
-    return [a for a in alerts if marker in json.dumps(a)]
+    return [a for a in alerts if a.get("detection") in ("unusual_ancestry", "shell_from_service") and marker in json.dumps(a)]
 
 
 def show(alert):
@@ -55,6 +55,7 @@ def main():
         by_detection[a.get("detection")] = by_detection.get(a.get("detection"), 0) + 1
     info("total alerts in the run: %s (the machine may produce alerts of its own)" % by_detection)
     info("lost events in the normalized stream: %d" % sum(1 for e in events if e.get("type") == "lost"))
+    info("alerts of other detections (not judged here): %s" % dict(sorted((k, n) for k, n in by_detection.items() if k not in ("unusual_ancestry", "shell_from_service"))))
 
     parent = [e for e in events if e.get("type") == "exec_success" and e.get("exe") == cases["service"]
               and "EVT_D4_DIRECT" in str(e.get("cmdline"))]
@@ -93,7 +94,7 @@ def main():
     for marker, label in (("EVT_D4_CTL_DIRECT", "control a"), ("EVT_D4_CTL_GRAND", "control b")):
         ran = runs(events, "python3", marker)
         check("%s: python3 ran below the unlisted copy" % label, len(ran) == 1, "%d exec_success" % len(ran))
-        check("%s: no alert of any kind" % label, len(mentions(alerts, marker)) == 0, "%d alerts" % len(mentions(alerts, marker)))
+        check("%s: no unusual_ancestry or shell_from_service alert" % label, len(mentions(alerts, marker)) == 0, "%d alerts" % len(mentions(alerts, marker)))
     true_runs = runs(events, "true", "EVT_D4_TRUE")
     check("control c: /bin/true ran below the nginx copy", len(true_runs) == 1, "%d exec_success" % len(true_runs))
     check("control c: no alert for /bin/true", len(mentions(alerts, "EVT_D4_TRUE")) == 0)
