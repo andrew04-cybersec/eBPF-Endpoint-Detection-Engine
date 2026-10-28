@@ -90,7 +90,9 @@ RELATED = {
     "rapid_spawn": (),
 }
 
-SSH_KEY_PATH = re.compile(r"/(?:root|home/[^/]+)/\.ssh/[^/]+")
+#these two repeat SSH_KEY_DIR and SSH_NOT_PRIVATE of sensitive_file_access and a test checks that both modules agree on every path
+SSH_KEY_PATH = re.compile(r"/(?:root|home/[^/]+)/\.ssh/([^/]+)")
+SSH_NOT_PRIVATE = ("known_hosts", "known_hosts.old", "config", "authorized_keys", "authorized_keys2")
 
 
 def sensitive_category(path):
@@ -99,9 +101,10 @@ def sensitive_category(path):
         return "shadow"
     if path == "/etc/passwd":
         return "passwd"
-    if path == "/etc/sudoers" or path.startswith("/etc/sudoers.d/"):
+    if path == "/etc/sudoers" or (path.startswith("/etc/sudoers.d/") and len(path) > len("/etc/sudoers.d/")):
         return "sudoers"
-    if SSH_KEY_PATH.fullmatch(path):
+    m = SSH_KEY_PATH.fullmatch(path)
+    if m is not None and not m.group(1).endswith(".pub") and m.group(1) not in SSH_NOT_PRIVATE:
         return "ssh_private_key"
     return None
 

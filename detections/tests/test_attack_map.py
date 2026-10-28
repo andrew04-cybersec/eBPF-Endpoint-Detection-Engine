@@ -14,18 +14,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DET_DIR = os.path.dirname(HERE)
 sys.path.insert(0, DET_DIR)
 
-import attack_map as am  # noqa: E402
-import exec_from_tmp  # noqa: E402
-import download_chmod_exec  # noqa: E402
-import interpreter_chain  # noqa: E402
-import outbound_after_exec  # noqa: E402
-import persistence as pers  # noqa: E402
-import privilege_escalation  # noqa: E402
-import rapid_spawn  # noqa: E402
-import runner  # noqa: E402
-import sensitive_file_access as sfa  # noqa: E402
-import shell_from_service  # noqa: E402
-import unusual_ancestry  # noqa: E402
+import attack_map as am  #noqa: E402
+import exec_from_tmp  #noqa: E402
+import download_chmod_exec  #noqa: E402
+import interpreter_chain  #noqa: E402
+import outbound_after_exec  #noqa: E402
+import persistence as pers  #noqa: E402
+import privilege_escalation  #noqa: E402
+import rapid_spawn  #noqa: E402
+import runner  #noqa: E402
+import sensitive_file_access as sfa  #noqa: E402
+import shell_from_service  #noqa: E402
+import unusual_ancestry  #noqa: E402
 
 ID_PATTERN = re.compile(r"T\d{4}(\.\d{3})?")
 PLAIN = (shell_from_service, exec_from_tmp, download_chmod_exec, unusual_ancestry, rapid_spawn,
@@ -176,6 +176,57 @@ class OnAlerts(unittest.TestCase):
                   event(60, "file_open", ppid=50, comm="cat", path="/etc/passwd", ret=3)]
         alerts = run_alerts(events, sfa.detect)
         self.assertEqual([a["technique"] for a in alerts], ["T1003.008"])
+
+
+class Consistency(unittest.TestCase):
+    """attack_map.sensitive_category repeats the path tiers of sensitive_file_access so both have to agree on every path (including any near misses)"""
+
+    def sensitive_paths(self):
+        paths = list(sfa.TIER1_EXACT) + list(sfa.TIER2_EXACT)
+        paths += [p + "x" for p in sfa.TIER1_PREFIX] + [p + "sub/x" for p in sfa.TIER1_PREFIX]
+        for base in ("/root", "/home/bob"):
+            paths += ["%s/.ssh/%s" % (base, n) for n in ("id_rsa", "id_ed25519", "id_ecdsa", "id_dsa", "anything", "key.pem")]
+        return paths
+
+    def near_misses(self):
+        paths = list(sfa.TIER1_PREFIX) + [p.rstrip("/") for p in sfa.TIER1_PREFIX]
+        paths += [p + s for p in list(sfa.TIER1_EXACT) + list(sfa.TIER2_EXACT) for s in ("-", ".bak", "x")]
+        paths += ["/etc/hosts", "/etc/passwd.d/x", "/etc/sudoers.dx/y"]
+        for base in ("/root", "/home/bob"):
+            paths += ["%s/.ssh/%s" % (base, n) for n in ["id_rsa.pub"] + list(sfa.SSH_NOT_PRIVATE)]
+            paths += ["%s/.ssh" % base, "%s/.ssh/" % base, "%s/.ssh/sub/id_rsa" % base, "%s/x/.ssh/id_rsa" % base]
+        paths += ["/homebob/.ssh/id_rsa", "/home/.ssh/id_rsa", "/home/bob/sub/.ssh/id_rsa", "/var/.ssh/id_rsa"]
+        return paths
+
+    def test_both_agree_on_whether_a_path_is_sensitive(self):
+        for path in self.sensitive_paths() + self.near_misses():
+            self.assertEqual(sfa.tier_of(path) is not None, am.sensitive_category(path) is not None, path)
+
+    def test_every_sensitive_path_has_the_category_its_tier_implies(self):
+        for path in self.sensitive_paths():
+            category = am.sensitive_category(path)
+            tier = sfa.tier_of(path)
+            self.assertEqual(tier, 2 if category == "passwd" else 1, path)
+            self.assertIn(category, am.SENSITIVE_FILE, path)
+        for path in ("/etc/shadow", "/etc/gshadow"):
+            self.assertEqual(am.sensitive_category(path), "shadow")
+        self.assertEqual(am.sensitive_category("/etc/sudoers.d/x"), "sudoers")
+        self.assertEqual(am.sensitive_category("/home/bob/.ssh/id_rsa"), "ssh_private_key")
+
+    def test_every_tier_one_and_two_constant_is_classified(self):
+        for path in list(sfa.TIER1_EXACT) + list(sfa.TIER2_EXACT):
+            self.assertIsNotNone(am.sensitive_category(path), path)
+        for prefix in sfa.TIER1_PREFIX:
+            self.assertIsNotNone(am.sensitive_category(prefix + "x"), prefix)
+
+    def test_every_path_category_of_persistence_can_return_is_mapped(self):
+        paths = list(pers.EXACT) + [p + "x" for p, _ in pers.PREFIX]
+        for base in ("/root", "/home/bob"):
+            paths += ["%s/%s" % (base, n) for n in pers.HOME_EXACT] + ["%s/%sx" % (base, n) for n, _ in pers.HOME_PREFIX]
+        for path in paths:
+            category = pers.category_of(path)
+            self.assertIn(category, am.PERSISTENCE_FILE, path)
+            self.assertIsNotNone(am.technique_for("persistence_write", category), path)
 
 
 if __name__ == "__main__":
