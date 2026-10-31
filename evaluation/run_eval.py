@@ -291,12 +291,15 @@ def plan_lines(scenarios, results_name="<timestamp>-eval", found=None, lookup=fi
     return lines
 
 
-def run_script(argv, env, log_path, timeout, clock=time.monotonic_ns):
+def run_script(argv, env, log_path, timeout, clock=time.monotonic_ns, record=None):
     """run one script in its own process group with a timeout and write its output to log_path and finally return (start_ns, end_ns, exit status, and timed_out)"""
     timed_out = False
     with open(log_path, "ab") as log:
         start = clock()
         proc = subprocess.Popen(argv, env=env, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        #when caller passes a list... the pid and the clock readings around the start are kept; the kernel start time of the new process lies between the two readings
+        if record is not None:
+            record.append({"pid": proc.pid, "before_ns": start, "after_ns": clock()})
         try:
             status = proc.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
@@ -316,11 +319,25 @@ def run_script(argv, env, log_path, timeout, clock=time.monotonic_ns):
     return start, end, status, timed_out
 
 
-def script_env(sc, address=None, bases=None):
+def script_env(sc, address=None, bases=None, seed=None):
     env = dict(os.environ)
     env.update(scenario_lib.scenario_env(sc["id"], bases=bases, address=address))
     env["EVT_EVAL_MARKER"] = sc["marker"]
+    #seed inherited from the calling shell is dropped so the only way to set one is --seed option which is recorded in env.txt
+    env.pop("EVT_EVAL_SEED", None)
+    if seed is not None:
+        env["EVT_EVAL_SEED"] = str(seed)
     return env
+
+
+def resolve_predictions(option, scenarios_dir):
+    """
+    path of predictions file for a run (or None for no predictions) where the option is the --predictions value or None for the default; default is predictions.json next to the folder that holds the scenarios directory which for standard scenarios directory is evaluation/predictions.json
+    """
+    if option is not None:
+        return None if option == "none" else os.path.abspath(option)
+    beside = os.path.join(os.path.dirname(os.path.abspath(scenarios_dir)), "predictions.json")
+    return beside if os.path.isfile(beside) else None
 
 
 def wait_for_text(path, text, timeout, alive=None):
@@ -345,6 +362,8 @@ class Pipeline:
         self.results = results
         self.procs = {}
         self.files = []
+        #pid and clock readings around each start are kept for harness process list in scenario_windows.json
+        self.launched = {}
 
     def start(self):
         previous = None
@@ -354,8 +373,10 @@ class Pipeline:
                 stderr = open(os.path.join(self.results, name + ".stderr"), "wb")
                 self.files.append(stderr)
             last = name == "stamper"
+            before = time.monotonic_ns()
             proc = subprocess.Popen(argv, stdin=previous.stdout if previous else subprocess.DEVNULL,
                                     stdout=None if last else subprocess.PIPE, stderr=stderr, start_new_session=True)
+            self.launched[name] = {"pid": proc.pid, "before_ns": before, "after_ns": time.monotonic_ns()}
             if previous is not None:
                 previous.stdout.close()
             self.procs[name] = proc
@@ -390,6 +411,20 @@ class Pipeline:
         for f in self.files:
             f.close()
         return codes
+
+
+def harness_processes(stages, scripts, helpers, driver_pid):
+    """
+    processes run_eval.py started itself as a list of dicts for the scorer; stages maps a role to {pid, before_ns, after_ns} and scripts is a list of (role, that dict)
+    process is matched by pid and by kernel start time inside [start_ns_min, start_ns_max] where the clock of the start time in the process key so a reused pid doesnt match; the driver predates the run and is matched by pid alone
+    helpers are (role, from_ns, to_ns) commands that give no pid before they end and ran outside every scenario window so they are kept as intervals for the record only
+    """
+    rows = [{"role": "driver", "pid": driver_pid, "start_ns_min": None, "start_ns_max": None}]
+    for role, p in sorted(stages.items()) + list(scripts):
+        rows.append({"role": role, "pid": p["pid"], "start_ns_min": p["before_ns"], "start_ns_max": p["after_ns"]})
+    for role, start, end in helpers:
+        rows.append({"role": role, "pid": None, "ran_from_ns": start, "ran_to_ns": end})
+    return rows
 
 
 def write_env(results, info, hashes):
@@ -431,7 +466,7 @@ def raise_interrupt(signum, frame):
     raise KeyboardInterrupt()
 
 
-def execute(scenarios, scenarios_dir, results_root):
+def execute(scenarios, scenarios_dir, results_root, predictions=None, seed=None):
     """the order of steps is in plan_lines and every exit path goes through the finally block"""
     results = os.path.join(results_root, time.strftime("%Y%m%d-%H%M%S") + "-eval")
     os.makedirs(results)
@@ -441,11 +476,20 @@ def execute(scenarios, scenarios_dir, results_root):
         shutil.copyfile(os.path.join(sc["_dir"], "scenario.json"), os.path.join(results, "scenarios_snapshot", sc["id"] + ".json"))
     hashes = scenario_lib.label_hashes(scenarios)
     hashes["predictions_sha256"] = None
-    if os.path.isfile(PREDICTIONS):
-        shutil.copyfile(PREDICTIONS, os.path.join(results, "predictions.json"))
-        hashes["predictions_sha256"] = scenario_lib.sha256_file(PREDICTIONS)
+    predictions_path = resolve_predictions(predictions, scenarios_dir)
+    if predictions_path is not None and os.path.isfile(predictions_path):
+        shutil.copyfile(predictions_path, os.path.join(results, "predictions.json"))
+        hashes["predictions_sha256"] = scenario_lib.sha256_file(predictions_path)
+    else:
+        predictions_path = None
+    #scorer reads these two paths back so a folder from another set is compared with its own scenarios and predictions
+    hashes["scenarios_dir"] = os.path.abspath(scenarios_dir)
+    hashes["predictions_path"] = predictions_path
     write_json(os.path.join(results, "label_hashes.json"), hashes)
+    helpers, setup_runs, teardown_runs = [], [], []
+    ip_start = time.monotonic_ns()
     skipped, address = evaluate_needs(scenarios)
+    helpers.append(("ip", ip_start, time.monotonic_ns()))
     for sid, reason in sorted(skipped.items()):
         print("not run: %s: %s" % (sid, reason), file=sys.stderr)
     todo = [sc for sc in scenarios if sc["id"] not in skipped]
@@ -460,7 +504,9 @@ def execute(scenarios, scenarios_dir, results_root):
             if sc["_scripts"]["setup"]:
                 setups.append(sc["id"])
                 log = os.path.join(results, "logs", sc["id"] + ".setup.log")
-                _, _, status, timed_out = run_script(["bash", sc["_scripts"]["setup"]], script_env(sc, address), log, SCRIPT_TIMEOUT_SECONDS)
+                started = []
+                _, _, status, timed_out = run_script(["bash", sc["_scripts"]["setup"]], script_env(sc, address, seed=seed), log, SCRIPT_TIMEOUT_SECONDS, record=started)
+                setup_runs += [("setup " + sc["id"], p) for p in started]
                 state["setup"][sc["id"]] = status
                 if status != 0 or timed_out:
                     raise HarnessError("setup of %s failed (status %s, timed out %s); see logs/%s.setup.log" % (sc["id"], status, timed_out, sc["id"]))
@@ -479,6 +525,7 @@ def execute(scenarios, scenarios_dir, results_root):
             subprocess.run(["/bin/true", marker], check=False)
             after = time.monotonic_ns()
             brackets.append((marker, before, after))
+            helpers.append(("clock check true " + str(i), before, after))
         wait_for_text(os.path.join(results, "events.jsonl"), brackets[-1][0], CLOCK_CHECK_WAIT_SECONDS)
         state["clock_check"] = check_clock(os.path.join(results, "events.jsonl"), brackets)
         if not state["clock_check"]["passed"]:
@@ -486,10 +533,12 @@ def execute(scenarios, scenarios_dir, results_root):
         for sc in todo:
             state["order"].append(sc["id"])
             log = os.path.join(results, "logs", sc["id"] + ".action.log")
-            start, end, status, timed_out = run_script(action_argv(sc), script_env(sc, address), log, sc["timeout_seconds"])
+            start, end, status, timed_out = run_script(action_argv(sc), script_env(sc, address, seed=seed), log, sc["timeout_seconds"])
             state["windows"][sc["id"]] = {"start_ns": start, "end_ns": end, "exit_status": status, "timed_out": timed_out}
             time.sleep(SETTLE_SECONDS)
+        bpf_start = time.monotonic_ns()
         bpf = read_bpf_stats(pipeline.procs["loader"].pid)
+        helpers.append(("bpftool", bpf_start, time.monotonic_ns()))
     except (KeyboardInterrupt, HarnessError) as e:
         state["aborted"] = "interrupted" if isinstance(e, KeyboardInterrupt) else str(e)
         print("run stopped: %s" % state["aborted"], file=sys.stderr)
@@ -512,7 +561,9 @@ def execute(scenarios, scenarios_dir, results_root):
             if sc["id"] in touched and sc["_scripts"]["teardown"]:
                 log = os.path.join(results, "logs", sc["id"] + ".teardown.log")
                 try:
-                    state["teardown"][sc["id"]] = run_script(["bash", sc["_scripts"]["teardown"]], script_env(sc, address), log, SCRIPT_TIMEOUT_SECONDS)[2]
+                    started = []
+                    state["teardown"][sc["id"]] = run_script(["bash", sc["_scripts"]["teardown"]], script_env(sc, address, seed=seed), log, SCRIPT_TIMEOUT_SECONDS, record=started)[2]
+                    teardown_runs += [("teardown " + sc["id"], p) for p in started]
                 except Exception as e:
                     state["teardown"][sc["id"]] = repr(e)
         left = []
@@ -543,6 +594,8 @@ def execute(scenarios, scenarios_dir, results_root):
                 "clk_tck": os.sysconf("SC_CLK_TCK"), "bpftool": find_bpftool(), "settle_seconds": SETTLE_SECONDS,
                 "sample_interval_seconds": sampler.SAMPLE_INTERVAL_SECONDS,
                 "loader_sha256": scenario_lib.sha256_file(LOADER) if os.path.isfile(LOADER) else "missing"}
+        if seed is not None:
+            info["seed"] = seed
         for name, argv in pipeline_commands(results):
             info["pipeline " + name] = " ".join(argv)
         write_env(results, info, code_hashes())
@@ -550,7 +603,8 @@ def execute(scenarios, scenarios_dir, results_root):
         write_json(os.path.join(results, "scenario_windows.json"), {
             "scenarios": state["windows"], "order": state["order"], "skipped": skipped, "clock_check": state["clock_check"], "aborted": state["aborted"],
             "pipeline_exit_codes": state["exit_codes"], "setup_status": state["setup"], "teardown_status": state["teardown"],
-            "leftovers_removed_by_driver": state["leftovers_removed_by_driver"]})
+            "leftovers_removed_by_driver": state["leftovers_removed_by_driver"],
+            "harness_processes": harness_processes(pipeline.launched, setup_runs + teardown_runs, helpers, os.getpid())})
         derive_alerts(results)
     scores, _ = evaluate.score_folder(results, scenarios_dir)
     give_to_owner(results)
@@ -566,6 +620,9 @@ def main(argv=None):
     ap.add_argument("--dry-run", action="store_true", help="validate the scenarios and print the plan and the commands; start nothing")
     ap.add_argument("--scenarios-dir", default=os.path.join(EVAL_DIR, "scenarios"))
     ap.add_argument("--results-root", default=os.path.join(EVAL_DIR, "results"))
+    ap.add_argument("--predictions", default=None, metavar="PATH|none",
+                    help="predictions file to copy into the results folder, or none; the default is the predictions.json next to the folder that holds the scenarios directory")
+    ap.add_argument("--seed", type=int, default=None, help="non-negative integer given to every script as EVT_EVAL_SEED and written to env.txt")
     args = ap.parse_args(argv)
 
     scenarios, problems = scenario_lib.load_scenarios(args.scenarios_dir)
@@ -573,8 +630,17 @@ def main(argv=None):
         for p in problems or ["no scenarios found in " + args.scenarios_dir]:
             print("scenario problem: " + p, file=sys.stderr)
         return 2
+    if args.seed is not None and args.seed < 0:
+        print("--seed must not be negative", file=sys.stderr)
+        return 2
+    chosen = resolve_predictions(args.predictions, args.scenarios_dir)
+    if args.predictions not in (None, "none") and not os.path.isfile(chosen):
+        print("--predictions file %s does not exist" % args.predictions, file=sys.stderr)
+        return 2
     if args.dry_run:
         print("\n".join(plan_lines(scenarios)))
+        print("predictions: %s" % (chosen if chosen and os.path.isfile(chosen) else "none"))
+        print("seed: %s" % ("none" if args.seed is None else args.seed))
         return 0
     if os.geteuid() != 0:
         print("run this with sudo", file=sys.stderr)
@@ -591,7 +657,7 @@ def main(argv=None):
         for p in found:
             print("  " + p, file=sys.stderr)
         return 2
-    return execute(scenarios, args.scenarios_dir, args.results_root)
+    return execute(scenarios, args.scenarios_dir, args.results_root, predictions=args.predictions, seed=args.seed)
 
 
 if __name__ == "__main__":

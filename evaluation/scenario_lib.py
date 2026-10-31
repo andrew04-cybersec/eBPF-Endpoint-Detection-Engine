@@ -9,14 +9,16 @@ import sys
 EVAL_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(EVAL_DIR)
 sys.path.insert(0, os.path.join(ROOT, "detections"))
-import attack_map  # noqa: E402
+import attack_map  #noqa: E402
 
 DETECTION_NAMES = tuple(sorted(set(attack_map.DETECTIONS) | set(attack_map.CATEGORY_TABLES)))
 
 REQUIRED = ("id", "title", "kind", "technique", "threat_model", "phase", "marker", "expected", "acceptable",
             "timeout_seconds", "known_gap", "notes", "group")
-OPTIONAL = ("requires", "tmp_staging", "locations", "needs")
+OPTIONAL = ("requires", "tmp_staging", "locations", "needs", "attribution")
 GROUPS = ("ordinary", "gap")
+#how the scorer attributes alerts to a scenario; scenario without the key is attributed by marker and window is for the long benign workload
+ATTRIBUTIONS = ("marker", "window")
 LOCATIONS = ("tmp", "shm", "cron", "systemd", "home")
 NEEDS = ("non_loopback_ipv4",)
 KINDS = ("attack", "benign")
@@ -345,6 +347,11 @@ def validate(scenarios):
         if not (isinstance(needs, list) and all(x in NEEDS for x in needs)):
             problems.append("%s: needs must be a list of %s" % (label, ", ".join(NEEDS)))
             needs = []
+        if "attribution" in sc:
+            if sc["attribution"] not in ATTRIBUTIONS:
+                problems.append("%s: attribution must be one of %s" % (label, ", ".join(ATTRIBUTIONS)))
+            elif sc["attribution"] == "window" and sc["kind"] != "benign":
+                problems.append("%s: attribution window is only allowed for a benign scenario" % label)
         if sc["kind"] == "attack" and sc["group"] not in GROUPS:
             problems.append("%s: group of an attack must be ordinary or gap" % label)
         elif sc["kind"] == "benign" and sc["group"] is not None:

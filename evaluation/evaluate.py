@@ -121,7 +121,33 @@ def latency_stats(values):
             "max_ms": rounded(max(values)) if values else None}
 
 
-def score_alerts(scenarios, windows, alerts):
+def key_start(key):
+    """kernel start time in ns from a process key (None for anything else)"""
+    _, _, tail = key.partition(":") if isinstance(key, str) else ("", "", "")
+    return int(tail) if tail.isdigit() else None
+
+
+def is_harness(alert, harness):
+    """
+    true if process that triggered the alert is the one that run_eval.py started itself from the harness_processes list of scenario_windows.json; the alert's own process only and its ancestry isnt looked at
+    entry with start time bracket must match pid and have a key start time inside it so an entry without a bracket matches by pid alone
+    """
+    process = alert.get("process")
+    if not isinstance(process, dict) or not isinstance(harness, list):
+        return False
+    pid, start = process.get("pid"), key_start(process.get("process_key"))
+    for h in harness:
+        if not isinstance(h, dict) or type(h.get("pid")) is not int or h["pid"] != pid:
+            continue
+        low, high = h.get("start_ns_min"), h.get("start_ns_max")
+        if low is None or high is None:
+            return True
+        if start is not None and low <= start <= high:
+            return True
+    return False
+
+
+def score_alerts(scenarios, windows, alerts, harness=None, harness_out=None):
     """attribute alerts to scenarios by window and marker and count them; returns: per scenario results, in-window list, outside list, and latencies"""
     ran = [s for s in scenarios if s["id"] in windows]
     per = {s["id"]: {"tp": {}, "acceptable": {}, "fp": {}, "alerts": 0} for s in ran}
@@ -139,7 +165,13 @@ def score_alerts(scenarios, windows, alerts):
             outside.append(brief(alert))
             continue
         scenario = by_id[sid]
-        if not has_marker(alert, scenario["marker"]):
+        #window scenario needs no marker so an alert in its window counts unless its own process is a harness process; those go to harness_out instead
+        if scenario.get("attribution") == "window":
+            if is_harness(alert, harness):
+                if harness_out is not None:
+                    harness_out.append(brief(alert, sid))
+                continue
+        elif not has_marker(alert, scenario["marker"]):
             in_window.append(brief(alert, sid))
             continue
         kind = classify(scenario, alert)
@@ -153,7 +185,9 @@ def score_alerts(scenarios, windows, alerts):
 
 def score(data):
     scenarios, windows = data["scenarios"], data["windows"]
-    per, in_window, outside, lat_all, lat_tp = score_alerts(scenarios, windows, data["alerts"])
+    harness = data["windows_file"].get("harness_processes") if isinstance(data["windows_file"], dict) else None
+    harness_alerts = []
+    per, in_window, outside, lat_all, lat_tp = score_alerts(scenarios, windows, data["alerts"], harness, harness_alerts)
     out = {"scenarios": {}, "not_run": [], "not_run_reasons": {}, "warnings": list(data["warnings"])}
     skipped = data["windows_file"].get("skipped") if isinstance(data["windows_file"], dict) else None
     skipped = skipped if isinstance(skipped, dict) else {}
@@ -243,7 +277,53 @@ def score(data):
     out["bpf_stats"] = bpf_stats(data["bpf"], cross_checks(data))
     out["label_set_sha256"] = data["hashes"].get("set") if isinstance(data["hashes"], dict) else None
     out["predictions"] = compare_predictions(data["predictions"], out)
+    ran_window = [s for s in scenarios if s.get("attribution") == "window" and s["id"] in windows]
+    if ran_window:
+        if not isinstance(harness, list):
+            out["warnings"].append("WARNING: the folder has no harness process list, so no alert in a window scenario could be set aside as a harness alert")
+        out["window_attribution"] = window_section(ran_window, windows, per, harness_alerts, outside, data.get("events_path"))
     return out
+
+
+def window_event_counts(path, spans):
+    """events per type inside each span {id: (start_ns, end_ns)} from raw events file and every process counts here (harness's own included)"""
+    counts = {sid: {} for sid in spans}
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                try:
+                    ev = json.loads(line)
+                except ValueError:
+                    continue
+                if not isinstance(ev, dict) or type(ev.get("ts_ns")) is not int or not isinstance(ev.get("type"), str):
+                    continue
+                for sid, (first, last) in spans.items():
+                    if first <= ev["ts_ns"] <= last:
+                        counts[sid][ev["type"]] = counts[sid].get(ev["type"], 0) + 1
+    except OSError:
+        pass
+    return counts
+
+
+def window_section(ran, windows, per, harness_alerts, outside, events_path):
+    """
+    numbers for the scenarios attributed by window; every alert inside the window that isnt a harness alert counts as false positive with no marker test
+    harness alerts and alerts outside every window are listed and not counted so the rate is per hour of window and approximate upper bound of 3 divided by hours is given when the count is zero
+    """
+    spans = {s["id"]: (windows[s["id"]]["start_ns"], windows[s["id"]]["end_ns"]) for s in ran}
+    events = window_event_counts(events_path, spans) if events_path else {sid: {} for sid in spans}
+    rows = {}
+    for s in ran:
+        sid = s["id"]
+        hours = (spans[sid][1] - spans[sid][0]) / 1e9 / 3600.0
+        fp = per[sid]["alerts"]
+        rows[sid] = {"window_hours": rounded(hours, 6), "events_by_type": dict(sorted(events[sid].items())),
+                     "events_per_hour_by_type": {k: rounded(v / hours, 3) for k, v in sorted(events[sid].items())} if hours > 0 else {},
+                     "alerts_by_detection": dict(sorted(per[sid]["fp"].items())), "fp": fp,
+                     "fp_per_hour": rounded(fp / hours, 3) if hours > 0 else None,
+                     "rule_of_three_per_hour": rounded(3.0 / hours, 3) if fp == 0 and hours > 0 else None}
+    return {"scenarios": rows, "harness_alerts": harness_alerts, "machine_noise": outside,
+            "label": "approximate; scripted workload, one machine, WSL2"}
 
 
 def compare_predictions(predictions, scored):
@@ -438,7 +518,8 @@ def load_results(folder, scenarios_dir, predictions_path=None):
             "alerts": alerts, "bad_alert_lines": bad, "env": read_env(os.path.join(folder, "env.txt")),
             "resources": load_resources(os.path.join(folder, "resources.csv")), "event_ts": stamps, "lost_events": lost,
             "lost_dropped": dropped, "loader_lines": loader_lines, "bpf": read_json(os.path.join(folder, "bpf_stats.json")),
-            "event_types": types, "openat_seen": openat_seen, "predictions": predictions, "warnings": warnings}
+            "event_types": types, "openat_seen": openat_seen, "predictions": predictions, "warnings": warnings,
+            "events_path": os.path.join(folder, "events.jsonl")}
 
 
 def fmt_ratio(r):
@@ -513,6 +594,28 @@ def render_report(folder_name, scores, data):
     lines += ["## Benign runs", "",
               "False positive alerts in benign scenarios: %d over %s s of benign run time; false positives per hour: %s." % (
                   b["alerts"], fmt(b["seconds"]), fmt(b["fp_per_hour"])), ""]
+    w = s.get("window_attribution")
+    if w:
+        lines += ["## Benign runs attributed by window (scripted workload)", "",
+                  "Rule: an alert inside the window counts against the rate unless the process that triggered it is a process run_eval.py started itself (harness, listed and not counted); an alert outside every window is machine noise (listed and not counted). No marker is used.",
+                  "Label: %s." % w["label"], ""]
+        for sid, r in sorted(w["scenarios"].items()):
+            lines += ["### " + sid, "",
+                      "Window: %s hours." % fmt(r["window_hours"]),
+                      "Events per hour by type (all processes, the harness included): " + (", ".join("%s %s" % kv for kv in r["events_per_hour_by_type"].items()) or "none") + ".",
+                      "Alerts per detection: %s." % counts(r["alerts_by_detection"]),
+                      "False positives: %d. False positives per hour: %s." % (r["fp"], fmt(r["fp_per_hour"]))]
+            if r["rule_of_three_per_hour"] is not None:
+                lines += ["Zero false positives: the rule of three gives an approximate upper bound of %s per hour (3 divided by %s hours); approximate, scripted workload, one machine, WSL2." % (
+                    fmt(r["rule_of_three_per_hour"]), fmt(r["window_hours"]))]
+            lines += [""]
+        lines += ["Harness alerts inside a window (not counted): %d." % len(w["harness_alerts"])]
+        lines += ["- %s %s ts_ns %s window %s exe %s: %s" % (a["alert_seq"], a["detection"], a["ts_ns"], a["window"], a["exe"], a["cmdline"])
+                  for a in w["harness_alerts"][:LIST_LIMIT]]
+        lines += ["", "Machine noise, outside every window (not counted): %d." % len(w["machine_noise"])]
+        lines += ["- %s %s ts_ns %s exe %s: %s" % (a["alert_seq"], a["detection"], a["ts_ns"], a["exe"], a["cmdline"])
+                  for a in w["machine_noise"][:LIST_LIMIT]]
+        lines += [""]
     lat = s["latency"]
     lines += ["## Latency (alert arrival at the harness minus the ts_ns of the triggering event)", "",
               "Pipeline mode for these numbers: %s. Negative values (clock disagreement): %d." % (fmt(lat["mode"]), lat["negative"]), ""]
@@ -573,9 +676,21 @@ def write_outputs(folder, scores, report):
         f.write(report)
 
 
+def recorded_locations(folder):
+    """scenarios directory and predictions file that run_eval.py that is recorded in label_hashes.json and each as None when it wasnt recorded or isnt on this machine; a folder from before the paths were recorded gives (None, None) and scored against standard scenarios directory as it always was"""
+    hashes = read_json(os.path.join(folder, "label_hashes.json"), {})
+    if not isinstance(hashes, dict):
+        return None, None
+    where, predictions = hashes.get("scenarios_dir"), hashes.get("predictions_path")
+    return (where if isinstance(where, str) and os.path.isdir(where) else None,
+            predictions if isinstance(predictions, str) and os.path.isfile(predictions) else None)
+
+
 def score_folder(folder, scenarios_dir=None):
-    scenarios_dir = os.path.join(EVAL_DIR, "scenarios") if scenarios_dir is None else scenarios_dir
-    data = load_results(folder, scenarios_dir)
+    recorded_dir, recorded_predictions = recorded_locations(folder)
+    if scenarios_dir is None:
+        scenarios_dir = recorded_dir or os.path.join(EVAL_DIR, "scenarios")
+    data = load_results(folder, scenarios_dir, recorded_predictions)
     scores = score(data)
     report = render_report(os.path.basename(os.path.normpath(folder)), scores, data)
     write_outputs(folder, scores, report)
