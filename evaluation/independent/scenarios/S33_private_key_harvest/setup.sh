@@ -1,0 +1,8 @@
+set -eu
+mkdir -p "$EVT_EVAL_HOME/.ssh"
+mkdir -p "$EVT_EVAL_WORK"
+cat > "$EVT_EVAL_HOME/.ssh/id_rsa" <<'KEY'
+-----BEGIN OPENSSH PRIVATE KEY-----
+SYNTHETIC_INVALID_KEY_MATERIAL
+-----END OPENSSH PRIVATE KEY-----
+KEY

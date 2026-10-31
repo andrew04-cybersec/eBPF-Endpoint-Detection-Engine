@@ -1,0 +1,18 @@
+{
+ "id": "S36_shell_startup",
+ "title": "Shell Initialization Persistence",
+ "kind": "attack",
+ "group": "independent",
+ "technique": "T1546.004",
+ "threat_model": "An attacker plants commands in a user's shell startup configuration to run during subsequent interactive sessions.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S36_SHELL_STARTUP",
+ "expected": [{"detection": "persistence_write", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 15,
+ "known_gap": null,
+ "notes": "Uses an isolated fake home and an explicit Bash startup-file invocation to verify execution.",
+ "locations": ["home"],
+ "requires": ["bash", "mkdir", "rm", "cat"],
+ "attribution": "marker"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "S33_private_key_harvest",
+ "title": "Private Key Material Harvesting",
+ "kind": "attack",
+ "group": "independent",
+ "technique": "T1552.004",
+ "threat_model": "An attacker searches a user's home directory for private keys and collects accessible key files.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S33_PRIVATE_KEY_HARVEST",
+ "expected": [{"detection": "sensitive_file_access", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 15,
+ "known_gap": null,
+ "notes": "Harvests an invalid synthetic SSH private key from an isolated fake home directory.",
+ "locations": ["home"],
+ "requires": ["bash", "find", "cp", "mkdir", "rm"],
+ "attribution": "marker"
+}

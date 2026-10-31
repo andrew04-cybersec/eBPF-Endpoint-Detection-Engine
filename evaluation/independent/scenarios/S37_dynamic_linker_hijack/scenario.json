@@ -1,0 +1,17 @@
+{
+ "id": "S37_dynamic_linker_hijack",
+ "title": "Process-Scoped Dynamic Linker Hijacking",
+ "kind": "attack",
+ "group": "independent",
+ "technique": "T1574.006",
+ "threat_model": "An attacker influences a program's dynamic library loading so attacker-controlled code executes during process initialization.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S37_LINKER_HIJACK",
+ "expected": [{"detection": "persistence_write", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 20,
+ "known_gap": null,
+ "notes": "Compiles a harmless shared-library constructor and loads it into one test process through a process-scoped environment variable.",
+ "requires": ["bash", "gcc", "mkdir", "rm", "cat"],
+ "attribution": "marker"
+}

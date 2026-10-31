@@ -1,0 +1,54 @@
+{
+ "label_set_sha256": "9b3bcb6d47ddf6a1aad681e31522a2a929b980b71b28b122f561a2bc6e3eebcb",
+ "note": "The labels come from an isolated author's threat models and the technique mapping, written before any run of S30 to S37. predicted_outcome is detected for every scenario because that is the threat-model label, not a forecast informed by detector logic. Any miss is a finding, never a failure to fix. Results are reported separately from S01 to S29 and the near-miss set, and are never pooled. predicted_other_alerts is empty everywhere because no forecast of other alerts was made.",
+ "predictions": {
+  "S30_service_shell": {
+   "assumptions": ["a background worker stands in for the compromised service, with no network listener, as the author states"],
+   "basis": "Threat-model label: T1059.004 maps to shell_from_service in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S31_payload_transfer": {
+   "assumptions": ["a local copy of a prepared file stands in for a completed transfer, with no network communication, as the author states"],
+   "basis": "Threat-model label: T1105 maps to download_chmod_exec in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S32_password_material": {
+   "assumptions": ["synthetic passwd and shadow files in the work directory stand in for the real databases, as the author states", "the account record in the synthetic passwd file names the fake home /home/evt_eval_s32, a mechanical change made while staging"],
+   "basis": "Threat-model label: T1003.008 maps to sensitive_file_access in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S33_private_key_harvest": {
+   "assumptions": ["an invalid synthetic key in a fake home stands in for a private key, as the author states"],
+   "basis": "Threat-model label: T1552.004 maps to sensitive_file_access in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S34_raw_command_channel": {
+   "assumptions": ["a local Unix domain socket stands in for a non-application-layer command channel, with no network traffic, a limited approximation as the author states"],
+   "basis": "Threat-model label: T1095 maps to outbound_after_exec in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S35_cron_persistence": {
+   "assumptions": ["a cron definition file is written and the cron daemon is not required to run, as the author states", "both detections the technique table maps to T1053.003 are listed as expected, because the staging rule took every exact match"],
+   "basis": "Threat-model label: T1053.003 maps to persistence_write and persistence_command in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S36_shell_startup": {
+   "assumptions": ["the startup file is written in an isolated fake home"],
+   "basis": "Threat-model label: T1546.004 maps to persistence_write in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S37_dynamic_linker_hijack": {
+   "assumptions": ["LD_PRELOAD is scoped to one test process and no system linker file is changed, as the author states"],
+   "basis": "Threat-model label: T1574.006 maps to persistence_write in the technique table.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  }
+ }
+}
