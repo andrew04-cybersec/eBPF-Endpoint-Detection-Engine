@@ -26,6 +26,7 @@ run_suite detections detections/tests .
 run_suite graph graph/tests .
 run_suite alerts alerts/tests .
 run_suite normalizer normalizer tests
+run_suite evaluation evaluation/tests .
 
 echo "total        $TOTAL tests, $FAILED suite(s) failed"
 [ "$FAILED" -eq 0 ]
