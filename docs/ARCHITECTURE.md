@@ -163,7 +163,9 @@ Evaluation is a required part of the project. The plan is to run twenty to thirt
 - Events per second.
 - False positives per hour on the benign baseline.
 
-Because the loader emits JSON lines, an evaluation run can be recorded once and replayed through the normalizer and detections, which keeps measurements repeatable. Misses and failures get their own section in the final writeup. *No results exist yet.*
+Because the loader emits JSON lines, an evaluation run can be recorded once and replayed through the normalizer and detections, which keeps measurements repeatable. Misses and failures get their own section in the final writeup.
+
+*Planned:* the harness is built in `evaluation/` and described in `docs/EVENT_SCHEMA.md` section 26. A driver run with sudo starts the same pipeline as the live tests, runs scenarios one at a time (each a labeled attack or a benign activity with a unique marker in its command line), stamps every alert with its arrival time, samples CPU and memory, reads the per-program `bpf_stats`, and saves everything in a results folder. An offline scorer then attributes alerts to scenarios and computes the counts, ratios, latency percentiles, and false positives per hour, and writes a report. What exists is the machinery and a five-scenario smoke set. It has been exercised by unit tests on constructed fixtures, a dry run, and the scenario scripts run on their own, and it has not been run against the live pipeline. The 20 to 30 attack simulations, the full benign baseline, and the final measurements are later tasks and are not built. The design measures precision and recall per scenario, with a count next to every ratio, and 20 to 30 scenarios are a demonstration and not a statistical estimate. *No results exist yet.*
 
 ## 9. Observed constraints
 
