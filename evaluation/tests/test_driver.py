@@ -327,7 +327,7 @@ class Helpers2(unittest.TestCase):
         scenarios = scenario_lib.load_scenarios(SCENARIOS)[0]
         self.assertEqual(run_eval.missing_requirements(scenarios, which=lambda c: "/bin/" + c), [])
         self.assertEqual(run_eval.missing_requirements(scenarios, which=lambda c: None if c == "curl" else "/bin/x"),
-                         ["S03_download_chmod_exec needs curl"])
+                         ["S03_download_chmod_exec needs curl", "S11_download_relative_path needs curl", "S13_download_to_tmp_and_run needs curl"])
 
     def test_code_hashes_cover_the_code_directories(self):
         hashes = run_eval.code_hashes()
@@ -376,6 +376,103 @@ class Helpers2(unittest.TestCase):
         self.assertLessEqual(s, e)
         with open(os.path.join(d, "log")) as f:
             self.assertEqual(f.read(), "hello\n")
+
+
+class Needs(unittest.TestCase):
+    """the need checks, the new refuse-to-start patterns and the plan of the 29 scenarios; the address lookup is injected so no root and no network is needed"""
+
+    def scenarios(self):
+        scenarios, problems = scenario_lib.load_scenarios(SCENARIOS)
+        self.assertEqual(problems, [])
+        return scenarios
+
+    class Done:
+        def __init__(self, text):
+            self.stdout = text
+
+    def test_the_address_is_the_first_global_ipv4_of_ip_addr(self):
+        text = ("2: eth0    inet 10.255.255.254/32 brd 10.255.255.254 scope global eth0\n"
+                "3: eth1    inet 192.168.1.5/24 brd 192.168.1.255 scope global eth1\n")
+        self.assertEqual(run_eval.first_global_ipv4(run=lambda *a, **k: self.Done(text)), "10.255.255.254")
+        self.assertIsNone(run_eval.first_global_ipv4(run=lambda *a, **k: self.Done("")))
+        self.assertIsNone(run_eval.first_global_ipv4(run=lambda *a, **k: self.Done("2: eth0    inet6 fe80::1/64 scope link\n")))
+
+    def test_the_command_used_is_the_one_of_the_d7_live_test(self):
+        seen = []
+        run_eval.first_global_ipv4(run=lambda argv, **k: seen.append(argv) or self.Done(""))
+        self.assertEqual(seen, [["ip", "-4", "-o", "addr", "show", "scope", "global"]])
+
+    def test_a_missing_ip_command_means_no_address(self):
+        def missing(*a, **k):
+            raise OSError("no ip")
+        self.assertIsNone(run_eval.first_global_ipv4(run=missing))
+
+    def test_a_scenario_whose_need_is_not_met_is_skipped_with_a_reason(self):
+        skipped, address = run_eval.evaluate_needs(self.scenarios(), lookup=lambda: None)
+        self.assertEqual(sorted(k[:3] for k in skipped), ["S26", "S27"])
+        self.assertIn("non-loopback IPv4", " ".join(skipped.values()))
+        self.assertIsNone(address)
+
+    def test_when_the_need_is_met_nothing_is_skipped_and_the_address_is_returned(self):
+        self.assertEqual(run_eval.evaluate_needs(self.scenarios(), lookup=lambda: "10.0.0.7"), ({}, "10.0.0.7"))
+
+    def test_the_lookup_is_not_made_when_no_scenario_needs_it(self):
+        calls = []
+        plain = [s for s in self.scenarios() if not s.get("needs")]
+        self.assertEqual(run_eval.evaluate_needs(plain, lookup=lambda: calls.append(1)), ({}, None))
+        self.assertEqual(calls, [])
+
+    def test_the_lookup_is_made_once(self):
+        calls = []
+        run_eval.evaluate_needs(self.scenarios(), lookup=lambda: calls.append(1) or "10.0.0.7")
+        self.assertEqual(calls, [1])
+
+    def test_the_script_environment_carries_the_address_only_when_there_is_one(self):
+        sc = [s for s in self.scenarios() if s["id"].startswith("S26")][0]
+        self.assertEqual(run_eval.script_env(sc, "10.0.0.7")["EVT_EVAL_NONLOOPBACK_IPV4"], "10.0.0.7")
+        self.assertNotIn("EVT_EVAL_NONLOOPBACK_IPV4", run_eval.script_env(sc))
+        self.assertEqual(run_eval.script_env(sc, bases={"cron": "/scratch"})["EVT_EVAL_CRON_FILE"], "/scratch/evt_eval_" + sc["id"].lower())
+        self.assertEqual(run_eval.script_env(sc)["EVT_EVAL_MARKER"], sc["marker"])
+
+    def test_the_plan_marks_a_scenario_that_would_not_run(self):
+        text = "\n".join(run_eval.plan_lines(self.scenarios(), found=[], lookup=lambda: None))
+        self.assertIn("non-loopback IPv4 address: none; not run for that reason: S26_reverse_shell_style_connect, S27_delayed_connect", text)
+        self.assertIn("S26_reverse_shell_style_connect  A shell opens a TCP connection to another address   [NOT RUN:", text)
+        self.assertIn("group gap", text)
+        self.assertIn("locations ['cron']", text)
+
+    def test_the_plan_lists_all_29_with_their_markers(self):
+        text = "\n".join(run_eval.plan_lines(self.scenarios(), found=[], lookup=lambda: "10.0.0.7"))
+        for i in range(1, 30):
+            self.assertIn("marker EVT_EVAL_S%02d" % i, text)
+        self.assertIn("non-loopback IPv4 address: 10.0.0.7", text)
+        self.assertNotIn("[NOT RUN", text)
+
+    def test_the_refuse_to_start_patterns_cover_the_new_locations(self):
+        self.assertEqual(sorted(run_eval.LEFTOVER_PATTERNS), sorted(["/opt/evt_eval_*", "/tmp/evt_eval_*", "/dev/shm/evt_eval_*", "/etc/cron.d/evt_eval_*",
+                                                                       "/etc/systemd/system/evt_eval_*", "/home/evt_eval_*"]))
+
+    def test_the_driver_removes_only_the_exact_names_it_may_have_created(self):
+        ok = ["/opt/evt_eval_s01_x", "/tmp/evt_eval_s04_y", "/dev/shm/evt_eval_s12_z", "/home/evt_eval_s15_a", "/etc/cron.d/evt_eval_s18_b",
+              "/etc/systemd/system/evt_eval_s21_c.service"]
+        for path in ok:
+            self.assertTrue(run_eval.SAFE_LEFTOVER.fullmatch(path), path)
+        for path in ["/etc/cron.d/other", "/etc/cron.d/evt_eval_x/../passwd", "/etc/cron.daily/evt_eval_x", "/etc/systemd/system/evt_eval_x",
+                     "/etc/systemd/system/other.service", "/home/bob", "/home/evt_eval_X", "/etc/passwd", "/opt/other", "/opt/evt_eval_s01/sub",
+                     "/etc/cron.d/evt_eval_x.bak"]:
+            self.assertFalse(run_eval.SAFE_LEFTOVER.fullmatch(path), path)
+
+    def test_every_path_a_scenario_may_create_is_one_the_driver_may_remove(self):
+        for sc in self.scenarios():
+            for path in scenario_lib.scenario_paths(sc["id"]):
+                self.assertTrue(run_eval.SAFE_LEFTOVER.fullmatch(path), path)
+
+    def test_the_dry_run_lists_all_29_and_validates_them(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(run_eval.main(["--dry-run"]), 0)
+        self.assertIn("scenarios: 29", out.getvalue())
+        self.assertIn("S29_slow_spawn_loop", out.getvalue())
 
 
 if __name__ == "__main__":

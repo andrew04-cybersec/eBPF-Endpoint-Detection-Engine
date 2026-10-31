@@ -220,7 +220,8 @@ class Aggregates(unittest.TestCase):
 
     def test_per_technique(self):
         s = self.folder().score()[0]
-        self.assertEqual(s["per_technique"]["T1059.004"], {"attacks": 2, "detected": 1, "missed": 1, "recall": {"num": 1, "den": 2, "value": 0.5}})
+        self.assertEqual({k: v for k, v in s["per_technique"]["T1059.004"].items() if k != "by_group"},
+                         {"attacks": 2, "detected": 1, "missed": 1, "recall": {"num": 1, "den": 2, "value": 0.5}})
         self.assertEqual(s["per_technique"]["T1059"]["recall"], {"num": 1, "den": 1, "value": 1.0})
 
     def test_per_detection_and_strict_against_lenient_precision(self):

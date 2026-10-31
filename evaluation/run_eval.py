@@ -41,8 +41,10 @@ DRAIN_TIMEOUT_SECONDS = 30
 SCRIPT_TIMEOUT_SECONDS = 60
 CLOCK_CHECK_WAIT_SECONDS = 5
 KILL_GRACE_SECONDS = 3
-LEFTOVER_PATTERNS = ("/opt/evt_eval_*", "/tmp/evt_eval_*")
-SAFE_LEFTOVER = re.compile(r"/(opt|tmp)/evt_eval_[a-z0-9_]+")
+LEFTOVER_PATTERNS = ("/opt/evt_eval_*", "/tmp/evt_eval_*", "/dev/shm/evt_eval_*", "/etc/cron.d/evt_eval_*",
+                     "/etc/systemd/system/evt_eval_*", "/home/evt_eval_*")
+SAFE_LEFTOVER = re.compile(r"/(opt|tmp|dev/shm|home)/evt_eval_[a-z0-9_]+|/etc/cron\.d/evt_eval_[a-z0-9_]+|/etc/systemd/system/evt_eval_[a-z0-9_]+\.service")
+PREDICTIONS = os.path.join(EVAL_DIR, "predictions.json")
 CODE_DIRS = ("detections", "alerts", "graph", "normalizer")
 PIPELINE_STAGES = ("loader", "tee_events", "normalizer", "tee_normalized", "runner", "stamper")
 
@@ -57,6 +59,30 @@ def leftovers(patterns=LEFTOVER_PATTERNS):
 
 def missing_requirements(scenarios, which=shutil.which):
     return sorted({"%s needs %s" % (sc["id"], cmd) for sc in scenarios for cmd in sc.get("requires", []) if which(cmd) is None})
+
+
+def first_global_ipv4(run=subprocess.run):
+    """first global IPv4 address the way the d7 live test finds it (ip -4 -o addr show scope global); or None"""
+    try:
+        done = run(["ip", "-4", "-o", "addr", "show", "scope", "global"], capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    for line in (done.stdout or "").splitlines():
+        m = re.search(r"\binet (\d+\.\d+\.\d+\.\d+)/", line)
+        if m:
+            return m.group(1)
+    return None
+
+
+def evaluate_needs(scenarios, lookup=first_global_ipv4):
+    """returns ({scenario id: reason} for scenarios in which the needs are not met as the address or None); the lookup is made once and only if a scenario needs it"""
+    wants = [sc for sc in scenarios if "non_loopback_ipv4" in sc.get("needs", [])]
+    address = lookup() if wants else None
+    skipped = {}
+    if wants and address is None:
+        for sc in wants:
+            skipped[sc["id"]] = "needs a non-loopback IPv4 address and the machine has none"
+    return skipped, address
 
 
 def find_bpftool():
@@ -221,8 +247,9 @@ def action_argv(sc):
     return ["bash", "-c", scenario_lib.read_text(sc["_scripts"]["action"]), "evt_eval_action", sc["marker"]]
 
 
-def plan_lines(scenarios, results_name="<timestamp>-eval", found=None):
+def plan_lines(scenarios, results_name="<timestamp>-eval", found=None, lookup=first_global_ipv4):
     found = leftovers() if found is None else found
+    skipped, address = evaluate_needs(scenarios, lookup)
     lines = ["dry run: nothing is started and nothing is written",
              "scenarios: %d (%s)" % (len(scenarios), ", ".join(s["id"] for s in scenarios)),
              "label set sha256: %s" % scenario_lib.label_hashes(scenarios)["set"],
@@ -231,6 +258,7 @@ def plan_lines(scenarios, results_name="<timestamp>-eval", found=None):
              "  loader built: %s (%s)" % ("yes" if os.access(LOADER, os.X_OK) else "no", LOADER),
              "  leftover work directories (%s): %s" % (" ".join(LEFTOVER_PATTERNS), ", ".join(found) if found else "none"),
              "  commands the scenarios need: %s" % (", ".join(missing_requirements(scenarios)) or "all found"),
+             "  non-loopback IPv4 address: %s" % (address or "none") + ("; not run for that reason: " + ", ".join(sorted(skipped)) if skipped else ""),
              "", "order of a run:",
              "  1. run every setup.sh in id order, before the pipeline, so nothing they start is recorded",
              "  2. read %s and set it to 1 unless NO_BPF_STATS=1 is set" % BPF_SYSCTL,
@@ -242,10 +270,11 @@ def plan_lines(scenarios, results_name="<timestamp>-eval", found=None):
               "  5. clock check: run /bin/true twice with markers, each bracketed by time.monotonic_ns(), and require the loader's ts_ns inside the bracket",
               "  6. run the scenarios in id order, %d s settle pause after each:" % SETTLE_SECONDS]
     for sc in scenarios:
-        env = scenario_lib.scenario_env(sc["id"])
-        lines += ["", "     %s  %s" % (sc["id"], sc["title"]),
-                  "       kind %s, technique %s, phase %s, timeout %d s, tmp_staging %s" % (
-                      sc["kind"], sc["technique"], sc["phase"], sc["timeout_seconds"], bool(sc.get("tmp_staging"))),
+        env = scenario_lib.scenario_env(sc["id"], address=address)
+        lines += ["", "     %s  %s%s" % (sc["id"], sc["title"], "   [NOT RUN: %s]" % skipped[sc["id"]] if sc["id"] in skipped else ""),
+                  "       kind %s, group %s, technique %s, phase %s, timeout %d s, tmp_staging %s, locations %s, needs %s" % (
+                      sc["kind"], sc["group"], sc["technique"], sc["phase"], sc["timeout_seconds"], bool(sc.get("tmp_staging")),
+                      sc.get("locations", []), sc.get("needs", [])),
                   "       marker %s" % sc["marker"],
                   "       expected %s, acceptable %s" % (json.dumps(sc["expected"]), json.dumps(sc["acceptable"])),
                   "       known_gap: %s" % sc["known_gap"],
@@ -287,9 +316,9 @@ def run_script(argv, env, log_path, timeout, clock=time.monotonic_ns):
     return start, end, status, timed_out
 
 
-def script_env(sc):
+def script_env(sc, address=None, bases=None):
     env = dict(os.environ)
-    env.update(scenario_lib.scenario_env(sc["id"]))
+    env.update(scenario_lib.scenario_env(sc["id"], bases=bases, address=address))
     env["EVT_EVAL_MARKER"] = sc["marker"]
     return env
 
@@ -410,7 +439,16 @@ def execute(scenarios, scenarios_dir, results_root):
     os.makedirs(os.path.join(results, "logs"))
     for sc in scenarios:
         shutil.copyfile(os.path.join(sc["_dir"], "scenario.json"), os.path.join(results, "scenarios_snapshot", sc["id"] + ".json"))
-    write_json(os.path.join(results, "label_hashes.json"), scenario_lib.label_hashes(scenarios))
+    hashes = scenario_lib.label_hashes(scenarios)
+    hashes["predictions_sha256"] = None
+    if os.path.isfile(PREDICTIONS):
+        shutil.copyfile(PREDICTIONS, os.path.join(results, "predictions.json"))
+        hashes["predictions_sha256"] = scenario_lib.sha256_file(PREDICTIONS)
+    write_json(os.path.join(results, "label_hashes.json"), hashes)
+    skipped, address = evaluate_needs(scenarios)
+    for sid, reason in sorted(skipped.items()):
+        print("not run: %s: %s" % (sid, reason), file=sys.stderr)
+    todo = [sc for sc in scenarios if sc["id"] not in skipped]
 
     state = {"windows": {}, "order": [], "aborted": None, "clock_check": None, "teardown": {}, "exit_codes": {}, "setup": {}}
     pipeline, samp, sysctl_before, sysctl_changed = Pipeline(results), None, read_sysctl(), False
@@ -418,11 +456,11 @@ def execute(scenarios, scenarios_dir, results_root):
     setups = []
     previous_term = signal.signal(signal.SIGTERM, raise_interrupt)
     try:
-        for sc in scenarios:
+        for sc in todo:
             if sc["_scripts"]["setup"]:
                 setups.append(sc["id"])
                 log = os.path.join(results, "logs", sc["id"] + ".setup.log")
-                _, _, status, timed_out = run_script(["bash", sc["_scripts"]["setup"]], script_env(sc), log, SCRIPT_TIMEOUT_SECONDS)
+                _, _, status, timed_out = run_script(["bash", sc["_scripts"]["setup"]], script_env(sc, address), log, SCRIPT_TIMEOUT_SECONDS)
                 state["setup"][sc["id"]] = status
                 if status != 0 or timed_out:
                     raise HarnessError("setup of %s failed (status %s, timed out %s); see logs/%s.setup.log" % (sc["id"], status, timed_out, sc["id"]))
@@ -445,10 +483,10 @@ def execute(scenarios, scenarios_dir, results_root):
         state["clock_check"] = check_clock(os.path.join(results, "events.jsonl"), brackets)
         if not state["clock_check"]["passed"]:
             raise HarnessError("clock check failed: %s" % json.dumps(state["clock_check"], sort_keys=True))
-        for sc in scenarios:
+        for sc in todo:
             state["order"].append(sc["id"])
             log = os.path.join(results, "logs", sc["id"] + ".action.log")
-            start, end, status, timed_out = run_script(action_argv(sc), script_env(sc), log, sc["timeout_seconds"])
+            start, end, status, timed_out = run_script(action_argv(sc), script_env(sc, address), log, sc["timeout_seconds"])
             state["windows"][sc["id"]] = {"start_ns": start, "end_ns": end, "exit_status": status, "timed_out": timed_out}
             time.sleep(SETTLE_SECONDS)
         bpf = read_bpf_stats(pipeline.procs["loader"].pid)
@@ -469,20 +507,26 @@ def execute(scenarios, scenarios_dir, results_root):
             state["exit_codes"] = pipeline.stop()
         except Exception as e:
             print("stopping the pipeline: %r" % (e,), file=sys.stderr)
-        for sc in scenarios:
-            if sc["id"] in setups and sc["_scripts"]["teardown"]:
+        touched = set(setups) | set(state["order"])
+        for sc in todo:
+            if sc["id"] in touched and sc["_scripts"]["teardown"]:
                 log = os.path.join(results, "logs", sc["id"] + ".teardown.log")
                 try:
-                    state["teardown"][sc["id"]] = run_script(["bash", sc["_scripts"]["teardown"]], script_env(sc), log, SCRIPT_TIMEOUT_SECONDS)[2]
+                    state["teardown"][sc["id"]] = run_script(["bash", sc["_scripts"]["teardown"]], script_env(sc, address), log, SCRIPT_TIMEOUT_SECONDS)[2]
                 except Exception as e:
                     state["teardown"][sc["id"]] = repr(e)
         left = []
-        for sc in scenarios:
-            env = scenario_lib.scenario_env(sc["id"])
-            for path in (env["EVT_EVAL_WORK"], env["EVT_EVAL_TMP"]):
-                if sc["id"] in setups and os.path.lexists(path) and SAFE_LEFTOVER.fullmatch(path) and not os.path.islink(path):
+        for sc in todo:
+            for path in scenario_lib.scenario_paths(sc["id"]):
+                if sc["id"] in touched and os.path.lexists(path) and SAFE_LEFTOVER.fullmatch(path) and not os.path.islink(path):
                     left.append(path)
-                    shutil.rmtree(path, ignore_errors=True)
+                    if os.path.isdir(path):
+                        shutil.rmtree(path, ignore_errors=True)
+                    else:
+                        try:
+                            os.remove(path)
+                        except OSError:
+                            pass
         state["leftovers_removed_by_driver"] = left
         sysctl_after = sysctl_before
         if sysctl_changed:
@@ -504,7 +548,7 @@ def execute(scenarios, scenarios_dir, results_root):
         write_env(results, info, code_hashes())
         write_json(os.path.join(results, "bpf_stats.json"), bpf)
         write_json(os.path.join(results, "scenario_windows.json"), {
-            "scenarios": state["windows"], "order": state["order"], "clock_check": state["clock_check"], "aborted": state["aborted"],
+            "scenarios": state["windows"], "order": state["order"], "skipped": skipped, "clock_check": state["clock_check"], "aborted": state["aborted"],
             "pipeline_exit_codes": state["exit_codes"], "setup_status": state["setup"], "teardown_status": state["teardown"],
             "leftovers_removed_by_driver": state["leftovers_removed_by_driver"]})
         derive_alerts(results)

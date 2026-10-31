@@ -154,7 +154,13 @@ def score_alerts(scenarios, windows, alerts):
 def score(data):
     scenarios, windows = data["scenarios"], data["windows"]
     per, in_window, outside, lat_all, lat_tp = score_alerts(scenarios, windows, data["alerts"])
-    out = {"scenarios": {}, "not_run": [], "warnings": list(data["warnings"])}
+    out = {"scenarios": {}, "not_run": [], "not_run_reasons": {}, "warnings": list(data["warnings"])}
+    skipped = data["windows_file"].get("skipped") if isinstance(data["windows_file"], dict) else None
+    skipped = skipped if isinstance(skipped, dict) else {}
+    unmarked = {}
+    for a in in_window:
+        unmarked[a["window"]] = unmarked.get(a["window"], 0) + 1
+    groups = {"ordinary": [0, 0], "gap": [0, 0], "ungrouped": [0, 0]}
     techniques, detections = {}, {}
     pooled = {"attacks": 0, "detected": 0, "tp": 0, "fp": 0, "acceptable": 0}
     benign_alerts, benign_seconds = 0, 0.0
@@ -171,13 +177,14 @@ def score(data):
         sid = s["id"]
         if sid not in windows:
             out["not_run"].append(sid)
+            out["not_run_reasons"][sid] = skipped.get(sid) or "no window was recorded (the run stopped before it started)"
             continue
         p = per[sid]
         w = windows[sid]
         seconds = (w["end_ns"] - w["start_ns"]) / 1e9
         rec = {"kind": s["kind"], "technique": s["technique"], "tp": p["tp"], "acceptable": p["acceptable"], "fp": p["fp"],
                "alerts_attributed": p["alerts"], "window_seconds": rounded(seconds), "timed_out": bool(w.get("timed_out")),
-               "known_gap": s.get("known_gap"), "unmet": []}
+               "known_gap": s.get("known_gap"), "unmet": [], "group": s.get("group"), "in_window_without_marker": unmarked.get(sid, 0)}
         for kind in ("tp", "acceptable", "fp"):
             for name, n in p[kind].items():
                 detections[name][kind] += n
@@ -192,9 +199,15 @@ def score(data):
                     rec["unmet"].append({"detection": e["detection"], "min_count": e["min_count"], "got": got})
             rec["detected"] = not rec["unmet"]
             rec["outcome"] = "detected" if rec["detected"] else "missed"
-            t = techniques.setdefault(s["technique"], {"attacks": 0, "detected": 0})
+            g = s.get("group") if s.get("group") in ("ordinary", "gap") else "ungrouped"
+            groups[g][0] += 1
+            groups[g][1] += 1 if rec["detected"] else 0
+            t = techniques.setdefault(s["technique"], {"attacks": 0, "detected": 0, "by_group": {}})
             t["attacks"] += 1
             t["detected"] += 1 if rec["detected"] else 0
+            bg = t["by_group"].setdefault(g, [0, 0])
+            bg[0] += 1
+            bg[1] += 1 if rec["detected"] else 0
             pooled["attacks"] += 1
             pooled["detected"] += 1 if rec["detected"] else 0
         else:
@@ -204,7 +217,10 @@ def score(data):
             benign_seconds += seconds
         out["scenarios"][sid] = rec
     out["per_technique"] = {t: {"attacks": v["attacks"], "detected": v["detected"], "missed": v["attacks"] - v["detected"],
-                                "recall": ratio(v["detected"], v["attacks"])} for t, v in sorted(techniques.items())}
+                                "recall": ratio(v["detected"], v["attacks"]),
+                                "by_group": {g: ratio(v["by_group"].get(g, [0, 0])[1], v["by_group"].get(g, [0, 0])[0]) for g in ("ordinary", "gap")}}
+                            for t, v in sorted(techniques.items())}
+    out["groups"] = {g: {"scenarios": n, "detected": k, "missed": n - k, "recall": ratio(k, n)} for g, (n, k) in groups.items() if g != "ungrouped" or n}
     out["per_detection"] = {}
     for name, v in sorted(detections.items()):
         out["per_detection"][name] = dict(v, recall=ratio(v["detected"], v["expected"]),
@@ -226,7 +242,34 @@ def score(data):
     out["resources"] = resource_stats(data)
     out["bpf_stats"] = bpf_stats(data["bpf"], cross_checks(data))
     out["label_set_sha256"] = data["hashes"].get("set") if isinstance(data["hashes"], dict) else None
+    out["predictions"] = compare_predictions(data["predictions"], out)
     return out
+
+
+def compare_predictions(predictions, scored):
+    """predicted against actual for every scenario and a mismatch is listed and never scored; None is returned for folder with no predictions"""
+    if not isinstance(predictions, dict) or not isinstance(predictions.get("predictions"), dict):
+        return None
+    rows, mismatches = [], []
+    for sid in sorted(set(predictions["predictions"]) | set(scored["scenarios"]) | set(scored["not_run"])):
+        p = predictions["predictions"].get(sid)
+        r = scored["scenarios"].get(sid)
+        if r is None:
+            rows.append({"id": sid, "predicted": p.get("predicted_outcome") if p else None, "actual": "not run", "status": "not run",
+                         "other_predicted": sorted(p.get("predicted_other_alerts") or []) if p else [], "other_actual": []})
+            continue
+        actual = r["outcome"] if r["kind"] == "attack" else ("no alerts" if r["outcome"] == "clean" else "false alerts")
+        other = sorted(set(r["acceptable"]) | set(r["fp"]))
+        if p is None:
+            rows.append({"id": sid, "predicted": None, "actual": actual, "status": "no prediction", "other_predicted": [], "other_actual": other})
+            continue
+        predicted_other = sorted(p.get("predicted_other_alerts") or [])
+        same = p.get("predicted_outcome") == actual and predicted_other == other
+        rows.append({"id": sid, "predicted": p.get("predicted_outcome"), "actual": actual, "status": "MATCH" if same else "MISMATCH",
+                     "other_predicted": predicted_other, "other_actual": other})
+        if not same:
+            mismatches.append(sid)
+    return {"rows": rows, "mismatches": mismatches, "label_set_sha256": predictions.get("label_set_sha256")}
 
 
 def resource_stats(data):
@@ -334,7 +377,7 @@ def load_events(path):
     return stamps, lost, dropped, types
 
 
-def load_results(folder, scenarios_dir):
+def load_results(folder, scenarios_dir, predictions_path=None):
     """read a results folder and the scenarios come from the snapshot taken at run time and also a warning is made for every live file that no longer matches it"""
     warnings = []
     hashes = read_json(os.path.join(folder, "label_hashes.json"), {})
@@ -365,6 +408,20 @@ def load_results(folder, scenarios_dir):
                 warnings.append("WARNING: the live scenario %s was not part of this run" % sid)
     else:
         warnings.append("WARNING: the live scenario directory was not found, so the label hashes could not be compared")
+    predictions = read_json(os.path.join(folder, "predictions.json"))
+    recorded_p = hashes.get("predictions_sha256") if isinstance(hashes, dict) else None
+    if recorded_p:
+        copy = os.path.join(folder, "predictions.json")
+        if not os.path.isfile(copy) or scenario_lib.sha256_file(copy) != recorded_p:
+            warnings.append("WARNING: the predictions in this folder do not match the hash recorded at run time")
+        live_p = predictions_path or os.path.join(os.path.dirname(os.path.normpath(scenarios_dir)), "predictions.json")
+        if not os.path.isfile(live_p):
+            warnings.append("WARNING: the live predictions file is gone; the copy in the folder is used")
+        elif scenario_lib.sha256_file(live_p) != recorded_p:
+            warnings.append("WARNING: the live predictions file was changed after the run; the copy in the folder is used")
+        written_for = predictions.get("label_set_sha256") if isinstance(predictions, dict) else None
+        if isinstance(written_for, str) and isinstance(hashes.get("set"), str) and written_for != hashes["set"]:
+            warnings.append("WARNING: the predictions were written against a different label set than the one of this run")
     alerts, bad = load_stamped(os.path.join(folder, "alerts.stamped.tsv"))
     stamps, lost, dropped, types = load_events(os.path.join(folder, "events.jsonl"))
     loader_lines, openat_seen = [], None
@@ -381,7 +438,7 @@ def load_results(folder, scenarios_dir):
             "alerts": alerts, "bad_alert_lines": bad, "env": read_env(os.path.join(folder, "env.txt")),
             "resources": load_resources(os.path.join(folder, "resources.csv")), "event_ts": stamps, "lost_events": lost,
             "lost_dropped": dropped, "loader_lines": loader_lines, "bpf": read_json(os.path.join(folder, "bpf_stats.json")),
-            "event_types": types, "openat_seen": openat_seen, "warnings": warnings}
+            "event_types": types, "openat_seen": openat_seen, "predictions": predictions, "warnings": warnings}
 
 
 def fmt_ratio(r):
@@ -412,24 +469,46 @@ def render_report(folder_name, scores, data):
     cc = s["clock_check"]
     lines += ["Clock check: %s." % ("not recorded" if not cc else ("passed" if cc.get("passed") else "FAILED"))
               + ("" if not cc else " Largest distance outside the bracket: %s ns." % fmt(cc.get("max_skew_ns"))), ""]
+    g = s["groups"]
+    lines += ["## Headline: attack scenarios by group", ""]
+    lines += table(["group", "scenarios", "detected", "missed", "recall"],
+                   [(name, v["scenarios"], v["detected"], v["missed"], fmt_ratio(v["recall"])) for name, v in g.items()]) + [""]
+    lines += ["The ordinary group was written by the same person who read the detection rules, so its recall is a best case and not a detection rate. The gap group is built to miss: its scenarios exercise documented gaps, so a miss there is an expected result and not a harness error. The two groups are never added into one score here.", ""]
     lines += ["## Scenario outcomes", ""]
     rows = []
     for sid, r in sorted(s["scenarios"].items()):
         unmet = "; ".join("%s needs %d, got %d" % (u["detection"], u["min_count"], u["got"]) for u in r["unmet"]) or "-"
-        rows.append((sid, r["kind"], fmt(r["technique"]), r["outcome"], counts(r["tp"]), counts(r["acceptable"]), counts(r["fp"]),
-                     unmet, "yes" if r["timed_out"] else "no", fmt(r["window_seconds"]), r["known_gap"] or "-"))
-    lines += table(["scenario", "kind", "technique", "outcome", "true positive alerts", "acceptable alerts", "false positive alerts",
-                    "unmet expectations", "timed out", "window s", "known gap"], rows) + [""]
+        rows.append((sid, r["kind"], fmt(r["group"]), fmt(r["technique"]), r["outcome"], counts(r["tp"]), counts(r["acceptable"]), counts(r["fp"]),
+                     unmet, r["in_window_without_marker"], "yes" if r["timed_out"] else "no", fmt(r["window_seconds"]), r["known_gap"] or "-"))
+    lines += table(["scenario", "kind", "group", "technique", "outcome", "true positive alerts", "acceptable alerts", "false positive alerts",
+                    "unmet expectations", "alerts in window without the marker", "timed out", "window s", "known gap"], rows) + [""]
+    lines += ["A count above 0 in the column of alerts in the window without the marker means the scenario's evidence is not attributable by its marker; those alerts are listed below and are not scored.", ""]
+    lines += ["## Scenarios not run", ""]
+    if s["not_run"]:
+        lines += ["- %s: %s" % (sid, s["not_run_reasons"].get(sid, "no reason recorded")) for sid in s["not_run"]] + [""]
+    else:
+        lines += ["none", ""]
     lines += ["## Per technique (attack scenarios)", ""]
-    lines += table(["technique", "attacks", "detected", "missed", "recall"],
-                   [(t, v["attacks"], v["detected"], v["missed"], fmt_ratio(v["recall"])) for t, v in s["per_technique"].items()]) + [""]
+    lines += table(["technique", "attacks", "detected", "missed", "recall", "ordinary", "gap"],
+                   [(t, v["attacks"], v["detected"], v["missed"], fmt_ratio(v["recall"]), fmt_ratio(v["by_group"]["ordinary"]), fmt_ratio(v["by_group"]["gap"]))
+                    for t, v in s["per_technique"].items()]) + [""]
     lines += ["## Per detection", ""]
     lines += table(["detection", "expected in", "detected in", "scenario recall", "TP", "FP", "acceptable", "precision (lenient)", "precision (strict)"],
                    [(n, v["expected"], v["detected"], fmt_ratio(v["recall"]), v["tp"], v["fp"], v["acceptable"],
                      fmt_ratio(v["precision_lenient"]), fmt_ratio(v["precision_strict"])) for n, v in s["per_detection"].items()]) + [""]
     p = s["pooled"]
-    lines += ["Pooled recall (scenario level): %s. Pooled precision (alert level): lenient %s, strict %s." % (
-        fmt_ratio(p["recall"]), fmt_ratio(p["precision_lenient"]), fmt_ratio(p["precision_strict"])), ""]
+    lines += ["Pooled recall (scenario level, secondary): %s. Pooled precision (alert level): lenient %s, strict %s." % (
+        fmt_ratio(p["recall"]), fmt_ratio(p["precision_lenient"]), fmt_ratio(p["precision_strict"])),
+              "The pooled numbers mix the ordinary and the gap group, and the mix is a design choice and not a population, so they are secondary to the group tables above.", ""]
+    pr = s["predictions"]
+    lines += ["## Predicted versus actual", ""]
+    if pr is None:
+        lines += ["No predictions file was saved with this folder.", ""]
+    else:
+        lines += table(["scenario", "predicted", "actual", "other alerts predicted", "other alerts actual", "status"],
+                       [(x["id"], fmt(x["predicted"]), x["actual"], ", ".join(x["other_predicted"]) or "none", ", ".join(x["other_actual"]) or "none", x["status"])
+                        for x in pr["rows"]]) + [""]
+        lines += ["Mismatches (listed, never scored): %s." % (", ".join(pr["mismatches"]) or "none"), ""]
     b = s["benign"]
     lines += ["## Benign runs", "",
               "False positive alerts in benign scenarios: %d over %s s of benign run time; false positives per hour: %s." % (

@@ -15,7 +15,7 @@ sys.path.insert(0, EVAL_DIR)
 
 import scenario_lib as lib  # noqa: E402
 
-GOOD = {"id": "T1", "title": "t", "kind": "attack", "technique": "T1059", "threat_model": "x", "phase": "after_loader",
+GOOD = {"id": "T1", "title": "t", "kind": "attack", "group": "ordinary", "technique": "T1059", "threat_model": "x", "phase": "after_loader",
         "marker": "EVT_EVAL_T1", "expected": [{"detection": "exec_from_tmp", "min_count": 1}], "acceptable": [],
         "timeout_seconds": 10, "known_gap": None, "notes": "x"}
 
@@ -56,10 +56,10 @@ class SmokeSet(unittest.TestCase):
     def test_the_five_smoke_scenarios_validate(self):
         scenarios, problems = lib.load_scenarios(os.path.join(EVAL_DIR, "scenarios"))
         self.assertEqual(problems, [])
-        self.assertEqual([s["id"] for s in scenarios], ["S01_shell_from_service_after_loader", "S02_shell_from_service_before_loader",
-                                                         "S03_download_chmod_exec", "S04_exec_from_tmp_via_interpreter", "S05_benign_smoke"])
-        self.assertEqual([s["kind"] for s in scenarios], ["attack"] * 4 + ["benign"])
-        self.assertEqual(len({s["marker"] for s in scenarios}), 5)
+        self.assertEqual([s["id"] for s in scenarios][:5], ["S01_shell_from_service_after_loader", "S02_shell_from_service_before_loader",
+                                                             "S03_download_chmod_exec", "S04_exec_from_tmp_via_interpreter", "S05_benign_smoke"])
+        self.assertEqual([s["kind"] for s in scenarios][:5], ["attack"] * 4 + ["benign"])
+        self.assertEqual(len({s["marker"] for s in scenarios}), len(scenarios))
 
     def test_the_labels_of_the_smoke_set(self):
         by = {s["id"][:3]: s for s in lib.load_scenarios(os.path.join(EVAL_DIR, "scenarios"))[0]}
@@ -72,9 +72,11 @@ class SmokeSet(unittest.TestCase):
 
     def test_every_smoke_script_passes_the_lint(self):
         for sc in lib.load_scenarios(os.path.join(EVAL_DIR, "scenarios"))[0]:
+            created = set().union(*[lib.created_copies(lib.read_text(p)) for p in sc["_scripts"].values() if p])
             for path in sc["_scripts"].values():
                 if path:
-                    self.assertEqual(lib.lint_script(lib.read_text(path), allow_tmp=bool(sc.get("tmp_staging"))), [], path)
+                    self.assertEqual(lib.lint_script(lib.read_text(path), allow_tmp=bool(sc.get("tmp_staging")), locations=sc.get("locations", []),
+                                                     created=created), [], path)
 
 
 class Rejections(unittest.TestCase):
@@ -191,7 +193,7 @@ class Lint(unittest.TestCase):
               "echo x > /etc/ld.so.preload", "cat /etc/ld.so.preload", "cat /tmp/x", "ls /tmp", "chmod 777 /etc/shadow", "ln -s a /etc/b"]
     ALLOWED = ["echo hello", "cat /etc/hostname", "ls /usr/bin | wc -l", "cp /bin/bash \"$EVT_EVAL_WORK/nginx\"",
                "rm -rf \"$EVT_EVAL_WORK\"", "rm -rf \"$EVT_EVAL_WORK/serve\"", "rm -f \"$EVT_EVAL_WORK/x\"", "rm -rf ${EVT_EVAL_WORK}",
-               "\"$EVT_EVAL_WORK/crontab\" -l", "\"$EVT_EVAL_WORK/systemctl\" status", "echo x > /home/evt_eval_user/.bashrc",
+               "cp /bin/true \"$EVT_EVAL_WORK/crontab\"\n\"$EVT_EVAL_WORK/crontab\" -l", "ln -s /bin/true \"$EVT_EVAL_WORK/systemctl\"\n\"$EVT_EVAL_WORK/systemctl\" status",
                "# sudo is only a word in this comment", "echo done # reboot later", "python3 -c 'print(1)'", "mkfifo \"$EVT_EVAL_WORK/f\"",
                "echo x > /dev/null", "echo x 2> /dev/null", "sleep 1", "kill \"$pid\" 2> /dev/null || true", "[ -f \"$EVT_EVAL_WORK/p\" ] && echo yes"]
 
@@ -233,7 +235,8 @@ class Hashes(unittest.TestCase):
 
     def test_the_environment_of_a_scenario(self):
         env = lib.scenario_env("S01_Abc")
-        self.assertEqual(env, {"EVT_EVAL_ID": "S01_Abc", "EVT_EVAL_WORK": "/opt/evt_eval_s01_abc", "EVT_EVAL_TMP": "/tmp/evt_eval_s01_abc"})
+        self.assertEqual({k: env[k] for k in ("EVT_EVAL_ID", "EVT_EVAL_WORK", "EVT_EVAL_TMP")},
+                         {"EVT_EVAL_ID": "S01_Abc", "EVT_EVAL_WORK": "/opt/evt_eval_s01_abc", "EVT_EVAL_TMP": "/tmp/evt_eval_s01_abc"})
 
 
 if __name__ == "__main__":
