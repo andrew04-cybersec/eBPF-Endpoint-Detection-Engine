@@ -1,0 +1,23 @@
+{
+ "id": "S24_regain_root_via_saved_uid",
+ "title": "Drop privileges and regain root through the saved uid",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1068",
+ "threat_model": "An attacker's process lowers its uid and gid but keeps the saved uid 0, and a forked child asks for uid 0 again, the shape of a privilege escalation.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S24",
+ "expected": [
+  {
+   "detection": "privilege_escalation",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "As in case a of the privilege_escalation live test: a root python3 sets its real and effective ids to 61234 with saved uid 0, forks, and the child calls setresuid(0, 0, 0) and executes /bin/true. No account is created for the numeric ids. The work directory is mode 755 and the action changes into it so that uid 61234 can start. The parent's own setresuid is made by root and does not alert. Needs root, which the harness has.",
+ "requires": [
+  "python3"
+ ]
+}

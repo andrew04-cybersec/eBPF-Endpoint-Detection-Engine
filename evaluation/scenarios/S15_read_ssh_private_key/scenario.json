@@ -1,0 +1,23 @@
+{
+ "id": "S15_read_ssh_private_key",
+ "title": "Read an SSH private key",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1552.004",
+ "threat_model": "An attacker reads a user's private key to log in to other machines.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S15",
+ "expected": [
+  {
+   "detection": "sensitive_file_access",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "setup.sh creates a fake home directly under /home with a file named id_ed25519 under .ssh that holds only a dummy line, and the action reads it with cat. The marker reaches the alert through the ancestry.",
+ "locations": [
+  "home"
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "id": "S29_slow_spawn_loop",
+ "title": "One shell starts a program thirty times, slowly",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1059",
+ "threat_model": "An attacker's script starts the same number of programs but spreads them over time to stay under a rate threshold.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S29",
+ "expected": [
+  {
+   "detection": "rapid_spawn",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": "rapid_spawn counts distinct children of one parent inside a sliding window of WINDOW_NS (2 s). Thirty spawns spread over about 24 seconds never put the threshold's worth of children inside one window.",
+ "notes": "One bash runs /bin/true and then sleep, COUNT (30) times, SPACING (0.8) seconds apart. Both are set at the top of action.sh, and a unit test checks that the children started inside one window, counting the true and the sleep of each pass, stay below SPAWN_THRESHOLD."
+}

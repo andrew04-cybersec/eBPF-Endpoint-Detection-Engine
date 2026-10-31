@@ -1,0 +1,23 @@
+{
+ "id": "S23_write_cron_file_renamed_writer",
+ "title": "Write a cron file with a copy of bash named dpkg",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1053.003",
+ "threat_model": "An attacker names the writing program after a package manager, which is allowed to write there, so that a name-based allow list ignores it.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S23",
+ "expected": [
+  {
+   "detection": "persistence_write",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": "persistence skips writers whose comm is on its expected-writer list, and the comm is the name of the file that was run, so a copy named dpkg is suppressed.",
+ "notes": "setup.sh copies /bin/bash to a file named dpkg in the work directory. The action runs it by that path and it writes a comment line to the cron file. The real dpkg is not run.",
+ "locations": [
+  "cron"
+ ]
+}

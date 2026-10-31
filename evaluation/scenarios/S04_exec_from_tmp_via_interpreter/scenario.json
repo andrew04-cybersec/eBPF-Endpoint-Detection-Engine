@@ -2,6 +2,7 @@
  "id": "S04_exec_from_tmp_via_interpreter",
  "title": "Run a script staged in /tmp through an interpreter",
  "kind": "attack",
+ "group": "gap",
  "technique": "T1059",
  "threat_model": "An attacker stages a script in a world-writable temporary directory and runs it with the system's python3.",
  "phase": "after_loader",

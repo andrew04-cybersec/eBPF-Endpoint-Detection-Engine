@@ -1,0 +1,31 @@
+{
+ "id": "S13_download_to_tmp_and_run",
+ "title": "Download into /tmp, make executable, run",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1105",
+ "threat_model": "An attacker downloads a second-stage script into a temporary directory, marks it executable and runs it by its path.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S13",
+ "expected": [
+  {
+   "detection": "download_chmod_exec",
+   "min_count": 1
+  },
+  {
+   "detection": "exec_from_tmp",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": null,
+ "notes": "The same exec is covered by two detections: download_chmod_exec for the chain and exec_from_tmp for an exec of a file under /tmp. Both are expected. The server is python3 -m http.server on 127.0.0.1 port 18744, started by setup.sh, and the file goes to a unique directory under /tmp. The prediction assumes /tmp is not mounted noexec.",
+ "locations": [
+  "tmp"
+ ],
+ "requires": [
+  "curl",
+  "python3"
+ ]
+}

@@ -2,6 +2,7 @@
  "id": "S03_download_chmod_exec",
  "title": "Download a script, make it executable and run it",
  "kind": "attack",
+ "group": "ordinary",
  "technique": "T1105",
  "threat_model": "An attacker with a foothold downloads a second-stage script from a server they control, marks it executable and runs it, each step as a separate command.",
  "phase": "after_loader",

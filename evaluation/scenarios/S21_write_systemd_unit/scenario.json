@@ -1,0 +1,23 @@
+{
+ "id": "S21_write_systemd_unit",
+ "title": "Write a systemd unit file",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1543.002",
+ "threat_model": "An attacker with root installs a service definition so that their program starts at boot.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S21",
+ "expected": [
+  {
+   "detection": "persistence_write",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "The unit file has only a [Unit] section, is never enabled or started, and is removed by teardown. systemctl is not run.",
+ "locations": [
+  "systemd"
+ ]
+}

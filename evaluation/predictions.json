@@ -1,0 +1,181 @@
+{
+ "label_set_sha256": "4dc82dc5803011cbe1724e41bb7edf12dad3603a8daee50041638eb7814b390c",
+ "note": "Written from the detection rules and their documented gaps alone, before any run of S06 to S29. S01 to S05 carry the predictions they had before their first run, which the first smoke run matched. predicted_outcome is detected (every expected entry met), missed (an expected entry not met), or no alerts (a benign scenario). predicted_other_alerts lists detections expected to fire that are not in the expected list.",
+ "predictions": {
+  "S01_shell_from_service_after_loader": {
+   "assumptions": ["the copy of bash named nginx was started after the loader, so it has a graph node with comm nginx"],
+   "basis": "shell_from_service (EVENT_SCHEMA section 15): the shell's direct parent node has a service comm.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S02_shell_from_service_before_loader": {
+   "assumptions": ["the helper was started before the loader, so the loader never saw it start"],
+   "basis": "GAP, section 15: the parent is a placeholder with no comm, so the shell is counted unevaluable (placeholder_parent). Section 18 cannot find a service either.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S03_download_chmod_exec": {
+   "assumptions": ["curl, chmod and the downloaded file are three separate execs", "the path is absolute"],
+   "basis": "download_chmod_exec (section 17): curl -o of an absolute path, chmod +x of it, then an exec of it, in order inside 600 s.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S04_exec_from_tmp_via_interpreter": {
+   "assumptions": [],
+   "basis": "GAP, section 16: the executed file is /usr/bin/python3, and the script in /tmp is only an argument.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S05_benign_smoke": {
+   "assumptions": [],
+   "basis": "Section 20: eight commands over 20 seconds are far under the rapid_spawn threshold, and no sensitive, persistence or non-loopback activity occurs.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "no alerts"
+  },
+  "S06_service_runs_python": {
+   "assumptions": ["the nginx copy is started by the action after the loader", "its python3 child is a direct child"],
+   "basis": "unusual_ancestry (section 18): an interpreter below a node whose comm is a service name. shell_from_service does not apply because python3 is not a shell, and interpreter_chain (section 24) sees a run of 1 because nginx is not a watched program.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S07_service_shell_python": {
+   "assumptions": ["the nginx copy is started after the loader"],
+   "basis": "shell_from_service (section 15) for the sh that is a direct child of the service, and unusual_ancestry (section 18) for the python3 below the sh, because the shell's direct child case is left to section 15 but the interpreter is not. interpreter_chain sees a run of 2 (python3, sh) that ends at nginx, which is below the minimum of 3.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S08_nested_inline_interpreters": {
+   "assumptions": ["the action's bash -c is the root of the chain and counts as a member with its -c", "the sh of os.system does not run python3 in place because the command ends in a builtin"],
+   "basis": "interpreter_chain (section 24): the run python3, sh, python3, bash has length 4, families python and shell, and inline options throughout, so it alerts at the sh (length 3) and at the last python3 (length 4).",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S09_nested_script_files": {
+   "assumptions": ["timeout forks its child, so the chain from the script bash is cut at timeout, which is not watched", "no command line of bash, python3, sh, python3 in the chain has an inline option"],
+   "basis": "GAP, section 24: the rule needs an inline-code option in some member. The chain of script files has length 4 and two families but no inline option. The action's own bash -c would supply one, so the chain is cut below it with timeout.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S10_download_via_python": {
+   "assumptions": ["the connect is to 127.0.0.1"],
+   "basis": "GAP, section 17: only curl and wget are tracked as downloaders, so no download entry exists and the chmod and the exec match nothing. The loopback connect is skipped by outbound_after_exec (section 21).",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S11_download_relative_path": {
+   "assumptions": ["curl, chmod and the file run as children of the one action bash, a node the loader saw start"],
+   "basis": "download_chmod_exec (section 17): relative paths are matched inside one parent process. curl -sO takes the name from the URL, chmod +x names the same file, and ./name is the exec.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S12_run_from_shm": {
+   "assumptions": ["/dev/shm is not mounted noexec, so the exec succeeds"],
+   "basis": "exec_from_tmp (section 16): an absolute exec filename under /dev/shm.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S13_download_to_tmp_and_run": {
+   "assumptions": ["the file is run by its absolute path", "/tmp is not mounted noexec, so the exec succeeds"],
+   "basis": "download_chmod_exec (section 17) for the chain and exec_from_tmp (section 16) for the exec of a file under /tmp, both on the same exec_success.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S14_read_shadow": {
+   "assumptions": [],
+   "basis": "sensitive_file_access (section 19): a successful open of /etc/shadow by cat, which is not on the expected-reader list.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S15_read_ssh_private_key": {
+   "assumptions": ["the key file is directly under .ssh of a path /home/<user>/"],
+   "basis": "sensitive_file_access (section 19): a private key file directly under .ssh, read by cat.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S16_read_shadow_renamed_reader": {
+   "assumptions": ["the copy of cat named sudo takes the comm sudo"],
+   "basis": "GAP, section 19: the reader's comm sudo is on the expected-reader list, so the open is counted as expected_reader and does not alert.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S17_service_reads_passwd": {
+   "assumptions": ["the nginx copy is started after the loader"],
+   "basis": "sensitive_file_access (section 19): /etc/passwd alerts only when the reader runs below a service-named process.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S18_write_cron_file": {
+   "assumptions": ["the shell redirect is the open, made by the action bash (comm bash)"],
+   "basis": "persistence (section 22): a write-flagged open of a file under /etc/cron.d by a writer that is not on the expected-writer list.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S19_append_bashrc": {
+   "assumptions": ["the fake home is directly under /home"],
+   "basis": "persistence (section 22): an O_APPEND open of .bashrc under /home/<user>/.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S20_write_authorized_keys": {
+   "assumptions": ["the fake home is directly under /home"],
+   "basis": "persistence (section 22): a write open of .ssh/authorized_keys under /home/<user>/. sensitive_file_access does not apply, because authorized_keys is excluded from its private key rule.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S21_write_systemd_unit": {
+   "assumptions": [],
+   "basis": "persistence (section 22): a write open of a file under /etc/systemd/system.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S22_move_file_into_cron_dir": {
+   "assumptions": ["the work directory and /etc/cron.d are on the same filesystem, so mv renames and does not copy"],
+   "basis": "GAP, section 22: rename is not hooked, so a file moved into /etc/cron.d produces no write open. If the filesystems differ, mv copies, the open of the destination is seen, and the outcome would be detected.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S23_write_cron_file_renamed_writer": {
+   "assumptions": ["the copy of bash named dpkg takes the comm dpkg"],
+   "basis": "GAP, section 22: the writer's comm dpkg is on the expected-writer list, so the write is counted as persist_expected_writer and does not alert.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S24_regain_root_via_saved_uid": {
+   "assumptions": ["the harness runs as root", "the work directory is mode 755 and the action changes into it"],
+   "basis": "privilege_escalation (section 23), request signal: the forked child, at uid 61234, calls setresuid(0, 0, 0). The parent's own setresuid is made by root and is counted priv_already_root.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S25_regain_root_renamed_helper": {
+   "assumptions": ["the symlink named sudo gives the process the comm sudo, as in the live test of section 23"],
+   "basis": "GAP, section 23: the comm sudo is on the expected-escalator list, so the request is counted priv_expected_escalator and does not alert. The later uid 0 events are counted as a transition after a request.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S26_reverse_shell_style_connect": {
+   "assumptions": ["the machine has a non-loopback IPv4 address, otherwise the scenario is not run"],
+   "basis": "outbound_after_exec (section 21): a shell connects to a non-loopback address within 60 seconds of its exec.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S27_delayed_connect": {
+   "assumptions": ["the machine has a non-loopback IPv4 address, otherwise the scenario is not run", "the sleep is longer than CONNECT_WINDOW_NS plus a margin"],
+   "basis": "GAP, section 21: the connect comes more than 60 seconds after the exec of the process, so it is counted connect_outside_window and does not alert.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  },
+  "S28_burst_of_spawns": {
+   "assumptions": ["60 spawns of /bin/true take far less than 2 seconds"],
+   "basis": "rapid_spawn (section 20): 25 distinct children of one parent inside 2 seconds. A loop of 60 execs of /bin/true by one bash is expected to pass the threshold.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "detected"
+  },
+  "S29_slow_spawn_loop": {
+   "assumptions": ["each iteration starts two children (true and sleep), about 0.8 seconds apart"],
+   "basis": "GAP, section 20: spreading the spawns so that fewer than 25 children start inside any 2 second window never reaches the threshold.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "missed"
+  }
+ },
+ "written_before_any_run_of": "S06 to S29"
+}

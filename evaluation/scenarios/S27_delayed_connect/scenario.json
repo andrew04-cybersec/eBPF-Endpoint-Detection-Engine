@@ -1,0 +1,26 @@
+{
+ "id": "S27_delayed_connect",
+ "title": "A shell waits, then opens a TCP connection",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1095",
+ "threat_model": "An attacker's shell waits longer than the detection's window before it connects out.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S27",
+ "expected": [
+  {
+   "detection": "outbound_after_exec",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 120,
+ "known_gap": "outbound_after_exec only counts a connect that comes within CONNECT_WINDOW_NS (60 s) of the latest exec of the process. A shell that sleeps longer than that before it connects is not seen.",
+ "notes": "As S26, but the shell first runs sleep for SLEEP_SECONDS (70), set at the top of action.sh. A unit test checks it against the detection's window. The scenario is not run if the machine has no non-loopback IPv4 address.",
+ "needs": [
+  "non_loopback_ipv4"
+ ],
+ "requires": [
+  "python3"
+ ]
+}

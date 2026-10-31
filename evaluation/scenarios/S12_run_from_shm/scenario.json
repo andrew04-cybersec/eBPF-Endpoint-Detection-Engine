@@ -1,0 +1,23 @@
+{
+ "id": "S12_run_from_shm",
+ "title": "Run a program from /dev/shm",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1059",
+ "threat_model": "An attacker places a program in shared memory, a world-writable directory that leaves nothing on disk, and runs it by its path.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S12",
+ "expected": [
+  {
+   "detection": "exec_from_tmp",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "setup.sh copies /bin/true into a unique directory under /dev/shm and the action runs it by absolute path with the marker as its argument. The prediction assumes /dev/shm is not mounted noexec.",
+ "locations": [
+  "shm"
+ ]
+}

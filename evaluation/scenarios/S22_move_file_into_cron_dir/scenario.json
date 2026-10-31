@@ -1,0 +1,23 @@
+{
+ "id": "S22_move_file_into_cron_dir",
+ "title": "Move a staged file into /etc/cron.d",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1053.003",
+ "threat_model": "An attacker prepares a job file elsewhere and moves it into the scheduler's directory, so that no write to that directory is seen.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S22",
+ "expected": [
+  {
+   "detection": "persistence_write",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": "persistence sees write opens only. A rename is not hooked, so a file moved into /etc/cron.d produces no write open. If the work directory and /etc/cron.d are on different filesystems, mv copies the file and the open of the destination would be seen.",
+ "notes": "The prediction assumes that both directories are on the same filesystem. setup.sh prints the device numbers of both directories (stat) to its log, so the assumption can be checked from logs/ of the results folder.",
+ "locations": [
+  "cron"
+ ]
+}

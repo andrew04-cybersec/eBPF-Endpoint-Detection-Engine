@@ -2,6 +2,7 @@
  "id": "S01_shell_from_service_after_loader",
  "title": "A service-named process starts a shell (service started after the loader)",
  "kind": "attack",
+ "group": "ordinary",
  "technique": "T1059.004",
  "threat_model": "An attacker who controls a network service makes it run a shell command, so the shell is a direct child of a process that carries the service's name. The service process was started after the monitoring began.",
  "phase": "after_loader",

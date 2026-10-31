@@ -2,6 +2,7 @@
  "id": "S02_shell_from_service_before_loader",
  "title": "A service-named process starts a shell (service started before the loader)",
  "kind": "attack",
+ "group": "gap",
  "technique": "T1059.004",
  "threat_model": "An attacker who controls a network service makes it run a shell command, so the shell is a direct child of a process that carries the service's name. The service was already running before the monitoring began.",
  "phase": "before_loader",

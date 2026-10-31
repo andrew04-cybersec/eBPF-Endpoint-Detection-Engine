@@ -2,6 +2,7 @@
  "id": "S05_benign_smoke",
  "title": "Twenty seconds of low-rate harmless commands",
  "kind": "benign",
+ "group": null,
  "technique": null,
  "threat_model": "No attacker. A user runs a few ordinary commands (list a directory, read a harmless file, search it, print the date) with pauses in between.",
  "phase": "after_loader",
