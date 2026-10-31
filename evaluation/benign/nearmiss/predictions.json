@@ -1,0 +1,55 @@
+{
+ "label_set_sha256": "f419657963f3ea5eb19d2327d62e7bf86e0013becea4fdfb974c47ebe9327fcc",
+ "note": "Written from the threat model and the rule constants alone, before any run of N01 to N08. A mismatch between predicted and actual is a finding to report, not a failure to fix. predicted_outcome is no alerts, or false alerts for a benign scenario that is predicted to alert, because every alert in a benign scenario counts as a false positive. predicted_other_alerts lists the detections predicted to fire. Results are reported as k of n scenarios alerted with each alert listed, never as a rate, and never pooled with the everyday set.",
+ "predictions": {
+  "N01_install_local_prefix": {
+   "assumptions": ["everything happens under the work directory under /opt", "the installed tool is a script that starts with #!/bin/sh, so the shells under the action are one family"],
+   "basis": "No detection matches: nothing runs from /tmp, /var/tmp or /dev/shm, no persistence path is written, no sensitive path is read, and interpreter_chain needs two families.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "no alerts"
+  },
+  "N02_install_staged_in_tmp": {
+   "assumptions": ["/tmp is not mounted noexec", "the copy is run by its absolute path"],
+   "basis": "exec_from_tmp (T1059, weak fit): an exec_success whose absolute filename is under /tmp. The activity is benign and resembles the rule target.",
+   "predicted_other_alerts": ["exec_from_tmp"],
+   "predicted_outcome": "false alerts"
+  },
+  "N03_parallel_build_j200": {
+   "assumptions": ["make starts the recipes as direct children, 400 of them within a second or two", "no event is lost; this must be checked in the lost events of the run and not assumed"],
+   "basis": "rapid_spawn (SPAWN_THRESHOLD 25 distinct children of one parent inside WINDOW_NS 2 seconds). make -j200 over 400 trivial targets starts far more than 25 children inside 2 seconds.",
+   "predicted_other_alerts": ["rapid_spawn"],
+   "predicted_outcome": "false alerts"
+  },
+  "N04_sed_inplace_bashrc": {
+   "assumptions": ["UNSURE, needs a live run: GNU sed opens the original read-only and writes a temporary file with another name before it renames it", "rename is not hooked"],
+   "basis": "The kernel filter reports a write-intent path only for a write open, and a read-only open of .bashrc is skipped. A temporary file with another name is not on the write-intent list.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "no alerts"
+  },
+  "N05_append_bashrc_redirect": {
+   "assumptions": ["the redirect is done by the action's bash, whose comm is bash"],
+   "basis": "persistence_write (T1546.004): a write open of .bashrc in a home directory by a comm that is not in EXPECTED_WRITERS. S19 was detected on the same rule.",
+   "predicted_other_alerts": ["persistence_write"],
+   "predicted_outcome": "false alerts"
+  },
+  "N06_sshkeygen_fake_home": {
+   "assumptions": ["the comm of the process is ssh-keygen", "the fake home name stays within the 31 characters the kernel filter reads"],
+   "basis": "sensitive_file_access skips a tier 1 open by a comm in EXPECTED_READERS, and ssh-keygen is in that list. persistence_write does not match id_ed25519 or its .pub file.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "no alerts"
+  },
+  "N07_cat_ssh_key_nonlisted_reader": {
+   "assumptions": ["the key is created in setup.sh before the pipeline starts, so only the cat is recorded", "cat is not in EXPECTED_READERS"],
+   "basis": "sensitive_file_access (T1552.004), tier 1: a successful open of a private key file under .ssh in a home directory by a reader that is not expected. The contrast case to N06.",
+   "predicted_other_alerts": ["sensitive_file_access"],
+   "predicted_outcome": "false alerts"
+  },
+  "N08_root_cat_shadow": {
+   "assumptions": ["the action runs as root so the open succeeds"],
+   "basis": "sensitive_file_access (T1003.008), tier 1: a successful open of /etc/shadow by a reader that is not expected. S14 was detected on the same rule.",
+   "predicted_other_alerts": ["sensitive_file_access"],
+   "predicted_outcome": "false alerts"
+  }
+ },
+ "written_before_any_run_of": "N01 to N08"
+}
