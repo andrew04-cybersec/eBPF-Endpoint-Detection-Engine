@@ -194,7 +194,7 @@ def score(data):
     unmarked = {}
     for a in in_window:
         unmarked[a["window"]] = unmarked.get(a["window"], 0) + 1
-    groups = {"ordinary": [0, 0], "gap": [0, 0], "ungrouped": [0, 0]}
+    groups = {"ordinary": [0, 0], "gap": [0, 0], "independent": [0, 0], "ungrouped": [0, 0]}
     techniques, detections = {}, {}
     pooled = {"attacks": 0, "detected": 0, "tp": 0, "fp": 0, "acceptable": 0}
     benign_alerts, benign_seconds = 0, 0.0
@@ -233,7 +233,7 @@ def score(data):
                     rec["unmet"].append({"detection": e["detection"], "min_count": e["min_count"], "got": got})
             rec["detected"] = not rec["unmet"]
             rec["outcome"] = "detected" if rec["detected"] else "missed"
-            g = s.get("group") if s.get("group") in ("ordinary", "gap") else "ungrouped"
+            g = s.get("group") if s.get("group") in ("ordinary", "gap", "independent") else "ungrouped"
             groups[g][0] += 1
             groups[g][1] += 1 if rec["detected"] else 0
             t = techniques.setdefault(s["technique"], {"attacks": 0, "detected": 0, "by_group": {}})
@@ -250,11 +250,13 @@ def score(data):
             benign_alerts += p["alerts"]
             benign_seconds += seconds
         out["scenarios"][sid] = rec
+    #independent column and row exist only when an independent scenario was scored so a folder without one is scored exactly as it was before
+    shown = ("ordinary", "gap") + (("independent",) if groups["independent"][0] else ())
     out["per_technique"] = {t: {"attacks": v["attacks"], "detected": v["detected"], "missed": v["attacks"] - v["detected"],
                                 "recall": ratio(v["detected"], v["attacks"]),
-                                "by_group": {g: ratio(v["by_group"].get(g, [0, 0])[1], v["by_group"].get(g, [0, 0])[0]) for g in ("ordinary", "gap")}}
+                                "by_group": {g: ratio(v["by_group"].get(g, [0, 0])[1], v["by_group"].get(g, [0, 0])[0]) for g in shown}}
                             for t, v in sorted(techniques.items())}
-    out["groups"] = {g: {"scenarios": n, "detected": k, "missed": n - k, "recall": ratio(k, n)} for g, (n, k) in groups.items() if g != "ungrouped" or n}
+    out["groups"] = {g: {"scenarios": n, "detected": k, "missed": n - k, "recall": ratio(k, n)} for g, (n, k) in groups.items() if g not in ("ungrouped", "independent") or n}
     out["per_detection"] = {}
     for name, v in sorted(detections.items()):
         out["per_detection"][name] = dict(v, recall=ratio(v["detected"], v["expected"]),
@@ -555,6 +557,8 @@ def render_report(folder_name, scores, data):
     lines += table(["group", "scenarios", "detected", "missed", "recall"],
                    [(name, v["scenarios"], v["detected"], v["missed"], fmt_ratio(v["recall"])) for name, v in g.items()]) + [""]
     lines += ["The ordinary group was written by the same person who read the detection rules, so its recall is a best case and not a detection rate. The gap group is built to miss: its scenarios exercise documented gaps, so a miss there is an expected result and not a harness error. The two groups are never added into one score here.", ""]
+    if "independent" in g:
+        lines += ["The independent group is reported on its own row and is not added into the ordinary or gap rows.", ""]
     lines += ["## Scenario outcomes", ""]
     rows = []
     for sid, r in sorted(s["scenarios"].items()):
@@ -570,8 +574,10 @@ def render_report(folder_name, scores, data):
     else:
         lines += ["none", ""]
     lines += ["## Per technique (attack scenarios)", ""]
-    lines += table(["technique", "attacks", "detected", "missed", "recall", "ordinary", "gap"],
+    extra = [name for name in ("independent",) if any(name in v["by_group"] for v in s["per_technique"].values())]
+    lines += table(["technique", "attacks", "detected", "missed", "recall", "ordinary", "gap"] + extra,
                    [(t, v["attacks"], v["detected"], v["missed"], fmt_ratio(v["recall"]), fmt_ratio(v["by_group"]["ordinary"]), fmt_ratio(v["by_group"]["gap"]))
+                    + tuple(fmt_ratio(v["by_group"][name]) for name in extra)
                     for t, v in s["per_technique"].items()]) + [""]
     lines += ["## Per detection", ""]
     lines += table(["detection", "expected in", "detected in", "scenario recall", "TP", "FP", "acceptable", "precision (lenient)", "precision (strict)"],

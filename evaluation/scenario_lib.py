@@ -16,7 +16,7 @@ DETECTION_NAMES = tuple(sorted(set(attack_map.DETECTIONS) | set(attack_map.CATEG
 REQUIRED = ("id", "title", "kind", "technique", "threat_model", "phase", "marker", "expected", "acceptable",
             "timeout_seconds", "known_gap", "notes", "group")
 OPTIONAL = ("requires", "tmp_staging", "locations", "needs", "attribution")
-GROUPS = ("ordinary", "gap")
+GROUPS = ("ordinary", "gap", "independent")
 #how the scorer attributes alerts to a scenario; scenario without the key is attributed by marker and window is for the long benign workload
 ATTRIBUTIONS = ("marker", "window")
 LOCATIONS = ("tmp", "shm", "cron", "systemd", "home")
@@ -353,7 +353,7 @@ def validate(scenarios):
             elif sc["attribution"] == "window" and sc["kind"] != "benign":
                 problems.append("%s: attribution window is only allowed for a benign scenario" % label)
         if sc["kind"] == "attack" and sc["group"] not in GROUPS:
-            problems.append("%s: group of an attack must be ordinary or gap" % label)
+            problems.append("%s: group of an attack must be %s" % (label, " or ".join(GROUPS)))
         elif sc["kind"] == "benign" and sc["group"] is not None:
             problems.append("%s: a benign scenario has group null" % label)
         if sc["_scripts"]["action"] is None:
