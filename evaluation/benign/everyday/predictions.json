@@ -1,0 +1,13 @@
+{
+ "label_set_sha256": "70385b2d0099eba187df859d889e5e171b0da6651c4f030a875a86fdc9c22960",
+ "note": "Written from the detection rules alone, before any run of E01. predicted_outcome is no alerts (a benign scenario). Any alert inside the window counts as a false positive, and no alert is suppressed or excused afterward. These pre-registered risks are notes and not expectations: make -j4 starts about 31 recipe shells from one parent, which may reach the rapid_spawn threshold of 25 children inside 2 seconds; build tools may exec from a temporary directory, although TMPDIR is set inside the work directory; the driver, timeout, make and sh form a process structure that interpreter_chain reads, and the action's own bash -c is not a harness process; ls, ps, tar and git look up user names through the password file, which the kernel filter reports, and the detection only alerts on it below a service-named process.",
+ "predictions": {
+  "E01_everyday_workload": {
+   "assumptions": ["the driver runs under timeout, so the action's bash -c is not part of any interpreter chain", "all work stays under the work directory and TMPDIR points inside it", "no command uses the network, sudo or a sensitive path on purpose"],
+   "basis": "No detection fires on ordinary developer commands: exec_from_tmp needs an exec from /tmp, /var/tmp or /dev/shm, the service-based detections need a service-named ancestor, download_chmod_exec needs curl or wget, outbound_after_exec needs a non-loopback connect, persistence needs a write to a persistence path, sensitive_file_access needs a sensitive path, privilege_escalation needs a uid change, rapid_spawn needs 25 children of one parent inside 2 seconds, and interpreter_chain needs three consecutive shells or interpreters of two families with inline code.",
+   "predicted_other_alerts": [],
+   "predicted_outcome": "no alerts"
+  }
+ },
+ "written_before_any_run_of": "E01"
+}
