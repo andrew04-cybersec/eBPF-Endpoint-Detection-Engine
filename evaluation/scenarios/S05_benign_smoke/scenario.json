@@ -1,0 +1,14 @@
+{
+ "id": "S05_benign_smoke",
+ "title": "Twenty seconds of low-rate harmless commands",
+ "kind": "benign",
+ "technique": null,
+ "threat_model": "No attacker. A user runs a few ordinary commands (list a directory, read a harmless file, search it, print the date) with pauses in between.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S05",
+ "expected": [],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": null,
+ "notes": "Eight commands, each followed by a 2.5 second sleep, so the process rate stays far under the threshold of rapid_spawn. The files are in the scenario work directory, and nothing in /etc is read."
+}

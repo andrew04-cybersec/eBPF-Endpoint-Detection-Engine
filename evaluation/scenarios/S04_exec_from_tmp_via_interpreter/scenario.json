@@ -1,0 +1,16 @@
+{
+ "id": "S04_exec_from_tmp_via_interpreter",
+ "title": "Run a script staged in /tmp through an interpreter",
+ "kind": "attack",
+ "technique": "T1059",
+ "threat_model": "An attacker stages a script in a world-writable temporary directory and runs it with the system's python3.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S04",
+ "expected": [{"detection": "exec_from_tmp", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": "The program that is executed is /usr/bin/python3, and the script is only an argument. exec_from_tmp looks at the executed filename only, so an interpreter running a script from /tmp is not seen.",
+ "notes": "The script is staged by setup.sh in a unique directory under /tmp (the only scenario that uses /tmp) and removed by teardown.sh. Nothing else in the rules applies to this activity, so no alert is listed as acceptable.",
+ "tmp_staging": true,
+ "requires": ["python3"]
+}

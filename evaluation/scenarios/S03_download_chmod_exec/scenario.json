@@ -1,0 +1,15 @@
+{
+ "id": "S03_download_chmod_exec",
+ "title": "Download a script, make it executable and run it",
+ "kind": "attack",
+ "technique": "T1105",
+ "threat_model": "An attacker with a foothold downloads a second-stage script from a server they control, marks it executable and runs it, each step as a separate command.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S03",
+ "expected": [{"detection": "download_chmod_exec", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": null,
+ "notes": "The server is python3 -m http.server on 127.0.0.1:18741, started by setup.sh before the pipeline and serving a harmless script. The action runs curl -o, chmod +x and the downloaded file by its absolute path, so the three steps are three execs. The connect is to loopback, which outbound_after_exec skips, and nothing else in the rules applies to this activity, so no alert is listed as acceptable.",
+ "requires": ["curl", "python3"]
+}

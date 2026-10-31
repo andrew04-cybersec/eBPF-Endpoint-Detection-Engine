@@ -1,0 +1,14 @@
+{
+ "id": "S02_shell_from_service_before_loader",
+ "title": "A service-named process starts a shell (service started before the loader)",
+ "kind": "attack",
+ "technique": "T1059.004",
+ "threat_model": "An attacker who controls a network service makes it run a shell command, so the shell is a direct child of a process that carries the service's name. The service was already running before the monitoring began.",
+ "phase": "before_loader",
+ "marker": "EVT_EVAL_S02",
+ "expected": [{"detection": "shell_from_service", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": "The service was started before the loader, so the loader never saw it start. Its node in the graph is a placeholder with no name, and shell_from_service and unusual_ancestry cannot evaluate the shell (they count it as unevaluable).",
+ "notes": "The same attack as S01 and the same labels. setup.sh starts a copy of bash named nginx before the pipeline, waiting on a FIFO, and the action writes the command with the marker to the FIFO, so the shell is spawned by a process the loader never saw start."
+}
