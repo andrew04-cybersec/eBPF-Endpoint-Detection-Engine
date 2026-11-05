@@ -1,0 +1,17 @@
+{
+ "id": "S34_raw_command_channel",
+ "title": "Local Command Channel Simulation",
+ "kind": "attack",
+ "group": "independent",
+ "technique": "T1095",
+ "threat_model": "An attacker establishes a bidirectional command channel using messages outside a standard application protocol.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S34_COMMAND_CHANNEL",
+ "expected": [{"detection": "outbound_after_exec", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 15,
+ "known_gap": null,
+ "notes": "Uses a local Unix-domain socket for inert command-and-response exchange; no network traffic or command execution.",
+ "requires": ["python3", "mkdir", "rm"],
+ "attribution": "marker"
+}

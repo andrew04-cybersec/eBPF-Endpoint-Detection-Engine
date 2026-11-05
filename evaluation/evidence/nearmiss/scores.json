@@ -1,0 +1,590 @@
+{
+ "alerts_total": 5,
+ "bad_alert_lines": 0,
+ "benign": {
+  "alerts": 5,
+  "fp_per_hour": 35557.474,
+  "seconds": 0.506
+ },
+ "bpf_stats": {
+  "ambiguous": [],
+  "available": true,
+  "not_found": [],
+  "programs": [
+   {
+    "kernel_name": "handle_connect",
+    "mean_ns_per_run": 338.2,
+    "name": "handle_connect",
+    "own_data": null,
+    "run_cnt": 6,
+    "run_time_ns": 2029,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_attempt",
+    "mean_ns_per_run": 2955.8,
+    "name": "handle_exec_attempt",
+    "own_data": {
+     "count": 451,
+     "what": "exec_attempt events"
+    },
+    "run_cnt": 451,
+    "run_time_ns": 1333074,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_success",
+    "mean_ns_per_run": 12662.4,
+    "name": "handle_exec_success",
+    "own_data": {
+     "count": 427,
+     "what": "exec_success events"
+    },
+    "run_cnt": 427,
+    "run_time_ns": 5406824,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exit",
+    "mean_ns_per_run": 12362.4,
+    "name": "handle_exit",
+    "own_data": null,
+    "run_cnt": 426,
+    "run_time_ns": 5266365,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_exit",
+    "mean_ns_per_run": 528.9,
+    "name": "handle_openat_exit",
+    "own_data": {
+     "count": 1859,
+     "what": "openat_seen"
+    },
+    "run_cnt": 1846,
+    "run_time_ns": 976423,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_save",
+    "mean_ns_per_run": 383.6,
+    "name": "handle_openat_save",
+    "own_data": {
+     "count": 1859,
+     "what": "openat_seen"
+    },
+    "run_cnt": 1847,
+    "run_time_ns": 708478,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setgid",
+    "mean_ns_per_run": null,
+    "name": "handle_setgid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setresgid",
+    "mean_ns_per_run": 577.2,
+    "name": "handle_setresgid",
+    "own_data": null,
+    "run_cnt": 400,
+    "run_time_ns": 230897,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setresuid",
+    "mean_ns_per_run": 12418.0,
+    "name": "handle_setresuid",
+    "own_data": null,
+    "run_cnt": 400,
+    "run_time_ns": 4967187,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setreuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setreuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   }
+  ],
+  "raw_names": [
+   "handle_connect",
+   "handle_exec_attempt",
+   "handle_exec_success",
+   "handle_exit",
+   "handle_openat_exit",
+   "handle_openat_save",
+   "handle_setgid",
+   "handle_setresgid",
+   "handle_setresuid",
+   "handle_setreuid",
+   "handle_setuid"
+  ],
+  "reason": null,
+  "selected_by": "names"
+ },
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 171233799981205,
+    "before_ns": 171233798962436,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 171233799179547
+   },
+   {
+    "after_ns": 171233800678027,
+    "before_ns": 171233799984348,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 171233800114207
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "groups": {
+  "gap": {
+   "detected": 0,
+   "missed": 0,
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "scenarios": 0
+  },
+  "ordinary": {
+   "detected": 0,
+   "missed": 0,
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "scenarios": 0
+  }
+ },
+ "label_set_sha256": "f419657963f3ea5eb19d2327d62e7bf86e0013becea4fdfb974c47ebe9327fcc",
+ "latency": {
+  "all": {
+   "max_ms": 1.207,
+   "n": 5,
+   "p50_ms": 0.611,
+   "p95_ms": 1.207
+  },
+  "mode": "buffered: the stages run as in the live tests, with no python3 -u and no stdbuf",
+  "negative": 0,
+  "true_positive": {
+   "max_ms": null,
+   "n": 0,
+   "p50_ms": null,
+   "p95_ms": null
+  }
+ },
+ "not_run": [],
+ "not_run_reasons": {},
+ "per_detection": {
+  "exec_from_tmp": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 1,
+   "precision_lenient": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  },
+  "persistence_write": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 1,
+   "precision_lenient": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  },
+  "rapid_spawn": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 1,
+   "precision_lenient": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  },
+  "sensitive_file_access": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 2,
+   "precision_lenient": {
+    "den": 2,
+    "num": 0,
+    "value": 0.0
+   },
+   "precision_strict": {
+    "den": 2,
+    "num": 0,
+    "value": 0.0
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  }
+ },
+ "per_technique": {},
+ "pooled": {
+  "acceptable": 0,
+  "fp": 5,
+  "precision_lenient": {
+   "den": 5,
+   "num": 0,
+   "value": 0.0
+  },
+  "precision_strict": {
+   "den": 5,
+   "num": 0,
+   "value": 0.0
+  },
+  "recall": {
+   "den": 0,
+   "num": 0,
+   "value": null
+  },
+  "tp": 0
+ },
+ "predictions": {
+  "label_set_sha256": "f419657963f3ea5eb19d2327d62e7bf86e0013becea4fdfb974c47ebe9327fcc",
+  "mismatches": [],
+  "rows": [
+   {
+    "actual": "no alerts",
+    "id": "N01_install_local_prefix",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "no alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "false alerts",
+    "id": "N02_install_staged_in_tmp",
+    "other_actual": [
+     "exec_from_tmp"
+    ],
+    "other_predicted": [
+     "exec_from_tmp"
+    ],
+    "predicted": "false alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "false alerts",
+    "id": "N03_parallel_build_j200",
+    "other_actual": [
+     "rapid_spawn"
+    ],
+    "other_predicted": [
+     "rapid_spawn"
+    ],
+    "predicted": "false alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "no alerts",
+    "id": "N04_sed_inplace_bashrc",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "no alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "false alerts",
+    "id": "N05_append_bashrc_redirect",
+    "other_actual": [
+     "persistence_write"
+    ],
+    "other_predicted": [
+     "persistence_write"
+    ],
+    "predicted": "false alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "no alerts",
+    "id": "N06_sshkeygen_fake_home",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "no alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "false alerts",
+    "id": "N07_cat_ssh_key_nonlisted_reader",
+    "other_actual": [
+     "sensitive_file_access"
+    ],
+    "other_predicted": [
+     "sensitive_file_access"
+    ],
+    "predicted": "false alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "false alerts",
+    "id": "N08_root_cat_shadow",
+    "other_actual": [
+     "sensitive_file_access"
+    ],
+    "other_predicted": [
+     "sensitive_file_access"
+    ],
+    "predicted": "false alerts",
+    "status": "MATCH"
+   }
+  ]
+ },
+ "resources": {
+  "drops": {
+   "dropped_records": 0,
+   "loader_lines": [
+    "loader: file_stats mode=exit openat_seen=1859 openat_blank=0 file_open_emitted=8 write_list_emitted=1 write_list_skipped_readonly=1"
+   ],
+   "lost_events": 0
+  },
+  "events": {
+   "mean_per_s": 124.294,
+   "n": 2113,
+   "p95_per_s": 2009,
+   "peak_per_s": 2009,
+   "seconds": 17
+  },
+  "processes": {
+   "loader": {
+    "cpu_percent_mean": 0.059,
+    "cpu_percent_p95": 0.998,
+    "max_rss_kb": 10800,
+    "peak_vmhwm_kb": 14880,
+    "samples": 18
+   },
+   "normalizer": {
+    "cpu_percent_mean": 0.352,
+    "cpu_percent_p95": 4.989,
+    "max_rss_kb": 12640,
+    "peak_vmhwm_kb": 12640,
+    "samples": 18
+   },
+   "runner": {
+    "cpu_percent_mean": 0.587,
+    "cpu_percent_p95": 7.982,
+    "max_rss_kb": 15200,
+    "peak_vmhwm_kb": 15200,
+    "samples": 18
+   }
+  }
+ },
+ "scenarios": {
+  "N01_install_local_prefix": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": null,
+   "fp": {},
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "clean",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.016
+  },
+  "N02_install_staged_in_tmp": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": null,
+   "fp": {
+    "exec_from_tmp": 1
+   },
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "false alerts",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.064
+  },
+  "N03_parallel_build_j200": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": null,
+   "fp": {
+    "rapid_spawn": 1
+   },
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "false alerts",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.315
+  },
+  "N04_sed_inplace_bashrc": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": null,
+   "fp": {},
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "clean",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.064
+  },
+  "N05_append_bashrc_redirect": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": null,
+   "fp": {
+    "persistence_write": 1
+   },
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "false alerts",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.032
+  },
+  "N06_sshkeygen_fake_home": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": null,
+   "fp": {},
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "clean",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.008
+  },
+  "N07_cat_ssh_key_nonlisted_reader": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": null,
+   "fp": {
+    "sensitive_file_access": 1
+   },
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "false alerts",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.004
+  },
+  "N08_root_cat_shadow": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": null,
+   "fp": {
+    "sensitive_file_access": 1
+   },
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "false alerts",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 0.004
+  }
+ },
+ "unattributed_in_window": [],
+ "unattributed_outside_windows": [],
+ "warnings": []
+}

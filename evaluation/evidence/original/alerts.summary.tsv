@@ -1,0 +1,22 @@
+run_id	alert_seq	detection	technique	trigger_ts_ns	arrival_ns	latency_ms	trigger_comm	trigger_exe	window	class
+20261030-223359-eval	1	shell_from_service	T1059.004	112812511181228	112812591221309	80.040081	sh	/bin/sh	S01_shell_from_service_after_loader	tp
+20261030-223359-eval	2	download_chmod_exec	T1105	112817641770563	112817642433554	0.662991	EVT_EVAL_S03.sh	/opt/evt_eval_s03_download_chmod_exec/EVT_EVAL_S03.sh	S03_download_chmod_exec	tp
+20261030-223359-eval	3	unusual_ancestry	T1059	112843809599500	112843810404871	0.805371	python3	/usr/bin/python3	S06_service_runs_python	tp
+20261030-223359-eval	4	shell_from_service	T1059.004	112845885065136	112845885402656	0.337520	sh	/bin/sh	S07_service_shell_python	tp
+20261030-223359-eval	5	unusual_ancestry	T1059	112845888579402	112845888920296	0.340894	python3	/usr/bin/python3	S07_service_shell_python	tp
+20261030-223359-eval	6	interpreter_chain	T1059	112847949944142	112847950728276	0.784134	sh	/bin/sh	S08_nested_inline_interpreters	tp
+20261030-223359-eval	7	interpreter_chain	T1059	112847951003073	112847951505825	0.502752	python3	/usr/bin/python3	S08_nested_inline_interpreters	tp
+20261030-223359-eval	8	download_chmod_exec	T1105	112854351278233	112854351841875	0.563642	EVT_EVAL_S11.sh	./EVT_EVAL_S11.sh	S11_download_relative_path	tp
+20261030-223359-eval	9	exec_from_tmp	T1059	112856373009114	112856373743585	0.734471	true	/dev/shm/evt_eval_s12_run_from_shm/true	S12_run_from_shm	tp
+20261030-223359-eval	10	exec_from_tmp	T1059	112858401948538	112858411480225	9.531687	EVT_EVAL_S13.sh	/tmp/evt_eval_s13_download_to_tmp_and_run/EVT_EVAL_S13.sh	S13_download_to_tmp_and_run	tp
+20261030-223359-eval	11	download_chmod_exec	T1105	112858401948538	112858411791598	9.843060	EVT_EVAL_S13.sh	/tmp/evt_eval_s13_download_to_tmp_and_run/EVT_EVAL_S13.sh	S13_download_to_tmp_and_run	tp
+20261030-223359-eval	12	sensitive_file_access	T1003.008	112860441516292	112860442076443	0.560151	cat	/usr/bin/cat	S14_read_shadow	tp
+20261030-223359-eval	13	sensitive_file_access	T1552.004	112862477515018	112862478191206	0.676188	cat	/usr/bin/cat	S15_read_ssh_private_key	tp
+20261030-223359-eval	14	sensitive_file_access	T1003.008	112866518772619	112866519137936	0.365317	cat	/usr/bin/cat	S17_service_reads_passwd	tp
+20261030-223359-eval	15	persistence_write	T1053.003	112868542116214	112868542459966	0.343752	bash	/usr/bin/bash	S18_write_cron_file	tp
+20261030-223359-eval	16	persistence_write	T1546.004	112870562525823	112870562935186	0.409363	bash	/usr/bin/bash	S19_append_bashrc	tp
+20261030-223359-eval	17	persistence_write	T1098.004	112872583710342	112872584087732	0.377390	bash	/usr/bin/bash	S20_write_authorized_keys	tp
+20261030-223359-eval	18	persistence_write	T1543.002	112874593529606	112874593865540	0.335934	bash	/usr/bin/bash	S21_write_systemd_unit	tp
+20261030-223359-eval	19	privilege_escalation	T1068	112880739509509	112880740095087	0.585578	python3		S24_regain_root_via_saved_uid	tp
+20261030-223359-eval	20	outbound_after_exec	T1095	112884860116485	112884860498104	0.381619	bash	/usr/bin/bash	S26_reverse_shell_style_connect	tp
+20261030-223359-eval	21	rapid_spawn	T1059	112959001566224	112959022551383	20.985159	true	/bin/true	S28_burst_of_spawns	tp

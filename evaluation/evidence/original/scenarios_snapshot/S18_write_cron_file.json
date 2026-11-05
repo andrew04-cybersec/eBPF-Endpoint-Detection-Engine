@@ -1,0 +1,23 @@
+{
+ "id": "S18_write_cron_file",
+ "title": "Write a file in /etc/cron.d",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1053.003",
+ "threat_model": "An attacker with root installs a scheduled job so that the code runs again later.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S18",
+ "expected": [
+  {
+   "detection": "persistence_write",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "The file holds only a comment line, so cron runs nothing, and teardown removes it. The shell redirect of the action's bash is the write open, with the comm bash, which is not an expected writer.",
+ "locations": [
+  "cron"
+ ]
+}

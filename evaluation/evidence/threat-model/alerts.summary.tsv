@@ -1,0 +1,4 @@
+run_id	alert_seq	detection	technique	trigger_ts_ns	arrival_ns	latency_ms	trigger_comm	trigger_exe	window	class
+20261031-165318-eval	1	sensitive_file_access	T1552.004	175236994726645	175236995157949	0.431304	cp	/usr/bin/cp	S33_private_key_harvest	tp
+20261031-165318-eval	2	persistence_write	T1053.003	175241168856866	175241169460489	0.603623	bash	/usr/bin/bash	S35_cron_persistence	tp
+20261031-165318-eval	3	persistence_write	T1546.004	175243180265255	175243180695309	0.430054	bash		S36_shell_startup	tp

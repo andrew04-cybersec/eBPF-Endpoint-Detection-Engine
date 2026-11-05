@@ -1,0 +1,281 @@
+{
+ "aborted": null,
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 175229787054457,
+    "before_ns": 175229785453812,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 175229785674879
+   },
+   {
+    "after_ns": 175229787791883,
+    "before_ns": 175229787057892,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 175229787159411
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "harness_processes": [
+  {
+   "pid": 83975,
+   "role": "driver",
+   "start_ns_max": null,
+   "start_ns_min": null
+  },
+  {
+   "pid": 84006,
+   "role": "loader",
+   "start_ns_max": 175229660932873,
+   "start_ns_min": 175229631839032
+  },
+  {
+   "pid": 84008,
+   "role": "normalizer",
+   "start_ns_max": 175229669416786,
+   "start_ns_min": 175229668993377
+  },
+  {
+   "pid": 84010,
+   "role": "runner",
+   "start_ns_max": 175229679654846,
+   "start_ns_min": 175229679287396
+  },
+  {
+   "pid": 84011,
+   "role": "stamper",
+   "start_ns_max": 175229679985713,
+   "start_ns_min": 175229679660004
+  },
+  {
+   "pid": 84007,
+   "role": "tee_events",
+   "start_ns_max": 175229661559473,
+   "start_ns_min": 175229660937918
+  },
+  {
+   "pid": 84009,
+   "role": "tee_normalized",
+   "start_ns_max": 175229669879524,
+   "start_ns_min": 175229669421897
+  },
+  {
+   "pid": 83976,
+   "role": "setup S30_service_shell",
+   "start_ns_max": 175229239995165,
+   "start_ns_min": 175229239473350
+  },
+  {
+   "pid": 83978,
+   "role": "setup S31_payload_transfer",
+   "start_ns_max": 175229274663052,
+   "start_ns_min": 175229274331176
+  },
+  {
+   "pid": 83981,
+   "role": "setup S32_password_material",
+   "start_ns_max": 175229284331779,
+   "start_ns_min": 175229284076705
+  },
+  {
+   "pid": 83985,
+   "role": "setup S33_private_key_harvest",
+   "start_ns_max": 175229323414573,
+   "start_ns_min": 175229322879236
+  },
+  {
+   "pid": 83989,
+   "role": "setup S34_raw_command_channel",
+   "start_ns_max": 175229360431229,
+   "start_ns_min": 175229360118549
+  },
+  {
+   "pid": 83991,
+   "role": "setup S35_cron_persistence",
+   "start_ns_max": 175229379546729,
+   "start_ns_min": 175229379155948
+  },
+  {
+   "pid": 83995,
+   "role": "setup S36_shell_startup",
+   "start_ns_max": 175229397309475,
+   "start_ns_min": 175229396632429
+  },
+  {
+   "pid": 83998,
+   "role": "setup S37_dynamic_linker_hijack",
+   "start_ns_max": 175229406770823,
+   "start_ns_min": 175229406354555
+  },
+  {
+   "pid": 84058,
+   "role": "teardown S30_service_shell",
+   "start_ns_max": 175247947278891,
+   "start_ns_min": 175247946752267
+  },
+  {
+   "pid": 84060,
+   "role": "teardown S31_payload_transfer",
+   "start_ns_max": 175247981922163,
+   "start_ns_min": 175247981481828
+  },
+  {
+   "pid": 84062,
+   "role": "teardown S32_password_material",
+   "start_ns_max": 175248000339755,
+   "start_ns_min": 175247999945759
+  },
+  {
+   "pid": 84064,
+   "role": "teardown S33_private_key_harvest",
+   "start_ns_max": 175248009618310,
+   "start_ns_min": 175248009293747
+  },
+  {
+   "pid": 84067,
+   "role": "teardown S34_raw_command_channel",
+   "start_ns_max": 175248028646404,
+   "start_ns_min": 175248028178277
+  },
+  {
+   "pid": 84069,
+   "role": "teardown S35_cron_persistence",
+   "start_ns_max": 175248037883957,
+   "start_ns_min": 175248037590460
+  },
+  {
+   "pid": 84072,
+   "role": "teardown S36_shell_startup",
+   "start_ns_max": 175248049043236,
+   "start_ns_min": 175248048716476
+  },
+  {
+   "pid": 84075,
+   "role": "teardown S37_dynamic_linker_hijack",
+   "start_ns_max": 175248062187494,
+   "start_ns_min": 175248061774725
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 175229235857819,
+   "ran_to_ns": 175229235866506,
+   "role": "ip"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 175229785453812,
+   "ran_to_ns": 175229787054457,
+   "role": "clock check true 1"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 175229787057892,
+   "ran_to_ns": 175229787791883,
+   "role": "clock check true 2"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 175247247292659,
+   "ran_to_ns": 175247273096398,
+   "role": "bpftool"
+  }
+ ],
+ "leftovers_removed_by_driver": [],
+ "order": [
+  "S30_service_shell",
+  "S31_payload_transfer",
+  "S32_password_material",
+  "S33_private_key_harvest",
+  "S34_raw_command_channel",
+  "S35_cron_persistence",
+  "S36_shell_startup",
+  "S37_dynamic_linker_hijack"
+ ],
+ "pipeline_exit_codes": {
+  "loader": 0,
+  "normalizer": 0,
+  "runner": 0,
+  "stamper": 0,
+  "tee_events": 0,
+  "tee_normalized": 0
+ },
+ "scenarios": {
+  "S30_service_shell": {
+   "end_ns": 175230868469525,
+   "exit_status": 0,
+   "start_ns": 175229802053319,
+   "timed_out": false
+  },
+  "S31_payload_transfer": {
+   "end_ns": 175232940514997,
+   "exit_status": 0,
+   "start_ns": 175232932698219,
+   "timed_out": false
+  },
+  "S32_password_material": {
+   "end_ns": 175234963528273,
+   "exit_status": 0,
+   "start_ns": 175234947775941,
+   "timed_out": false
+  },
+  "S33_private_key_harvest": {
+   "end_ns": 175237006758793,
+   "exit_status": 0,
+   "start_ns": 175236974821540,
+   "timed_out": false
+  },
+  "S34_raw_command_channel": {
+   "end_ns": 175239144163240,
+   "exit_status": 0,
+   "start_ns": 175239029929497,
+   "timed_out": false
+  },
+  "S35_cron_persistence": {
+   "end_ns": 175241170857213,
+   "exit_status": 0,
+   "start_ns": 175241166994510,
+   "timed_out": false
+  },
+  "S36_shell_startup": {
+   "end_ns": 175243194164620,
+   "exit_status": 0,
+   "start_ns": 175243178366863,
+   "timed_out": false
+  },
+  "S37_dynamic_linker_hijack": {
+   "end_ns": 175245246136468,
+   "exit_status": 0,
+   "start_ns": 175245213649957,
+   "timed_out": false
+  }
+ },
+ "setup_status": {
+  "S30_service_shell": 0,
+  "S31_payload_transfer": 0,
+  "S32_password_material": 0,
+  "S33_private_key_harvest": 0,
+  "S34_raw_command_channel": 0,
+  "S35_cron_persistence": 0,
+  "S36_shell_startup": 0,
+  "S37_dynamic_linker_hijack": 0
+ },
+ "skipped": {},
+ "teardown_status": {
+  "S30_service_shell": 0,
+  "S31_payload_transfer": 0,
+  "S32_password_material": 0,
+  "S33_private_key_harvest": 0,
+  "S34_raw_command_channel": 0,
+  "S35_cron_persistence": 0,
+  "S36_shell_startup": 0,
+  "S37_dynamic_linker_hijack": 0
+ }
+}

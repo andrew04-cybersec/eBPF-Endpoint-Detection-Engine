@@ -1,0 +1,48 @@
+PASS  normalized events present  75 events, 0 bad lines
+PASS  every alert line is a JSON object  2 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has the technique the mapping gives it
+PASS  alert_seq counts 1..N in order  [1, 2]
+info  total alerts in the run: {'privilege_escalation': 2} (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+info  sudo-named binary is a symlink
+info  priv_ counters from replaying the saved events: {'priv_already_root': 3, 'priv_expected_escalator': 1, 'priv_transition_after_alert': 1, 'priv_transition_after_request': 1}
+PASS  case a (granted request): the root script ran once  1 exec_success, 1 process keys, exe ['/usr/bin/python3']
+PASS  case a (granted request): the parent's own setresuid(61234, 61234, 0) was recorded at uid 0  1 events
+PASS  case a (granted request): no alert for the parent
+PASS  case a (granted request): the child's setresuid(0, 0, 0) was recorded at uid 61234  1 events, uid [61234]
+PASS  case a (granted request): 1 privilege_escalation alert for the child  1 alerts
+info  case a (granted request): alert privilege_escalation, process python3, process uid 61234 (the uid of the triggering event), evidence [('priv_change', 'setresuid', [0, 0, 0], 61234)]
+PASS  case a (granted request): the child's later exec events are at uid 0 (the request was granted)  2 events
+PASS  case a: the alert is the request signal, evidence is the priv_change
+PASS  case a: the alert process is in the graph
+PASS  case a: priv_transition_after_alert counted for the child  {'priv_transition_after_alert': 1}
+PASS  case b (denied request): the process ran once  2 exec_success, 1 process keys, exe ['/usr/bin/setpriv', '/usr/bin/python3']
+PASS  case b: setuid(0) was recorded at uid 61234  1 events
+PASS  case b: 1 privilege_escalation alert  1 alerts
+info  case b: alert privilege_escalation, process python3, process uid 61234 (the uid of the triggering event), evidence [('priv_change', 'setuid', [0], 61234)]
+PASS  case b: the process never became uid 0 after the request (the request alone raised the alert, so a denied request cannot be told from a granted one)  0 events at uid 0
+PASS  case c (python3 named sudo, the renamed-binary weakness): the root script ran once  1 exec_success, 1 process keys, exe ['/opt/evt_priv.MASuXg/sudo']
+PASS  case c: comm of the sudo-named script is sudo  comm sudo
+PASS  case c (python3 named sudo, the renamed-binary weakness): the parent's own setresuid(61234, 61234, 0) was recorded at uid 0  1 events
+PASS  case c (python3 named sudo, the renamed-binary weakness): no alert for the parent
+PASS  case c (python3 named sudo, the renamed-binary weakness): the child's setresuid(0, 0, 0) was recorded at uid 61234  1 events, uid [61234]
+PASS  case c (python3 named sudo, the renamed-binary weakness): 0 privilege_escalation alert for the child  0 alerts
+PASS  case c (python3 named sudo, the renamed-binary weakness): the child's later exec events are at uid 0 (the request was granted)  2 events
+PASS  case c: the child's request came from comm sudo  comm sudo
+PASS  case c: priv_expected_escalator counted for the child  {'priv_expected_escalator': 1, 'priv_transition_after_request': 1}
+PASS  case d1 (setuid to own uid): the process ran once  2 exec_success, 1 process keys, exe ['/usr/bin/setpriv', '/usr/bin/python3']
+PASS  case d1 (setuid to own uid): the request was recorded at uid 61234  1 events
+PASS  case d1 (setuid to own uid): no alert
+PASS  case d2 (setreuid(-1, uid)): the process ran once  2 exec_success, 1 process keys, exe ['/usr/bin/setpriv', '/usr/bin/python3']
+PASS  case d2 (setreuid(-1, uid)): the request was recorded at uid 61234  1 events
+PASS  case d2 (setreuid(-1, uid)): no alert
+PASS  case d3 (root setuid(0)): the process ran once  1 exec_success, 1 process keys, exe ['/usr/bin/python3']
+PASS  case d3 (root setuid(0)): the request was recorded at uid 0  1 events
+PASS  case d3 (root setuid(0)): no alert
+PASS  case d3: priv_already_root counted  {'priv_already_root': 1}
+PASS  every privilege_escalation alert has its process in the graph  2 alerts
+PASS  no leftover files after cleanup  left: []
+PASS  runner printed its summary
+
+40 checks, 0 failed

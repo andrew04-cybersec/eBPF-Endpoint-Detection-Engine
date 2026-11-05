@@ -1,0 +1,33 @@
+PASS  normalized events present  51 events, 0 bad lines
+PASS  every alert line is a JSON object  3 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2, 3]
+info  total alerts in the run: {'unusual_ancestry': 2, 'shell_from_service': 1} (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+PASS  case a: nginx copy ran  1 exec_success
+PASS  case a: python3 ran as a distinct child of the nginx copy
+PASS  case a: exactly one unusual_ancestry alert for python3  1 alerts
+info  unusual_ancestry alert for pid 14946: ancestry ['python3', 'nginx', None], ancestry_stop placeholder
+PASS  case a: no shell_from_service alert
+PASS  case b: nginx copy ran  1 exec_success
+PASS  case b: sh ran as a distinct child of the nginx copy
+PASS  case b: python3 ran as a distinct child of the sh
+PASS  case b: exactly one unusual_ancestry alert for python3  1 alerts
+info  unusual_ancestry alert for pid 14949: ancestry ['python3', 'sh', 'nginx', None], ancestry_stop placeholder
+PASS  case b: no unusual_ancestry alert for the sh
+PASS  case b: exactly one shell_from_service alert for the sh  1 alerts
+info  shell_from_service alert for pid 14948: ancestry ['sh', 'nginx', None], ancestry_stop placeholder
+PASS  control a: python3 ran below the unlisted copy  1 exec_success
+PASS  control a: no alert of any kind  0 alerts
+PASS  control b: python3 ran below the unlisted copy  1 exec_success
+PASS  control b: no alert of any kind  0 alerts
+PASS  control c: /bin/true ran below the nginx copy  1 exec_success
+PASS  control c: no alert for /bin/true
+PASS  control d: plain python3 ran  1 exec_success
+PASS  control d: no alert for the plain python3
+PASS  runner printed its summary
+info  runner: alerts emitted: 3, shell_from_service 1, unusual_ancestry 2
+info  runner: unevaluable: 4, ancestry_incomplete 4
+
+24 checks, 0 failed

@@ -1,0 +1,130 @@
+{
+ "ambiguous": [],
+ "available": true,
+ "expected": [
+  "handle_connect",
+  "handle_exec_attempt",
+  "handle_exec_success",
+  "handle_exit",
+  "handle_openat_exit",
+  "handle_openat_save",
+  "handle_setgid",
+  "handle_setresgid",
+  "handle_setresuid",
+  "handle_setreuid",
+  "handle_setuid"
+ ],
+ "mode": "exit",
+ "not_found": [],
+ "programs": [
+  {
+   "kernel_name": "handle_connect",
+   "name": "handle_connect",
+   "run_cnt": 3308,
+   "run_time_ns": 930245,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_exec_attempt",
+   "name": "handle_exec_attempt",
+   "run_cnt": 42767,
+   "run_time_ns": 443030083,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_exec_success",
+   "name": "handle_exec_success",
+   "run_cnt": 18527,
+   "run_time_ns": 242774621,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_exit",
+   "name": "handle_exit",
+   "run_cnt": 18589,
+   "run_time_ns": 355967761,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_openat_exit",
+   "name": "handle_openat_exit",
+   "run_cnt": 478210,
+   "run_time_ns": 174675123,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_openat_save",
+   "name": "handle_openat_save",
+   "run_cnt": 478212,
+   "run_time_ns": 141283434,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_setgid",
+   "name": "handle_setgid",
+   "run_cnt": 1,
+   "run_time_ns": 21141,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_setresgid",
+   "name": "handle_setresgid",
+   "run_cnt": 5181,
+   "run_time_ns": 5130873,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_setresuid",
+   "name": "handle_setresuid",
+   "run_cnt": 5181,
+   "run_time_ns": 90510746,
+   "status": "counts"
+  },
+  {
+   "kernel_name": "handle_setreuid",
+   "name": "handle_setreuid",
+   "run_cnt": null,
+   "run_time_ns": null,
+   "status": "no data from bpftool"
+  },
+  {
+   "kernel_name": "handle_setuid",
+   "name": "handle_setuid",
+   "run_cnt": 1,
+   "run_time_ns": 23341,
+   "status": "counts"
+  }
+ ],
+ "raw_names_listed": [
+  "handle_connect",
+  "handle_exec_attempt",
+  "handle_exec_success",
+  "handle_exit",
+  "handle_openat_exit",
+  "handle_openat_save",
+  "handle_setgid",
+  "handle_setresgid",
+  "handle_setresuid",
+  "handle_setreuid",
+  "handle_setuid",
+  "sd_devices",
+  "sd_fw_egress",
+  "sd_fw_ingress"
+ ],
+ "raw_names_selected": [
+  "handle_connect",
+  "handle_exec_attempt",
+  "handle_exec_success",
+  "handle_exit",
+  "handle_openat_exit",
+  "handle_openat_save",
+  "handle_setgid",
+  "handle_setresgid",
+  "handle_setresuid",
+  "handle_setreuid",
+  "handle_setuid"
+ ],
+ "reason": null,
+ "selected_by": "names",
+ "unmatched_names": []
+}

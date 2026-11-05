@@ -1,0 +1,129 @@
+scenario	ts_ns	type	pid	ppid	parent_comm	comm	uid	exe_or_path	detail
+S30_service_shell	175229802290140	exec_attempt	85933	85893		python3	0	/usr/local/sbin/bash	
+S30_service_shell	175229802290140	exec_failed	85933	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S30_service_shell	175229802352831	exec_attempt	85933	85893		python3	0	/usr/local/bin/bash	
+S30_service_shell	175229802352831	exec_failed	85933	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S30_service_shell	175229802367413	exec_attempt	85933	85893		python3	0	/usr/sbin/bash	
+S30_service_shell	175229802367413	exec_failed	85933	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S30_service_shell	175229802392065	exec_attempt	85933	85893		python3	0	/usr/bin/bash	
+S30_service_shell	175229802520001	exec_success	85933	85893		bash	0	/usr/bin/bash	
+S30_service_shell	175229803821520	exec_attempt	85934	85933	bash	bash	0	/usr/bin/bash	
+S30_service_shell	175229803968289	exec_success	85934	85933	bash	bash	0	/usr/bin/bash	
+S30_service_shell	175229806698924	exec_attempt	85935	85934	bash	bash	0	/usr/bin/sleep	
+S30_service_shell	175229807000106	exec_success	85935	85934	bash	sleep	0	/usr/bin/sleep	
+S30_service_shell	175230807693966	exit	85935	85934	bash	sleep	0		exit_code=0
+S30_service_shell	175230811196013	exec_attempt	85934	85933	bash	bash	0	/usr/bin/bash	
+S30_service_shell	175230811407254	exec_success	85934	85933	bash	bash	0	/usr/bin/bash	
+S30_service_shell	175230828305739	exit	85934	85933	bash	bash	0		exit_code=0
+S30_service_shell	175230833970629	exec_attempt	85933	85893		bash	0	/usr/bin/cat	
+S30_service_shell	175230834177497	exec_success	85933	85893		cat	0	/usr/bin/cat	
+S30_service_shell	175230836098409	exit	85933	85893		cat	0		exit_code=0
+S31_payload_transfer	175232933055904	exec_attempt	85936	85893		python3	0	/usr/local/sbin/bash	
+S31_payload_transfer	175232933055904	exec_failed	85936	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S31_payload_transfer	175232933125730	exec_attempt	85936	85893		python3	0	/usr/local/bin/bash	
+S31_payload_transfer	175232933125730	exec_failed	85936	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S31_payload_transfer	175232933141533	exec_attempt	85936	85893		python3	0	/usr/sbin/bash	
+S31_payload_transfer	175232933141533	exec_failed	85936	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S31_payload_transfer	175232933164230	exec_attempt	85936	85893		python3	0	/usr/bin/bash	
+S31_payload_transfer	175232933270045	exec_success	85936	85893		bash	0	/usr/bin/bash	
+S31_payload_transfer	175232935066386	exec_attempt	85937	85936	bash	bash	0	/usr/bin/cp	
+S31_payload_transfer	175232935196978	exec_success	85937	85936	bash	cp	0	/usr/bin/cp	
+S31_payload_transfer	175232936046986	exit	85937	85936	bash	cp	0		exit_code=0
+S31_payload_transfer	175232937045390	exec_attempt	85938	85936	bash	bash	0	/usr/bin/chmod	
+S31_payload_transfer	175232937227542	exec_success	85938	85936	bash	chmod	0	/usr/bin/chmod	
+S31_payload_transfer	175232937735217	exit	85938	85936	bash	chmod	0		exit_code=0
+S31_payload_transfer	175232937855494	exec_attempt	85936	85893		bash	0	/opt/evt_eval_s31_payload_transfer/received_payload	
+S31_payload_transfer	175232938055272	exec_success	85936	85893		received_payloa	0	/opt/evt_eval_s31_payload_transfer/received_payload	
+S31_payload_transfer	175232940358528	exit	85936	85893		received_payloa	0		exit_code=0
+S32_password_material	175234948035821	exec_attempt	85939	85893		python3	0	/usr/local/sbin/bash	
+S32_password_material	175234948035821	exec_failed	85939	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S32_password_material	175234948108546	exec_attempt	85939	85893		python3	0	/usr/local/bin/bash	
+S32_password_material	175234948108546	exec_failed	85939	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S32_password_material	175234948132026	exec_attempt	85939	85893		python3	0	/usr/sbin/bash	
+S32_password_material	175234948132026	exec_failed	85939	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S32_password_material	175234948156785	exec_attempt	85939	85893		python3	0	/usr/bin/bash	
+S32_password_material	175234948250412	exec_success	85939	85893		bash	0	/usr/bin/bash	
+S32_password_material	175234949635837	exec_attempt	85940	85939	bash	bash	0	/usr/bin/cp	
+S32_password_material	175234949859515	exec_success	85940	85939	bash	cp	0	/usr/bin/cp	
+S32_password_material	175234950723793	exit	85940	85939	bash	cp	0		exit_code=0
+S32_password_material	175234951032059	exec_attempt	85941	85939	bash	bash	0	/usr/bin/cp	
+S32_password_material	175234951169154	exec_success	85941	85939	bash	cp	0	/usr/bin/cp	
+S32_password_material	175234951907825	exit	85941	85939	bash	cp	0		exit_code=0
+S32_password_material	175234952431680	exec_attempt	85942	85939	bash	bash	0	/usr/bin/grep	
+S32_password_material	175234952542657	exec_success	85942	85939	bash	grep	0	/usr/bin/grep	
+S32_password_material	175234953468156	exit	85942	85939	bash	grep	0		exit_code=0
+S32_password_material	175234953913257	exec_attempt	85943	85939	bash	bash	0	/usr/bin/grep	
+S32_password_material	175234954162672	exec_success	85943	85939	bash	grep	0	/usr/bin/grep	
+S32_password_material	175234955357584	exit	85943	85939	bash	grep	0		exit_code=0
+S32_password_material	175234955652205	exit	85939	85893		bash	0		exit_code=0
+S33_private_key_harvest	175236975081505	exec_attempt	85944	85893		python3	0	/usr/local/sbin/bash	
+S33_private_key_harvest	175236975081505	exec_failed	85944	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S33_private_key_harvest	175236975198507	exec_attempt	85944	85893		python3	0	/usr/local/bin/bash	
+S33_private_key_harvest	175236975198507	exec_failed	85944	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S33_private_key_harvest	175236975238301	exec_attempt	85944	85893		python3	0	/usr/sbin/bash	
+S33_private_key_harvest	175236975238301	exec_failed	85944	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S33_private_key_harvest	175236975261051	exec_attempt	85944	85893		python3	0	/usr/bin/bash	
+S33_private_key_harvest	175236975365294	exec_success	85944	85893		bash	0	/usr/bin/bash	
+S33_private_key_harvest	175236979082157	exec_attempt	85945	85944	bash	bash	0	/usr/bin/find	
+S33_private_key_harvest	175236979208675	exec_success	85945	85944	bash	find	0	/usr/bin/find	
+S33_private_key_harvest	175236993172807	exit	85945	85944	bash	find	0		exit_code=0
+S33_private_key_harvest	175236994023583	exec_attempt	85946	85944	bash	bash	0	/usr/bin/cp	
+S33_private_key_harvest	175236994145036	exec_success	85946	85944	bash	cp	0	/usr/bin/cp	
+S33_private_key_harvest	175236994726645	file_open	85946	85944	bash	cp	0	/home/evt_eval_s33/.ssh/id_rsa	flags=0 ret=3
+S33_private_key_harvest	175236994904077	exit	85946	85944	bash	cp	0		exit_code=0
+S33_private_key_harvest	175236995119968	exit	85944	85893		bash	0		exit_code=0
+S34_raw_command_channel	175239030255475	exec_attempt	85947	85893		python3	0	/usr/local/sbin/bash	
+S34_raw_command_channel	175239030255475	exec_failed	85947	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S34_raw_command_channel	175239030425423	exec_attempt	85947	85893		python3	0	/usr/local/bin/bash	
+S34_raw_command_channel	175239030425423	exec_failed	85947	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S34_raw_command_channel	175239030450673	exec_attempt	85947	85893		python3	0	/usr/sbin/bash	
+S34_raw_command_channel	175239030450673	exec_failed	85947	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S34_raw_command_channel	175239030462778	exec_attempt	85947	85893		python3	0	/usr/bin/bash	
+S34_raw_command_channel	175239030564521	exec_success	85947	85893		bash	0	/usr/bin/bash	
+S34_raw_command_channel	175239035715529	exec_attempt	85948	85947	bash	bash	0	/usr/bin/python3	
+S34_raw_command_channel	175239035886239	exec_success	85948	85947	bash	python3	0	/usr/bin/python3	
+S34_raw_command_channel	175239096945806	exit	85948	85947	bash	python3	0		exit_code=0
+S34_raw_command_channel	175239097423128	exit	85947	85893		bash	0		exit_code=0
+S35_cron_persistence	175241167338037	exec_attempt	85950	85893		python3	0	/usr/local/sbin/bash	
+S35_cron_persistence	175241167338037	exec_failed	85950	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S35_cron_persistence	175241167395219	exec_attempt	85950	85893		python3	0	/usr/local/bin/bash	
+S35_cron_persistence	175241167395219	exec_failed	85950	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S35_cron_persistence	175241167406266	exec_attempt	85950	85893		python3	0	/usr/sbin/bash	
+S35_cron_persistence	175241167406266	exec_failed	85950	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S35_cron_persistence	175241167416896	exec_attempt	85950	85893		python3	0	/usr/bin/bash	
+S35_cron_persistence	175241167501384	exec_success	85950	85893		bash	0	/usr/bin/bash	
+S35_cron_persistence	175241168856866	file_open	85950	85893		bash	0	/etc/cron.d/evt_eval_s35_cron_persistence	flags=577 ret=3
+S35_cron_persistence	175241169018401	exit	85950	85893		bash	0		exit_code=0
+S36_shell_startup	175243178581251	exec_attempt	85951	85893		python3	0	/usr/local/sbin/bash	
+S36_shell_startup	175243178581251	exec_failed	85951	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S36_shell_startup	175243178637224	exec_attempt	85951	85893		python3	0	/usr/local/bin/bash	
+S36_shell_startup	175243178637224	exec_failed	85951	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S36_shell_startup	175243178650505	exec_attempt	85951	85893		python3	0	/usr/sbin/bash	
+S36_shell_startup	175243178650505	exec_failed	85951	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S36_shell_startup	175243178664749	exec_attempt	85951	85893		python3	0	/usr/bin/bash	
+S36_shell_startup	175243178764227	exec_success	85951	85893		bash	0	/usr/bin/bash	
+S36_shell_startup	175243180265255	file_open	85952	85951	bash	bash	0	/home/evt_eval_s36/.bashrc	flags=577 ret=3
+S36_shell_startup	175243180301761	exec_attempt	85952	85951	bash	bash	0	/usr/bin/cat	
+S36_shell_startup	175243180496009	exec_success	85952	85951	bash	cat	0	/usr/bin/cat	
+S36_shell_startup	175243181001176	exit	85952	85951	bash	cat	0		exit_code=0
+S36_shell_startup	175243181345040	exec_attempt	85951	85893		bash	0	/usr/bin/bash	
+S36_shell_startup	175243181635033	exec_success	85951	85893		bash	0	/usr/bin/bash	
+S36_shell_startup	175243182298603	file_open	85951	85893		bash	0	/etc/passwd	flags=524288 ret=3
+S36_shell_startup	175243189392190	exec_attempt	85953	85951	bash	bash	0	/usr/bin/groups	
+S36_shell_startup	175243189978069	exec_success	85953	85951	bash	groups	0	/usr/bin/groups	
+S36_shell_startup	175243190469604	exit	85953	85951	bash	groups	0		exit_code=0
+S36_shell_startup	175243191181896	exit	85951	85893		bash	0		exit_code=0
+S37_dynamic_linker_hijack	175245213834776	exec_attempt	85975	85893		python3	0	/usr/local/sbin/bash	
+S37_dynamic_linker_hijack	175245213834776	exec_failed	85975	85893		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S37_dynamic_linker_hijack	175245213882343	exec_attempt	85975	85893		python3	0	/usr/local/bin/bash	
+S37_dynamic_linker_hijack	175245213882343	exec_failed	85975	85893		python3	0	/usr/local/bin/bash	reason=next_attempt
+S37_dynamic_linker_hijack	175245213893615	exec_attempt	85975	85893		python3	0	/usr/sbin/bash	
+S37_dynamic_linker_hijack	175245213893615	exec_failed	85975	85893		python3	0	/usr/sbin/bash	reason=next_attempt
+S37_dynamic_linker_hijack	175245213903409	exec_attempt	85975	85893		python3	0	/usr/bin/bash	
+S37_dynamic_linker_hijack	175245213982287	exec_success	85975	85893		bash	0	/usr/bin/bash	
+S37_dynamic_linker_hijack	175245215602027	exec_attempt	85976	85975	bash	bash	0	/bin/true	
+S37_dynamic_linker_hijack	175245216111801	exec_success	85976	85975	bash	true	0	/bin/true	
+S37_dynamic_linker_hijack	175245216527542	exit	85976	85975	bash	true	0		exit_code=0
+S37_dynamic_linker_hijack	175245220463215	exec_attempt	85975	85893		bash	0	/usr/bin/cat	
+S37_dynamic_linker_hijack	175245220664909	exec_success	85975	85893		cat	0	/usr/bin/cat	
+S37_dynamic_linker_hijack	175245230984235	exit	85975	85893		cat	0		exit_code=0

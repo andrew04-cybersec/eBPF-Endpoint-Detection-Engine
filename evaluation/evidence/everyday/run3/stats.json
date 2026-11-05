@@ -1,0 +1,102 @@
+{
+ "alerts": {
+  "rapid_spawn": 153,
+  "sensitive_file_access": 1
+ },
+ "counters": {
+  "chain_incomplete": 2,
+  "persist_read_only": 1454,
+  "priv_already_root": 5050,
+  "priv_state_evicted": 9995,
+  "unevaluable": 1687,
+  "unevaluable_ancestry_incomplete": 1686,
+  "unevaluable_placeholder_parent": 1
+ },
+ "detection_errors": 0,
+ "detections": [
+  {
+   "alerts": 0,
+   "counters": {
+    "unevaluable": 1,
+    "unevaluable_placeholder_parent": 1
+   },
+   "errors": 0,
+   "name": "shell_from_service"
+  },
+  {
+   "alerts": 0,
+   "counters": {},
+   "errors": 0,
+   "name": "exec_from_tmp"
+  },
+  {
+   "alerts": 0,
+   "counters": {},
+   "errors": 0,
+   "name": "download_chmod_exec"
+  },
+  {
+   "alerts": 0,
+   "counters": {
+    "unevaluable": 232,
+    "unevaluable_ancestry_incomplete": 232
+   },
+   "errors": 0,
+   "name": "unusual_ancestry"
+  },
+  {
+   "alerts": 1,
+   "counters": {
+    "unevaluable": 1454,
+    "unevaluable_ancestry_incomplete": 1454
+   },
+   "errors": 0,
+   "name": "sensitive_file_access"
+  },
+  {
+   "alerts": 153,
+   "counters": {},
+   "errors": 0,
+   "name": "rapid_spawn"
+  },
+  {
+   "alerts": 0,
+   "counters": {},
+   "errors": 0,
+   "name": "outbound_after_exec"
+  },
+  {
+   "alerts": 0,
+   "counters": {
+    "persist_read_only": 1454
+   },
+   "errors": 0,
+   "name": "persistence"
+  },
+  {
+   "alerts": 0,
+   "counters": {
+    "priv_already_root": 5050,
+    "priv_state_evicted": 9995
+   },
+   "errors": 0,
+   "name": "privilege_escalation"
+  },
+  {
+   "alerts": 0,
+   "counters": {
+    "chain_incomplete": 2
+   },
+   "errors": 0,
+   "name": "interpreter_chain"
+  }
+ ],
+ "events_processed": 113769,
+ "graph": {
+  "edges": 18184,
+  "lost_events": 0,
+  "nodes": 18189,
+  "placeholders": 5
+ },
+ "unattributed_counters": {}
+}

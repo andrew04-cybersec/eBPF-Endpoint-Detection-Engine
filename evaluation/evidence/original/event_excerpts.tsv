@@ -1,0 +1,841 @@
+scenario	ts_ns	type	pid	ppid	parent_comm	comm	uid	exe_or_path	detail
+S01_shell_from_service_after_loader	112812499390317	exec_attempt	26445	26333		python3	0	/usr/local/sbin/bash	
+S01_shell_from_service_after_loader	112812499390317	exec_failed	26445	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S01_shell_from_service_after_loader	112812499445388	exec_attempt	26445	26333		python3	0	/usr/local/bin/bash	
+S01_shell_from_service_after_loader	112812499445388	exec_failed	26445	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S01_shell_from_service_after_loader	112812499470943	exec_attempt	26445	26333		python3	0	/usr/sbin/bash	
+S01_shell_from_service_after_loader	112812499470943	exec_failed	26445	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S01_shell_from_service_after_loader	112812499494400	exec_attempt	26445	26333		python3	0	/usr/bin/bash	
+S01_shell_from_service_after_loader	112812499622754	exec_success	26445	26333		bash	0	/usr/bin/bash	
+S01_shell_from_service_after_loader	112812504429332	exec_attempt	26446	26445	bash	bash	0	/opt/evt_eval_s01_shell_from_service_after_loader/nginx	
+S01_shell_from_service_after_loader	112812504580276	exec_success	26446	26445	bash	nginx	0	/opt/evt_eval_s01_shell_from_service_after_loader/nginx	
+S01_shell_from_service_after_loader	112812511055314	exec_attempt	26447	26446	nginx	nginx	0	/bin/sh	
+S01_shell_from_service_after_loader	112812511181228	exec_success	26447	26446	nginx	sh	0	/bin/sh	
+S01_shell_from_service_after_loader	112812511918281	exit	26447	26446	nginx	sh	0		exit_code=0
+S01_shell_from_service_after_loader	112812512135339	exit	26446	26445	bash	nginx	0		exit_code=0
+S01_shell_from_service_after_loader	112812512295348	exit	26445	26333		bash	0		exit_code=0
+S02_shell_from_service_before_loader	112814532638676	exec_attempt	26448	26333		python3	0	/usr/local/sbin/bash	
+S02_shell_from_service_before_loader	112814532638676	exec_failed	26448	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S02_shell_from_service_before_loader	112814532699613	exec_attempt	26448	26333		python3	0	/usr/local/bin/bash	
+S02_shell_from_service_before_loader	112814532699613	exec_failed	26448	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S02_shell_from_service_before_loader	112814532722811	exec_attempt	26448	26333		python3	0	/usr/sbin/bash	
+S02_shell_from_service_before_loader	112814532722811	exec_failed	26448	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S02_shell_from_service_before_loader	112814532734139	exec_attempt	26448	26333		python3	0	/usr/bin/bash	
+S02_shell_from_service_before_loader	112814532992340	exec_success	26448	26333		bash	0	/usr/bin/bash	
+S02_shell_from_service_before_loader	112814535944140	exec_attempt	26449	26448	bash	bash	0	/usr/bin/sleep	
+S02_shell_from_service_before_loader	112814536247408	exec_attempt	26450	26342		nginx	0	/usr/bin/sh	
+S02_shell_from_service_before_loader	112814536347101	exec_success	26449	26448	bash	sleep	0	/usr/bin/sleep	
+S02_shell_from_service_before_loader	112814536380525	exec_success	26450	26342		sh	0	/usr/bin/sh	
+S02_shell_from_service_before_loader	112814544640436	exit	26450	26342		sh	0		exit_code=0
+S02_shell_from_service_before_loader	112815537000313	exit	26449	26448	bash	sleep	0		exit_code=0
+S02_shell_from_service_before_loader	112815537239100	exit	26448	26333		bash	0		exit_code=0
+S03_download_chmod_exec	112817621578182	exec_attempt	26451	26333		python3	0	/usr/local/sbin/bash	
+S03_download_chmod_exec	112817621578182	exec_failed	26451	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S03_download_chmod_exec	112817621651456	exec_attempt	26451	26333		python3	0	/usr/local/bin/bash	
+S03_download_chmod_exec	112817621651456	exec_failed	26451	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S03_download_chmod_exec	112817621666239	exec_attempt	26451	26333		python3	0	/usr/sbin/bash	
+S03_download_chmod_exec	112817621666239	exec_failed	26451	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S03_download_chmod_exec	112817621689742	exec_attempt	26451	26333		python3	0	/usr/bin/bash	
+S03_download_chmod_exec	112817621839830	exec_success	26451	26333		bash	0	/usr/bin/bash	
+S03_download_chmod_exec	112817630217040	exec_attempt	26452	26451	bash	bash	0	/usr/bin/curl	
+S03_download_chmod_exec	112817630351753	exec_success	26452	26451	bash	curl	0	/usr/bin/curl	
+S03_download_chmod_exec	112817634678536	file_open	26452	26451	bash	curl	0	/etc/passwd	flags=524288 ret=3
+S03_download_chmod_exec	112817634870549	net_connect	26452	26451	bash	curl	0		family=2 dst=loopback
+S03_download_chmod_exec	112817639633140	exit	26452	26451	bash	curl	0		exit_code=0
+S03_download_chmod_exec	112817640520902	exec_attempt	26454	26451	bash	bash	0	/usr/bin/chmod	
+S03_download_chmod_exec	112817640674590	exec_success	26454	26451	bash	chmod	0	/usr/bin/chmod	
+S03_download_chmod_exec	112817641126150	exit	26454	26451	bash	chmod	0		exit_code=0
+S03_download_chmod_exec	112817641632444	exec_attempt	26455	26451	bash	bash	0	/opt/evt_eval_s03_download_chmod_exec/EVT_EVAL_S03.sh	
+S03_download_chmod_exec	112817641770563	exec_success	26455	26451	bash	EVT_EVAL_S03.sh	0	/opt/evt_eval_s03_download_chmod_exec/EVT_EVAL_S03.sh	
+S03_download_chmod_exec	112817643154079	exit	26455	26451	bash	EVT_EVAL_S03.sh	0		exit_code=0
+S03_download_chmod_exec	112817643345235	exit	26451	26333		bash	0		exit_code=0
+S04_exec_from_tmp_via_interpreter	112819660549276	exec_attempt	26456	26333		python3	0	/usr/local/sbin/bash	
+S04_exec_from_tmp_via_interpreter	112819660549276	exec_failed	26456	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S04_exec_from_tmp_via_interpreter	112819660610947	exec_attempt	26456	26333		python3	0	/usr/local/bin/bash	
+S04_exec_from_tmp_via_interpreter	112819660610947	exec_failed	26456	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S04_exec_from_tmp_via_interpreter	112819660633514	exec_attempt	26456	26333		python3	0	/usr/sbin/bash	
+S04_exec_from_tmp_via_interpreter	112819660633514	exec_failed	26456	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S04_exec_from_tmp_via_interpreter	112819660644988	exec_attempt	26456	26333		python3	0	/usr/bin/bash	
+S04_exec_from_tmp_via_interpreter	112819660733878	exec_success	26456	26333		bash	0	/usr/bin/bash	
+S04_exec_from_tmp_via_interpreter	112819662026232	exec_attempt	26457	26456	bash	bash	0	/usr/bin/python3	
+S04_exec_from_tmp_via_interpreter	112819662222219	exec_success	26457	26456	bash	python3	0	/usr/bin/python3	
+S04_exec_from_tmp_via_interpreter	112819676597548	exit	26457	26456	bash	python3	0		exit_code=0
+S04_exec_from_tmp_via_interpreter	112819676892144	exit	26456	26333		bash	0		exit_code=0
+S05_benign_smoke	112821713424370	exec_attempt	26458	26333		python3	0	/usr/local/sbin/bash	
+S05_benign_smoke	112821713424370	exec_failed	26458	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S05_benign_smoke	112821713487284	exec_attempt	26458	26333		python3	0	/usr/local/bin/bash	
+S05_benign_smoke	112821713487284	exec_failed	26458	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S05_benign_smoke	112821713500397	exec_attempt	26458	26333		python3	0	/usr/sbin/bash	
+S05_benign_smoke	112821713500397	exec_failed	26458	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S05_benign_smoke	112821713513717	exec_attempt	26458	26333		python3	0	/usr/bin/bash	
+S05_benign_smoke	112821713614174	exec_success	26458	26333		bash	0	/usr/bin/bash	
+S05_benign_smoke	112821715055271	exec_attempt	26459	26458	bash	bash	0	/usr/bin/ls	
+S05_benign_smoke	112821715184003	exec_success	26459	26458	bash	ls	0	/usr/bin/ls	
+S05_benign_smoke	112821715951824	exit	26459	26458	bash	ls	0		exit_code=0
+S05_benign_smoke	112821716419199	exec_attempt	26460	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112821716527470	exec_success	26460	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112824217240494	exit	26460	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112824218410087	exec_attempt	26461	26458	bash	bash	0	/usr/bin/cat	
+S05_benign_smoke	112824218762076	exec_success	26461	26458	bash	cat	0	/usr/bin/cat	
+S05_benign_smoke	112824219265308	exit	26461	26458	bash	cat	0		exit_code=0
+S05_benign_smoke	112824219675454	exec_attempt	26462	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112824219797993	exec_success	26462	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112826720612832	exit	26462	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112826723864053	exec_attempt	26463	26458	bash	bash	0	/usr/bin/grep	
+S05_benign_smoke	112826724020217	exec_success	26463	26458	bash	grep	0	/usr/bin/grep	
+S05_benign_smoke	112826724644650	exit	26463	26458	bash	grep	0		exit_code=0
+S05_benign_smoke	112826725019198	exec_attempt	26464	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112826725134820	exec_success	26464	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112829225778304	exit	26464	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112829230282477	exec_attempt	26465	26458	bash	bash	0	/usr/bin/date	
+S05_benign_smoke	112829230459392	exec_success	26465	26458	bash	date	0	/usr/bin/date	
+S05_benign_smoke	112829232588320	exit	26465	26458	bash	date	0		exit_code=0
+S05_benign_smoke	112829232860331	exec_attempt	26466	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112829232967864	exec_success	26466	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112831733690186	exit	26466	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112831734347010	exec_attempt	26467	26458	bash	bash	0	/usr/bin/ls	
+S05_benign_smoke	112831734475844	exec_success	26467	26458	bash	ls	0	/usr/bin/ls	
+S05_benign_smoke	112831735072746	exit	26467	26458	bash	ls	0		exit_code=0
+S05_benign_smoke	112831736651544	exec_attempt	26468	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112831736752209	exec_success	26468	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112834237367714	exit	26468	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112834237915545	exec_attempt	26469	26458	bash	bash	0	/usr/bin/cat	
+S05_benign_smoke	112834238048058	exec_success	26469	26458	bash	cat	0	/usr/bin/cat	
+S05_benign_smoke	112834238442537	exit	26469	26458	bash	cat	0		exit_code=0
+S05_benign_smoke	112834238782562	exec_attempt	26470	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112834239023148	exec_success	26470	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112836739722306	exit	26470	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112836740384557	exec_attempt	26471	26458	bash	bash	0	/usr/bin/grep	
+S05_benign_smoke	112836740534403	exec_success	26471	26458	bash	grep	0	/usr/bin/grep	
+S05_benign_smoke	112836741208692	exit	26471	26458	bash	grep	0		exit_code=0
+S05_benign_smoke	112836741464746	exec_attempt	26472	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112836741973957	exec_success	26472	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112839242716729	exit	26472	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112839243353726	exec_attempt	26473	26458	bash	bash	0	/usr/bin/date	
+S05_benign_smoke	112839243492396	exec_success	26473	26458	bash	date	0	/usr/bin/date	
+S05_benign_smoke	112839243922819	exit	26473	26458	bash	date	0		exit_code=0
+S05_benign_smoke	112839244494530	exec_attempt	26474	26458	bash	bash	0	/usr/bin/sleep	
+S05_benign_smoke	112839244611238	exec_success	26474	26458	bash	sleep	0	/usr/bin/sleep	
+S05_benign_smoke	112841745368871	exit	26474	26458	bash	sleep	0		exit_code=0
+S05_benign_smoke	112841745597438	exit	26458	26333		bash	0		exit_code=0
+S06_service_runs_python	112843801125165	exec_attempt	26475	26333		python3	0	/usr/local/sbin/bash	
+S06_service_runs_python	112843801125165	exec_failed	26475	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S06_service_runs_python	112843801267576	exec_attempt	26475	26333		python3	0	/usr/local/bin/bash	
+S06_service_runs_python	112843801267576	exec_failed	26475	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S06_service_runs_python	112843801326954	exec_attempt	26475	26333		python3	0	/usr/sbin/bash	
+S06_service_runs_python	112843801326954	exec_failed	26475	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S06_service_runs_python	112843801348777	exec_attempt	26475	26333		python3	0	/usr/bin/bash	
+S06_service_runs_python	112843801771739	exec_success	26475	26333		bash	0	/usr/bin/bash	
+S06_service_runs_python	112843803493331	exec_attempt	26476	26475	bash	bash	0	/opt/evt_eval_s06_service_runs_python/nginx	
+S06_service_runs_python	112843805506895	exec_success	26476	26475	bash	nginx	0	/opt/evt_eval_s06_service_runs_python/nginx	
+S06_service_runs_python	112843809481345	exec_attempt	26477	26476	nginx	nginx	0	/usr/bin/python3	
+S06_service_runs_python	112843809599500	exec_success	26477	26476	nginx	python3	0	/usr/bin/python3	
+S06_service_runs_python	112843831005776	exit	26477	26476	nginx	python3	0		exit_code=0
+S06_service_runs_python	112843831278143	exit	26476	26475	bash	nginx	0		exit_code=0
+S06_service_runs_python	112843831558618	exit	26475	26333		bash	0		exit_code=0
+S07_service_shell_python	112845880264304	exec_attempt	26478	26333		python3	0	/usr/local/sbin/bash	
+S07_service_shell_python	112845880264304	exec_failed	26478	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S07_service_shell_python	112845880322956	exec_attempt	26478	26333		python3	0	/usr/local/bin/bash	
+S07_service_shell_python	112845880322956	exec_failed	26478	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S07_service_shell_python	112845880335373	exec_attempt	26478	26333		python3	0	/usr/sbin/bash	
+S07_service_shell_python	112845880335373	exec_failed	26478	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S07_service_shell_python	112845880348387	exec_attempt	26478	26333		python3	0	/usr/bin/bash	
+S07_service_shell_python	112845880447387	exec_success	26478	26333		bash	0	/usr/bin/bash	
+S07_service_shell_python	112845881623691	exec_attempt	26479	26478	bash	bash	0	/opt/evt_eval_s07_service_shell_python/nginx	
+S07_service_shell_python	112845881767851	exec_success	26479	26478	bash	nginx	0	/opt/evt_eval_s07_service_shell_python/nginx	
+S07_service_shell_python	112845884847894	exec_attempt	26480	26479	nginx	nginx	0	/bin/sh	
+S07_service_shell_python	112845885065136	exec_success	26480	26479	nginx	sh	0	/bin/sh	
+S07_service_shell_python	112845888298379	exec_attempt	26481	26480	sh	sh	0	/usr/bin/python3	
+S07_service_shell_python	112845888579402	exec_success	26481	26480	sh	python3	0	/usr/bin/python3	
+S07_service_shell_python	112845903963956	exit	26481	26480	sh	python3	0		exit_code=0
+S07_service_shell_python	112845904220531	exit	26480	26479	nginx	sh	0		exit_code=0
+S07_service_shell_python	112845904434996	exit	26479	26478	bash	nginx	0		exit_code=0
+S07_service_shell_python	112845904678352	exit	26478	26333		bash	0		exit_code=0
+S08_nested_inline_interpreters	112847936659503	exec_attempt	26482	26333		python3	0	/usr/local/sbin/bash	
+S08_nested_inline_interpreters	112847936659503	exec_failed	26482	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S08_nested_inline_interpreters	112847936777318	exec_attempt	26482	26333		python3	0	/usr/local/bin/bash	
+S08_nested_inline_interpreters	112847936777318	exec_failed	26482	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S08_nested_inline_interpreters	112847936801793	exec_attempt	26482	26333		python3	0	/usr/sbin/bash	
+S08_nested_inline_interpreters	112847936801793	exec_failed	26482	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S08_nested_inline_interpreters	112847936813042	exec_attempt	26482	26333		python3	0	/usr/bin/bash	
+S08_nested_inline_interpreters	112847936914300	exec_success	26482	26333		bash	0	/usr/bin/bash	
+S08_nested_inline_interpreters	112847938207046	exec_attempt	26483	26482	bash	bash	0	/usr/bin/python3	
+S08_nested_inline_interpreters	112847938339375	exec_success	26483	26482	bash	python3	0	/usr/bin/python3	
+S08_nested_inline_interpreters	112847949840341	exec_attempt	26484	26483	python3	python3	0	/bin/sh	
+S08_nested_inline_interpreters	112847949944142	exec_success	26484	26483	python3	sh	0	/bin/sh	
+S08_nested_inline_interpreters	112847950884443	exec_attempt	26485	26484	sh	sh	0	/usr/bin/python3	
+S08_nested_inline_interpreters	112847951003073	exec_success	26485	26484	sh	python3	0	/usr/bin/python3	
+S08_nested_inline_interpreters	112847964449352	exit	26485	26484	sh	python3	0		exit_code=0
+S08_nested_inline_interpreters	112847964683057	exit	26484	26483	python3	sh	0		exit_code=0
+S08_nested_inline_interpreters	112847966909118	exit	26483	26482	bash	python3	0		exit_code=0
+S08_nested_inline_interpreters	112847967205211	exit	26482	26333		bash	0		exit_code=0
+S09_nested_script_files	112849975578975	exec_attempt	26486	26333		python3	0	/usr/local/sbin/bash	
+S09_nested_script_files	112849975578975	exec_failed	26486	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S09_nested_script_files	112849975703786	exec_attempt	26486	26333		python3	0	/usr/local/bin/bash	
+S09_nested_script_files	112849975703786	exec_failed	26486	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S09_nested_script_files	112849975735883	exec_attempt	26486	26333		python3	0	/usr/sbin/bash	
+S09_nested_script_files	112849975735883	exec_failed	26486	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S09_nested_script_files	112849975759585	exec_attempt	26486	26333		python3	0	/usr/bin/bash	
+S09_nested_script_files	112849975855432	exec_success	26486	26333		bash	0	/usr/bin/bash	
+S09_nested_script_files	112849977162087	exec_attempt	26487	26486	bash	bash	0	/usr/bin/timeout	
+S09_nested_script_files	112849977479964	exec_success	26487	26486	bash	timeout	0	/usr/bin/timeout	
+S09_nested_script_files	112849978176209	exec_attempt	26488	26487	timeout	timeout	0	/usr/local/sbin/bash	
+S09_nested_script_files	112849978176209	exec_failed	26488	26487	timeout	timeout	0	/usr/local/sbin/bash	reason=next_attempt
+S09_nested_script_files	112849978373123	exec_attempt	26488	26487	timeout	timeout	0	/usr/local/bin/bash	
+S09_nested_script_files	112849978373123	exec_failed	26488	26487	timeout	timeout	0	/usr/local/bin/bash	reason=next_attempt
+S09_nested_script_files	112849978422427	exec_attempt	26488	26487	timeout	timeout	0	/usr/sbin/bash	
+S09_nested_script_files	112849978422427	exec_failed	26488	26487	timeout	timeout	0	/usr/sbin/bash	reason=next_attempt
+S09_nested_script_files	112849978481060	exec_attempt	26488	26487	timeout	timeout	0	/usr/bin/bash	
+S09_nested_script_files	112849978756876	exec_success	26488	26487	timeout	bash	0	/usr/bin/bash	
+S09_nested_script_files	112849988611913	exec_attempt	26489	26488	bash	bash	0	/usr/bin/python3	
+S09_nested_script_files	112849988798253	exec_success	26489	26488	bash	python3	0	/usr/bin/python3	
+S09_nested_script_files	112850013692627	exec_attempt	26490	26489	python3	python3	0	/usr/local/sbin/sh	
+S09_nested_script_files	112850013692627	exec_failed	26490	26489	python3	python3	0	/usr/local/sbin/sh	reason=next_attempt
+S09_nested_script_files	112850013792316	exec_attempt	26490	26489	python3	python3	0	/usr/local/bin/sh	
+S09_nested_script_files	112850013792316	exec_failed	26490	26489	python3	python3	0	/usr/local/bin/sh	reason=next_attempt
+S09_nested_script_files	112850013804953	exec_attempt	26490	26489	python3	python3	0	/usr/sbin/sh	
+S09_nested_script_files	112850013804953	exec_failed	26490	26489	python3	python3	0	/usr/sbin/sh	reason=next_attempt
+S09_nested_script_files	112850013817740	exec_attempt	26490	26489	python3	python3	0	/usr/bin/sh	
+S09_nested_script_files	112850013907913	exec_success	26490	26489	python3	sh	0	/usr/bin/sh	
+S09_nested_script_files	112850019265272	exec_attempt	26491	26490	sh	sh	0	/usr/bin/python3	
+S09_nested_script_files	112850019493784	exec_success	26491	26490	sh	python3	0	/usr/bin/python3	
+S09_nested_script_files	112850034306726	exit	26491	26490	sh	python3	0		exit_code=0
+S09_nested_script_files	112850034470202	exit	26490	26489	python3	sh	0		exit_code=0
+S09_nested_script_files	112850037383323	exit	26489	26488	bash	python3	0		exit_code=0
+S09_nested_script_files	112850037699209	exit	26488	26487	timeout	bash	0		exit_code=0
+S09_nested_script_files	112850037924800	exit	26487	26486	bash	timeout	0		exit_code=0
+S09_nested_script_files	112850038118146	exit	26486	26333		bash	0		exit_code=0
+S10_download_via_python	112852113976390	exec_attempt	26492	26333		python3	0	/usr/local/sbin/bash	
+S10_download_via_python	112852113976390	exec_failed	26492	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S10_download_via_python	112852114040593	exec_attempt	26492	26333		python3	0	/usr/local/bin/bash	
+S10_download_via_python	112852114040593	exec_failed	26492	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S10_download_via_python	112852114052822	exec_attempt	26492	26333		python3	0	/usr/sbin/bash	
+S10_download_via_python	112852114052822	exec_failed	26492	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S10_download_via_python	112852114063525	exec_attempt	26492	26333		python3	0	/usr/bin/bash	
+S10_download_via_python	112852114193504	exec_success	26492	26333		bash	0	/usr/bin/bash	
+S10_download_via_python	112852123609322	exec_attempt	26493	26492	bash	bash	0	/usr/bin/python3	
+S10_download_via_python	112852123733962	exec_success	26493	26492	bash	python3	0	/usr/bin/python3	
+S10_download_via_python	112852293406217	net_connect	26493	26492	bash	python3	0		family=2 dst=loopback
+S10_download_via_python	112852304042666	exit	26493	26492	bash	python3	0		exit_code=0
+S10_download_via_python	112852312415764	exec_attempt	26495	26492	bash	bash	0	/usr/bin/chmod	
+S10_download_via_python	112852312595650	exec_success	26495	26492	bash	chmod	0	/usr/bin/chmod	
+S10_download_via_python	112852313166931	exit	26495	26492	bash	chmod	0		exit_code=0
+S10_download_via_python	112852313420378	exec_attempt	26496	26492	bash	bash	0	/opt/evt_eval_s10_download_via_python/EVT_EVAL_S10.sh	
+S10_download_via_python	112852313559238	exec_success	26496	26492	bash	EVT_EVAL_S10.sh	0	/opt/evt_eval_s10_download_via_python/EVT_EVAL_S10.sh	
+S10_download_via_python	112852314911194	exit	26496	26492	bash	EVT_EVAL_S10.sh	0		exit_code=0
+S10_download_via_python	112852315126762	exit	26492	26333		bash	0		exit_code=0
+S11_download_relative_path	112854339727974	exec_attempt	26497	26333		python3	0	/usr/local/sbin/bash	
+S11_download_relative_path	112854339727974	exec_failed	26497	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S11_download_relative_path	112854339788475	exec_attempt	26497	26333		python3	0	/usr/local/bin/bash	
+S11_download_relative_path	112854339788475	exec_failed	26497	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S11_download_relative_path	112854339800851	exec_attempt	26497	26333		python3	0	/usr/sbin/bash	
+S11_download_relative_path	112854339800851	exec_failed	26497	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S11_download_relative_path	112854339812358	exec_attempt	26497	26333		python3	0	/usr/bin/bash	
+S11_download_relative_path	112854339906041	exec_success	26497	26333		bash	0	/usr/bin/bash	
+S11_download_relative_path	112854341091628	exec_attempt	26498	26497	bash	bash	0	/usr/bin/curl	
+S11_download_relative_path	112854341283041	exec_success	26498	26497	bash	curl	0	/usr/bin/curl	
+S11_download_relative_path	112854344502848	file_open	26498	26497	bash	curl	0	/etc/passwd	flags=524288 ret=3
+S11_download_relative_path	112854344639497	net_connect	26498	26497	bash	curl	0		family=2 dst=loopback
+S11_download_relative_path	112854350075091	exit	26498	26497	bash	curl	0		exit_code=0
+S11_download_relative_path	112854350364183	exec_attempt	26500	26497	bash	bash	0	/usr/bin/chmod	
+S11_download_relative_path	112854350468580	exec_success	26500	26497	bash	chmod	0	/usr/bin/chmod	
+S11_download_relative_path	112854350839688	exit	26500	26497	bash	chmod	0		exit_code=0
+S11_download_relative_path	112854351160562	exec_attempt	26501	26497	bash	bash	0	./EVT_EVAL_S11.sh	
+S11_download_relative_path	112854351278233	exec_success	26501	26497	bash	EVT_EVAL_S11.sh	0	./EVT_EVAL_S11.sh	
+S11_download_relative_path	112854352594468	exit	26501	26497	bash	EVT_EVAL_S11.sh	0		exit_code=0
+S11_download_relative_path	112854352801974	exit	26497	26333		bash	0		exit_code=0
+S12_run_from_shm	112856371304054	exec_attempt	26502	26333		python3	0	/usr/local/sbin/bash	
+S12_run_from_shm	112856371304054	exec_failed	26502	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S12_run_from_shm	112856371358518	exec_attempt	26502	26333		python3	0	/usr/local/bin/bash	
+S12_run_from_shm	112856371358518	exec_failed	26502	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S12_run_from_shm	112856371381227	exec_attempt	26502	26333		python3	0	/usr/sbin/bash	
+S12_run_from_shm	112856371381227	exec_failed	26502	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S12_run_from_shm	112856371392466	exec_attempt	26502	26333		python3	0	/usr/bin/bash	
+S12_run_from_shm	112856371475401	exec_success	26502	26333		bash	0	/usr/bin/bash	
+S12_run_from_shm	112856372863890	exec_attempt	26503	26502	bash	bash	0	/dev/shm/evt_eval_s12_run_from_shm/true	
+S12_run_from_shm	112856373009114	exec_success	26503	26502	bash	true	0	/dev/shm/evt_eval_s12_run_from_shm/true	
+S12_run_from_shm	112856373429881	exit	26503	26502	bash	true	0		exit_code=0
+S12_run_from_shm	112856373908668	exit	26502	26333		bash	0		exit_code=0
+S13_download_to_tmp_and_run	112858387637025	exec_attempt	26504	26333		python3	0	/usr/local/sbin/bash	
+S13_download_to_tmp_and_run	112858387637025	exec_failed	26504	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S13_download_to_tmp_and_run	112858387695748	exec_attempt	26504	26333		python3	0	/usr/local/bin/bash	
+S13_download_to_tmp_and_run	112858387695748	exec_failed	26504	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S13_download_to_tmp_and_run	112858387710061	exec_attempt	26504	26333		python3	0	/usr/sbin/bash	
+S13_download_to_tmp_and_run	112858387710061	exec_failed	26504	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S13_download_to_tmp_and_run	112858387732256	exec_attempt	26504	26333		python3	0	/usr/bin/bash	
+S13_download_to_tmp_and_run	112858387834289	exec_success	26504	26333		bash	0	/usr/bin/bash	
+S13_download_to_tmp_and_run	112858388992213	exec_attempt	26505	26504	bash	bash	0	/usr/bin/curl	
+S13_download_to_tmp_and_run	112858389142137	exec_success	26505	26504	bash	curl	0	/usr/bin/curl	
+S13_download_to_tmp_and_run	112858393587333	file_open	26505	26504	bash	curl	0	/etc/passwd	flags=524288 ret=3
+S13_download_to_tmp_and_run	112858394077970	net_connect	26505	26504	bash	curl	0		family=2 dst=loopback
+S13_download_to_tmp_and_run	112858397834922	exit	26505	26504	bash	curl	0		exit_code=0
+S13_download_to_tmp_and_run	112858401037231	exec_attempt	26507	26504	bash	bash	0	/usr/bin/chmod	
+S13_download_to_tmp_and_run	112858401213241	exec_success	26507	26504	bash	chmod	0	/usr/bin/chmod	
+S13_download_to_tmp_and_run	112858401592694	exit	26507	26504	bash	chmod	0		exit_code=0
+S13_download_to_tmp_and_run	112858401825848	exec_attempt	26508	26504	bash	bash	0	/tmp/evt_eval_s13_download_to_tmp_and_run/EVT_EVAL_S13.sh	
+S13_download_to_tmp_and_run	112858401948538	exec_success	26508	26504	bash	EVT_EVAL_S13.sh	0	/tmp/evt_eval_s13_download_to_tmp_and_run/EVT_EVAL_S13.sh	
+S13_download_to_tmp_and_run	112858411435150	exit	26508	26504	bash	EVT_EVAL_S13.sh	0		exit_code=0
+S13_download_to_tmp_and_run	112858411577697	exit	26504	26333		bash	0		exit_code=0
+S14_read_shadow	112860438752392	exec_attempt	26509	26333		python3	0	/usr/local/sbin/bash	
+S14_read_shadow	112860438752392	exec_failed	26509	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S14_read_shadow	112860438851325	exec_attempt	26509	26333		python3	0	/usr/local/bin/bash	
+S14_read_shadow	112860438851325	exec_failed	26509	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S14_read_shadow	112860438864210	exec_attempt	26509	26333		python3	0	/usr/sbin/bash	
+S14_read_shadow	112860438864210	exec_failed	26509	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S14_read_shadow	112860438875500	exec_attempt	26509	26333		python3	0	/usr/bin/bash	
+S14_read_shadow	112860438962580	exec_success	26509	26333		bash	0	/usr/bin/bash	
+S14_read_shadow	112860440896773	exec_attempt	26510	26509	bash	bash	0	/usr/bin/cat	
+S14_read_shadow	112860441172170	exec_success	26510	26509	bash	cat	0	/usr/bin/cat	
+S14_read_shadow	112860441516292	file_open	26510	26509	bash	cat	0	/etc/shadow	flags=0 ret=3
+S14_read_shadow	112860441585910	exit	26510	26509	bash	cat	0		exit_code=0
+S14_read_shadow	112860441740694	exit	26509	26333		bash	0		exit_code=0
+S15_read_ssh_private_key	112862467233499	exec_attempt	26511	26333		python3	0	/usr/local/sbin/bash	
+S15_read_ssh_private_key	112862467233499	exec_failed	26511	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S15_read_ssh_private_key	112862467344173	exec_attempt	26511	26333		python3	0	/usr/local/bin/bash	
+S15_read_ssh_private_key	112862467344173	exec_failed	26511	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S15_read_ssh_private_key	112862467380036	exec_attempt	26511	26333		python3	0	/usr/sbin/bash	
+S15_read_ssh_private_key	112862467380036	exec_failed	26511	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S15_read_ssh_private_key	112862467410028	exec_attempt	26511	26333		python3	0	/usr/bin/bash	
+S15_read_ssh_private_key	112862467509765	exec_success	26511	26333		bash	0	/usr/bin/bash	
+S15_read_ssh_private_key	112862477006431	exec_attempt	26512	26511	bash	bash	0	/usr/bin/cat	
+S15_read_ssh_private_key	112862477136208	exec_success	26512	26511	bash	cat	0	/usr/bin/cat	
+S15_read_ssh_private_key	112862477515018	file_open	26512	26511	bash	cat	0	/home/evt_eval_s15/.ssh/id_ed25519	flags=0 ret=3
+S15_read_ssh_private_key	112862477598187	exit	26512	26511	bash	cat	0		exit_code=0
+S15_read_ssh_private_key	112862477773274	exit	26511	26333		bash	0		exit_code=0
+S16_read_shadow_renamed_reader	112864492917142	exec_attempt	26513	26333		python3	0	/usr/local/sbin/bash	
+S16_read_shadow_renamed_reader	112864492917142	exec_failed	26513	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S16_read_shadow_renamed_reader	112864492987268	exec_attempt	26513	26333		python3	0	/usr/local/bin/bash	
+S16_read_shadow_renamed_reader	112864492987268	exec_failed	26513	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S16_read_shadow_renamed_reader	112864493000697	exec_attempt	26513	26333		python3	0	/usr/sbin/bash	
+S16_read_shadow_renamed_reader	112864493000697	exec_failed	26513	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S16_read_shadow_renamed_reader	112864493024941	exec_attempt	26513	26333		python3	0	/usr/bin/bash	
+S16_read_shadow_renamed_reader	112864493128265	exec_success	26513	26333		bash	0	/usr/bin/bash	
+S16_read_shadow_renamed_reader	112864494476306	exec_attempt	26514	26513	bash	bash	0	/opt/evt_eval_s16_read_shadow_renamed_reader/sudo	
+S16_read_shadow_renamed_reader	112864494673602	exec_success	26514	26513	bash	sudo	0	/opt/evt_eval_s16_read_shadow_renamed_reader/sudo	
+S16_read_shadow_renamed_reader	112864495036723	file_open	26514	26513	bash	sudo	0	/etc/shadow	flags=0 ret=3
+S16_read_shadow_renamed_reader	112864495111480	exit	26514	26513	bash	sudo	0		exit_code=0
+S16_read_shadow_renamed_reader	112864495376788	exit	26513	26333		bash	0		exit_code=0
+S17_service_reads_passwd	112866502939789	exec_attempt	26515	26333		python3	0	/usr/local/sbin/bash	
+S17_service_reads_passwd	112866502939789	exec_failed	26515	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S17_service_reads_passwd	112866503002233	exec_attempt	26515	26333		python3	0	/usr/local/bin/bash	
+S17_service_reads_passwd	112866503002233	exec_failed	26515	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S17_service_reads_passwd	112866503026021	exec_attempt	26515	26333		python3	0	/usr/sbin/bash	
+S17_service_reads_passwd	112866503026021	exec_failed	26515	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S17_service_reads_passwd	112866503051602	exec_attempt	26515	26333		python3	0	/usr/bin/bash	
+S17_service_reads_passwd	112866503293522	exec_success	26515	26333		bash	0	/usr/bin/bash	
+S17_service_reads_passwd	112866504872991	exec_attempt	26516	26515	bash	bash	0	/opt/evt_eval_s17_service_reads_passwd/nginx	
+S17_service_reads_passwd	112866505009448	exec_success	26516	26515	bash	nginx	0	/opt/evt_eval_s17_service_reads_passwd/nginx	
+S17_service_reads_passwd	112866518199855	exec_attempt	26517	26516	nginx	nginx	0	/usr/bin/cat	
+S17_service_reads_passwd	112866518330764	exec_success	26517	26516	nginx	cat	0	/usr/bin/cat	
+S17_service_reads_passwd	112866518772619	file_open	26517	26516	nginx	cat	0	/etc/passwd	flags=0 ret=3
+S17_service_reads_passwd	112866518843887	exit	26517	26516	nginx	cat	0		exit_code=0
+S17_service_reads_passwd	112866519029737	exit	26516	26515	bash	nginx	0		exit_code=0
+S17_service_reads_passwd	112866519263564	exit	26515	26333		bash	0		exit_code=0
+S18_write_cron_file	112868540441720	exec_attempt	26518	26333		python3	0	/usr/local/sbin/bash	
+S18_write_cron_file	112868540441720	exec_failed	26518	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S18_write_cron_file	112868540497859	exec_attempt	26518	26333		python3	0	/usr/local/bin/bash	
+S18_write_cron_file	112868540497859	exec_failed	26518	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S18_write_cron_file	112868540511817	exec_attempt	26518	26333		python3	0	/usr/sbin/bash	
+S18_write_cron_file	112868540511817	exec_failed	26518	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S18_write_cron_file	112868540533682	exec_attempt	26518	26333		python3	0	/usr/bin/bash	
+S18_write_cron_file	112868540842168	exec_success	26518	26333		bash	0	/usr/bin/bash	
+S18_write_cron_file	112868542116214	file_open	26518	26333		bash	0	/etc/cron.d/evt_eval_s18_write_cron_file	flags=577 ret=3
+S18_write_cron_file	112868542283730	exit	26518	26333		bash	0		exit_code=0
+S19_append_bashrc	112870561299811	exec_attempt	26519	26333		python3	0	/usr/local/sbin/bash	
+S19_append_bashrc	112870561299811	exec_failed	26519	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S19_append_bashrc	112870561375605	exec_attempt	26519	26333		python3	0	/usr/local/bin/bash	
+S19_append_bashrc	112870561375605	exec_failed	26519	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S19_append_bashrc	112870561401679	exec_attempt	26519	26333		python3	0	/usr/sbin/bash	
+S19_append_bashrc	112870561401679	exec_failed	26519	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S19_append_bashrc	112870561413097	exec_attempt	26519	26333		python3	0	/usr/bin/bash	
+S19_append_bashrc	112870561502656	exec_success	26519	26333		bash	0	/usr/bin/bash	
+S19_append_bashrc	112870562525823	file_open	26519	26333		bash	0	/home/evt_eval_s19/.bashrc	flags=1089 ret=3
+S19_append_bashrc	112870562673303	exit	26519	26333		bash	0		exit_code=0
+S20_write_authorized_keys	112872582339141	exec_attempt	26520	26333		python3	0	/usr/local/sbin/bash	
+S20_write_authorized_keys	112872582339141	exec_failed	26520	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S20_write_authorized_keys	112872582393406	exec_attempt	26520	26333		python3	0	/usr/local/bin/bash	
+S20_write_authorized_keys	112872582393406	exec_failed	26520	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S20_write_authorized_keys	112872582416039	exec_attempt	26520	26333		python3	0	/usr/sbin/bash	
+S20_write_authorized_keys	112872582416039	exec_failed	26520	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S20_write_authorized_keys	112872582427322	exec_attempt	26520	26333		python3	0	/usr/bin/bash	
+S20_write_authorized_keys	112872582512865	exec_success	26520	26333		bash	0	/usr/bin/bash	
+S20_write_authorized_keys	112872583710342	file_open	26520	26333		bash	0	/home/evt_eval_s20/.ssh/authorized_keys	flags=577 ret=3
+S20_write_authorized_keys	112872583842485	exit	26520	26333		bash	0		exit_code=0
+S21_write_systemd_unit	112874591106395	exec_attempt	26521	26333		python3	0	/usr/local/sbin/bash	
+S21_write_systemd_unit	112874591106395	exec_failed	26521	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S21_write_systemd_unit	112874591159131	exec_attempt	26521	26333		python3	0	/usr/local/bin/bash	
+S21_write_systemd_unit	112874591159131	exec_failed	26521	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S21_write_systemd_unit	112874591182511	exec_attempt	26521	26333		python3	0	/usr/sbin/bash	
+S21_write_systemd_unit	112874591182511	exec_failed	26521	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S21_write_systemd_unit	112874591203874	exec_attempt	26521	26333		python3	0	/usr/bin/bash	
+S21_write_systemd_unit	112874591287439	exec_success	26521	26333		bash	0	/usr/bin/bash	
+S21_write_systemd_unit	112874593529606	file_open	26521	26333		bash	0	/etc/systemd/system/evt_eval_s21_write_systemd_unit.service	flags=577 ret=3
+S21_write_systemd_unit	112874593657824	exit	26521	26333		bash	0		exit_code=0
+S22_move_file_into_cron_dir	112876599719928	exec_attempt	26522	26333		python3	0	/usr/local/sbin/bash	
+S22_move_file_into_cron_dir	112876599719928	exec_failed	26522	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S22_move_file_into_cron_dir	112876599778996	exec_attempt	26522	26333		python3	0	/usr/local/bin/bash	
+S22_move_file_into_cron_dir	112876599778996	exec_failed	26522	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S22_move_file_into_cron_dir	112876599802263	exec_attempt	26522	26333		python3	0	/usr/sbin/bash	
+S22_move_file_into_cron_dir	112876599802263	exec_failed	26522	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S22_move_file_into_cron_dir	112876599825983	exec_attempt	26522	26333		python3	0	/usr/bin/bash	
+S22_move_file_into_cron_dir	112876599931012	exec_success	26522	26333		bash	0	/usr/bin/bash	
+S22_move_file_into_cron_dir	112876601226539	exec_attempt	26523	26522	bash	bash	0	/usr/bin/mv	
+S22_move_file_into_cron_dir	112876601428180	exec_success	26523	26522	bash	mv	0	/usr/bin/mv	
+S22_move_file_into_cron_dir	112876602600033	exit	26523	26522	bash	mv	0		exit_code=0
+S22_move_file_into_cron_dir	112876602788124	exit	26522	26333		bash	0		exit_code=0
+S23_write_cron_file_renamed_writer	112878655733415	exec_attempt	26524	26333		python3	0	/usr/local/sbin/bash	
+S23_write_cron_file_renamed_writer	112878655733415	exec_failed	26524	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S23_write_cron_file_renamed_writer	112878655790789	exec_attempt	26524	26333		python3	0	/usr/local/bin/bash	
+S23_write_cron_file_renamed_writer	112878655790789	exec_failed	26524	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S23_write_cron_file_renamed_writer	112878655803073	exec_attempt	26524	26333		python3	0	/usr/sbin/bash	
+S23_write_cron_file_renamed_writer	112878655803073	exec_failed	26524	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S23_write_cron_file_renamed_writer	112878655816946	exec_attempt	26524	26333		python3	0	/usr/bin/bash	
+S23_write_cron_file_renamed_writer	112878655916726	exec_success	26524	26333		bash	0	/usr/bin/bash	
+S23_write_cron_file_renamed_writer	112878659422152	exec_attempt	26525	26524	bash	bash	0	/opt/evt_eval_s23_write_cron_file_renamed_writer/dpkg	
+S23_write_cron_file_renamed_writer	112878659579677	exec_success	26525	26524	bash	dpkg	0	/opt/evt_eval_s23_write_cron_file_renamed_writer/dpkg	
+S23_write_cron_file_renamed_writer	112878671898326	file_open	26525	26524	bash	dpkg	0	/etc/cron.d/evt_eval_s23_write_cron_file_renamed_writer	flags=577 ret=3
+S23_write_cron_file_renamed_writer	112878672114809	exit	26525	26524	bash	dpkg	0		exit_code=0
+S23_write_cron_file_renamed_writer	112878672304913	exit	26524	26333		bash	0		exit_code=0
+S24_regain_root_via_saved_uid	112880724575432	exec_attempt	26526	26333		python3	0	/usr/local/sbin/bash	
+S24_regain_root_via_saved_uid	112880724575432	exec_failed	26526	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S24_regain_root_via_saved_uid	112880724640413	exec_attempt	26526	26333		python3	0	/usr/local/bin/bash	
+S24_regain_root_via_saved_uid	112880724640413	exec_failed	26526	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S24_regain_root_via_saved_uid	112880724652550	exec_attempt	26526	26333		python3	0	/usr/sbin/bash	
+S24_regain_root_via_saved_uid	112880724652550	exec_failed	26526	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S24_regain_root_via_saved_uid	112880724664117	exec_attempt	26526	26333		python3	0	/usr/bin/bash	
+S24_regain_root_via_saved_uid	112880724998713	exec_success	26526	26333		bash	0	/usr/bin/bash	
+S24_regain_root_via_saved_uid	112880726432001	exec_attempt	26527	26526	bash	bash	0	/usr/bin/python3	
+S24_regain_root_via_saved_uid	112880726606665	exec_success	26527	26526	bash	python3	0	/usr/bin/python3	
+S24_regain_root_via_saved_uid	112880737906222	priv_change	26527	26526	bash	python3	0		setresgid ids=[61234, 61234, 0]
+S24_regain_root_via_saved_uid	112880737944300	priv_change	26527	26526	bash	python3	0		setresuid ids=[61234, 61234, 0]
+S24_regain_root_via_saved_uid	112880739509509	priv_change	26528	26527	python3	python3	61234		setresuid ids=[0, 0, 0]
+S24_regain_root_via_saved_uid	112880739577775	exec_attempt	26528	26527	python3	python3	0	/bin/true	
+S24_regain_root_via_saved_uid	112880739791138	exec_success	26528	26527	python3	true	0	/bin/true	
+S24_regain_root_via_saved_uid	112880740098298	exit	26528	26527	python3	true	0		exit_code=0
+S24_regain_root_via_saved_uid	112880743233266	exit	26527	26526	bash	python3	61234		exit_code=0
+S24_regain_root_via_saved_uid	112880743446483	exit	26526	26333		bash	0		exit_code=0
+S25_regain_root_renamed_helper	112882789718860	exec_attempt	26529	26333		python3	0	/usr/local/sbin/bash	
+S25_regain_root_renamed_helper	112882789718860	exec_failed	26529	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S25_regain_root_renamed_helper	112882789792547	exec_attempt	26529	26333		python3	0	/usr/local/bin/bash	
+S25_regain_root_renamed_helper	112882789792547	exec_failed	26529	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S25_regain_root_renamed_helper	112882789815953	exec_attempt	26529	26333		python3	0	/usr/sbin/bash	
+S25_regain_root_renamed_helper	112882789815953	exec_failed	26529	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S25_regain_root_renamed_helper	112882789839529	exec_attempt	26529	26333		python3	0	/usr/bin/bash	
+S25_regain_root_renamed_helper	112882789942072	exec_success	26529	26333		bash	0	/usr/bin/bash	
+S25_regain_root_renamed_helper	112882792804482	exec_attempt	26530	26529	bash	bash	0	/opt/evt_eval_s25_regain_root_renamed_helper/sudo	
+S25_regain_root_renamed_helper	112882792944396	exec_success	26530	26529	bash	sudo	0	/opt/evt_eval_s25_regain_root_renamed_helper/sudo	
+S25_regain_root_renamed_helper	112882803670749	priv_change	26530	26529	bash	sudo	0		setresgid ids=[61234, 61234, 0]
+S25_regain_root_renamed_helper	112882803709038	priv_change	26530	26529	bash	sudo	0		setresuid ids=[61234, 61234, 0]
+S25_regain_root_renamed_helper	112882804528780	priv_change	26531	26530	sudo	sudo	61234		setresuid ids=[0, 0, 0]
+S25_regain_root_renamed_helper	112882804572641	exec_attempt	26531	26530	sudo	sudo	0	/bin/true	
+S25_regain_root_renamed_helper	112882804934547	exec_success	26531	26530	sudo	true	0	/bin/true	
+S25_regain_root_renamed_helper	112882805218529	exit	26531	26530	sudo	true	0		exit_code=0
+S25_regain_root_renamed_helper	112882808121645	exit	26530	26529	bash	sudo	61234		exit_code=0
+S25_regain_root_renamed_helper	112882808309310	exit	26529	26333		bash	0		exit_code=0
+S26_reverse_shell_style_connect	112884849697002	exec_attempt	26532	26333		python3	0	/usr/local/sbin/bash	
+S26_reverse_shell_style_connect	112884849697002	exec_failed	26532	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S26_reverse_shell_style_connect	112884849753522	exec_attempt	26532	26333		python3	0	/usr/local/bin/bash	
+S26_reverse_shell_style_connect	112884849753522	exec_failed	26532	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S26_reverse_shell_style_connect	112884849767592	exec_attempt	26532	26333		python3	0	/usr/sbin/bash	
+S26_reverse_shell_style_connect	112884849767592	exec_failed	26532	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S26_reverse_shell_style_connect	112884849789723	exec_attempt	26532	26333		python3	0	/usr/bin/bash	
+S26_reverse_shell_style_connect	112884850244558	exec_success	26532	26333		bash	0	/usr/bin/bash	
+S26_reverse_shell_style_connect	112884851814223	exec_attempt	26533	26532	bash	bash	0	/usr/bin/bash	
+S26_reverse_shell_style_connect	112884851938801	exec_success	26533	26532	bash	bash	0	/usr/bin/bash	
+S26_reverse_shell_style_connect	112884860116485	net_connect	26533	26532	bash	bash	0		family=2 dst=private
+S26_reverse_shell_style_connect	112884861187578	exit	26533	26532	bash	bash	0		exit_code=0
+S26_reverse_shell_style_connect	112884861389976	exit	26532	26333		bash	0		exit_code=0
+S27_delayed_connect	112886879018244	exec_attempt	26534	26333		python3	0	/usr/local/sbin/bash	
+S27_delayed_connect	112886879018244	exec_failed	26534	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S27_delayed_connect	112886879135091	exec_attempt	26534	26333		python3	0	/usr/local/bin/bash	
+S27_delayed_connect	112886879135091	exec_failed	26534	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S27_delayed_connect	112886879172100	exec_attempt	26534	26333		python3	0	/usr/sbin/bash	
+S27_delayed_connect	112886879172100	exec_failed	26534	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S27_delayed_connect	112886879196274	exec_attempt	26534	26333		python3	0	/usr/bin/bash	
+S27_delayed_connect	112886879293824	exec_success	26534	26333		bash	0	/usr/bin/bash	
+S27_delayed_connect	112886880701181	exec_attempt	26535	26534	bash	bash	0	/usr/bin/bash	
+S27_delayed_connect	112886880878023	exec_success	26535	26534	bash	bash	0	/usr/bin/bash	
+S27_delayed_connect	112886883030159	exec_attempt	26536	26535	bash	bash	0	/usr/bin/sleep	
+S27_delayed_connect	112886883239990	exec_success	26536	26535	bash	sleep	0	/usr/bin/sleep	
+S27_delayed_connect	112956883882478	exit	26536	26535	bash	sleep	0		exit_code=0
+S27_delayed_connect	112956884148629	net_connect	26535	26534	bash	bash	0		family=2 dst=private
+S27_delayed_connect	112956885874097	exit	26535	26534	bash	bash	0		exit_code=0
+S27_delayed_connect	112956886142101	exit	26534	26333		bash	0		exit_code=0
+S28_burst_of_spawns	112958978349953	exec_attempt	26537	26333		python3	0	/usr/local/sbin/bash	
+S28_burst_of_spawns	112958978349953	exec_failed	26537	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S28_burst_of_spawns	112958978412876	exec_attempt	26537	26333		python3	0	/usr/local/bin/bash	
+S28_burst_of_spawns	112958978412876	exec_failed	26537	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S28_burst_of_spawns	112958978425575	exec_attempt	26537	26333		python3	0	/usr/sbin/bash	
+S28_burst_of_spawns	112958978425575	exec_failed	26537	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S28_burst_of_spawns	112958978436808	exec_attempt	26537	26333		python3	0	/usr/bin/bash	
+S28_burst_of_spawns	112958978531390	exec_success	26537	26333		bash	0	/usr/bin/bash	
+S28_burst_of_spawns	112958980992814	exec_attempt	26538	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958981146415	exec_success	26538	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958981583998	exit	26538	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958981922574	exec_attempt	26539	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958982050324	exec_success	26539	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958982400321	exit	26539	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958982670168	exec_attempt	26540	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958982814161	exec_success	26540	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958983179305	exit	26540	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958983638752	exec_attempt	26541	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958983802224	exec_success	26541	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958984186781	exit	26541	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958985034641	exec_attempt	26542	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958985230677	exec_success	26542	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958985638448	exit	26542	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958986047095	exec_attempt	26543	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958986338162	exec_success	26543	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958986719257	exit	26543	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958987069410	exec_attempt	26544	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958987191875	exec_success	26544	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958987541996	exit	26544	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958987870193	exec_attempt	26545	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958988036114	exec_success	26545	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958988369125	exit	26545	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958988659297	exec_attempt	26546	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958988762988	exec_success	26546	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958989110508	exit	26546	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958989470969	exec_attempt	26547	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958989573206	exec_success	26547	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958989909847	exit	26547	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958990153803	exec_attempt	26548	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958990277525	exec_success	26548	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958990635393	exit	26548	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958990954381	exec_attempt	26549	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958991225901	exec_success	26549	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958991594108	exit	26549	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958992036155	exec_attempt	26550	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958992203205	exec_success	26550	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958992543350	exit	26550	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958992769518	exec_attempt	26551	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958992873207	exec_success	26551	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958993193187	exit	26551	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958993357285	exec_attempt	26552	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958993454235	exec_success	26552	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958993775529	exit	26552	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958994245440	exec_attempt	26553	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958994364738	exec_success	26553	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958994708282	exit	26553	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958994893060	exec_attempt	26554	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958994990192	exec_success	26554	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958995313144	exit	26554	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958995648009	exec_attempt	26555	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958995901622	exec_success	26555	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958996374240	exit	26555	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958996667950	exec_attempt	26556	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958996764773	exec_success	26556	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958997073737	exit	26556	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958997403462	exec_attempt	26557	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958997502218	exec_success	26557	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958997832983	exit	26557	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958998177903	exec_attempt	26558	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958998339592	exec_success	26558	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958998693844	exit	26558	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958999064005	exec_attempt	26559	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958999224927	exec_success	26559	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112958999557205	exit	26559	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112958999879722	exec_attempt	26560	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112958999973105	exec_success	26560	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959000351483	exit	26560	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959000607346	exec_attempt	26561	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959000703203	exec_success	26561	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959001069906	exit	26561	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959001434910	exec_attempt	26562	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959001566224	exec_success	26562	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959001918814	exit	26562	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959002120384	exec_attempt	26563	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959002232043	exec_success	26563	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959002573866	exit	26563	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959002810911	exec_attempt	26564	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959002931182	exec_success	26564	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959003285339	exit	26564	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959003541698	exec_attempt	26565	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959003654742	exec_success	26565	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959004026983	exit	26565	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959004360322	exec_attempt	26566	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959004461469	exec_success	26566	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959004782748	exit	26566	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959005129744	exec_attempt	26567	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959005222009	exec_success	26567	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959005541470	exit	26567	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959005892043	exec_attempt	26568	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959005993203	exec_success	26568	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959006329810	exit	26568	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959006693098	exec_attempt	26569	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959006793606	exec_success	26569	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959007121708	exit	26569	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959007501297	exec_attempt	26570	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959007623791	exec_success	26570	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959008093811	exit	26570	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959008416316	exec_attempt	26571	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959008534511	exec_success	26571	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959008865616	exit	26571	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959009114548	exec_attempt	26572	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959009215954	exec_success	26572	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959009548399	exit	26572	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959010359246	exec_attempt	26573	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959010483374	exec_success	26573	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959010836234	exit	26573	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959011095254	exec_attempt	26574	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959011193902	exec_success	26574	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959011542482	exit	26574	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959011852637	exec_attempt	26575	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959011996896	exec_success	26575	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959012361547	exit	26575	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959012800678	exec_attempt	26576	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959012899656	exec_success	26576	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959013223129	exit	26576	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959013518601	exec_attempt	26577	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959013646564	exec_success	26577	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959013995885	exit	26577	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959014191782	exec_attempt	26578	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959014297475	exec_success	26578	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959014645565	exit	26578	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959014811004	exec_attempt	26579	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959014906848	exec_success	26579	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959015281184	exit	26579	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959015640300	exec_attempt	26580	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959015742330	exec_success	26580	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959016135171	exit	26580	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959016491338	exec_attempt	26581	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959016613624	exec_success	26581	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959016951368	exit	26581	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959017302733	exec_attempt	26582	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959017452395	exec_success	26582	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959017791804	exit	26582	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959018169704	exec_attempt	26583	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959018279651	exec_success	26583	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959018615955	exit	26583	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959019063857	exec_attempt	26584	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959019192205	exec_success	26584	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959019550131	exit	26584	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959019999971	exec_attempt	26585	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959020137175	exec_success	26585	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959020494937	exit	26585	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959021409434	exec_attempt	26586	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959021532677	exec_success	26586	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959021940167	exit	26586	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959022530060	exec_attempt	26587	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959022653568	exec_success	26587	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959022983668	exit	26587	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959023358975	exec_attempt	26588	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959023465838	exec_success	26588	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959023809314	exit	26588	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959024220328	exec_attempt	26589	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959024338381	exec_success	26589	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959024680511	exit	26589	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959024968001	exec_attempt	26590	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959025074340	exec_success	26590	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959025405687	exit	26590	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959026080261	exec_attempt	26591	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959026211088	exec_success	26591	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959026575206	exit	26591	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959027392714	exec_attempt	26592	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959027517299	exec_success	26592	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959027884905	exit	26592	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959028785939	exec_attempt	26593	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959028921900	exec_success	26593	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959029271429	exit	26593	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959030295961	exec_attempt	26594	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959030414259	exec_success	26594	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959030749832	exit	26594	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959031208866	exec_attempt	26595	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959031329157	exec_success	26595	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959031695041	exit	26595	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959032332569	exec_attempt	26596	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959032448900	exec_success	26596	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959032782479	exit	26596	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959033141353	exec_attempt	26597	26537	bash	bash	0	/bin/true	
+S28_burst_of_spawns	112959033257517	exec_success	26597	26537	bash	true	0	/bin/true	
+S28_burst_of_spawns	112959033587172	exit	26597	26537	bash	true	0		exit_code=0
+S28_burst_of_spawns	112959033736589	exit	26537	26333		bash	0		exit_code=0
+S29_slow_spawn_loop	112961055777265	exec_attempt	26598	26333		python3	0	/usr/local/sbin/bash	
+S29_slow_spawn_loop	112961055777265	exec_failed	26598	26333		python3	0	/usr/local/sbin/bash	reason=next_attempt
+S29_slow_spawn_loop	112961055840275	exec_attempt	26598	26333		python3	0	/usr/local/bin/bash	
+S29_slow_spawn_loop	112961055840275	exec_failed	26598	26333		python3	0	/usr/local/bin/bash	reason=next_attempt
+S29_slow_spawn_loop	112961055864282	exec_attempt	26598	26333		python3	0	/usr/sbin/bash	
+S29_slow_spawn_loop	112961055864282	exec_failed	26598	26333		python3	0	/usr/sbin/bash	reason=next_attempt
+S29_slow_spawn_loop	112961055885592	exec_attempt	26598	26333		python3	0	/usr/bin/bash	
+S29_slow_spawn_loop	112961055973424	exec_success	26598	26333		bash	0	/usr/bin/bash	
+S29_slow_spawn_loop	112961056968515	exec_attempt	26599	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112961057091408	exec_success	26599	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112961057462839	exit	26599	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112961057874873	exec_attempt	26600	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112961057997354	exec_success	26600	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112961858617076	exit	26600	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112961859077691	exec_attempt	26601	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112961859204589	exec_success	26601	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112961859585343	exit	26601	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112961859844757	exec_attempt	26602	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112961859964607	exec_success	26602	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112962660551735	exit	26602	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112962661012755	exec_attempt	26603	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112962661165647	exec_success	26603	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112962661547150	exit	26603	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112962661942407	exec_attempt	26604	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112962662081887	exec_success	26604	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112963462698570	exit	26604	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112963463602533	exec_attempt	26605	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112963463737655	exec_success	26605	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112963464167084	exit	26605	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112963464746338	exec_attempt	26606	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112963465011340	exec_success	26606	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112964265649515	exit	26606	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112964266300232	exec_attempt	26607	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112964266430744	exec_success	26607	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112964266863597	exit	26607	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112964267455089	exec_attempt	26608	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112964267559346	exec_success	26608	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112965068095292	exit	26608	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112965068631126	exec_attempt	26609	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112965068836872	exec_success	26609	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112965069241019	exit	26609	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112965069593527	exec_attempt	26610	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112965069748613	exec_success	26610	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112965870441245	exit	26610	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112965871088499	exec_attempt	26611	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112965871229902	exec_success	26611	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112965871675324	exit	26611	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112965872075072	exec_attempt	26612	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112965872416561	exec_success	26612	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112966673068704	exit	26612	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112966674024759	exec_attempt	26613	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112966674245532	exec_success	26613	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112966674680253	exit	26613	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112966674938576	exec_attempt	26614	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112966675295808	exec_success	26614	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112967475928007	exit	26614	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112967476448766	exec_attempt	26615	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112967476576899	exec_success	26615	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112967476957091	exit	26615	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112967477403300	exec_attempt	26616	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112967477775346	exec_success	26616	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112968278540968	exit	26616	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112968279195956	exec_attempt	26617	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112968279480427	exec_success	26617	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112968279923519	exit	26617	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112968280340200	exec_attempt	26618	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112968280453230	exec_success	26618	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112969081055614	exit	26618	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112969081701786	exec_attempt	26619	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112969081839428	exec_success	26619	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112969082240339	exit	26619	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112969082498715	exec_attempt	26620	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112969082600122	exec_success	26620	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112969883318450	exit	26620	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112969883822179	exec_attempt	26621	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112969883954108	exec_success	26621	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112969884381663	exit	26621	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112969884788956	exec_attempt	26622	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112969884909920	exec_success	26622	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112970685601663	exit	26622	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112970686220661	exec_attempt	26623	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112970686349568	exec_success	26623	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112970686894994	exit	26623	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112970687243794	exec_attempt	26624	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112970687345209	exec_success	26624	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112971487970312	exit	26624	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112971488466243	exec_attempt	26625	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112971488612991	exec_success	26625	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112971489008692	exit	26625	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112971489492781	exec_attempt	26626	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112971489727400	exec_success	26626	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112972290346425	exit	26626	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112972290796137	exec_attempt	26627	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112972290928443	exec_success	26627	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112972291338399	exit	26627	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112972291635905	exec_attempt	26628	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112972291749818	exec_success	26628	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112973092373671	exit	26628	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112973092912445	exec_attempt	26629	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112973093194228	exec_success	26629	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112973093608673	exit	26629	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112973093945352	exec_attempt	26630	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112973094064167	exec_success	26630	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112973894633646	exit	26630	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112973895091508	exec_attempt	26631	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112973895226873	exec_success	26631	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112973895629210	exit	26631	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112973895914324	exec_attempt	26632	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112973896097100	exec_success	26632	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112974696728228	exit	26632	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112974697219011	exec_attempt	26633	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112974697360195	exec_success	26633	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112974697751962	exit	26633	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112974698402757	exec_attempt	26634	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112974698617969	exec_success	26634	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112975499571177	exit	26634	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112975500338300	exec_attempt	26635	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112975500568790	exec_success	26635	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112975501029263	exit	26635	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112975501437133	exec_attempt	26636	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112975501721059	exec_success	26636	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112976302349376	exit	26636	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112976303091708	exec_attempt	26637	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112976303385849	exec_success	26637	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112976303863283	exit	26637	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112976304266485	exec_attempt	26638	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112976304533095	exec_success	26638	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112977105072019	exit	26638	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112977105437608	exec_attempt	26639	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112977105623946	exec_success	26639	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112977106027783	exit	26639	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112977106272899	exec_attempt	26640	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112977106706304	exec_success	26640	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112977907312346	exit	26640	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112977907789621	exec_attempt	26641	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112977908049989	exec_success	26641	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112977908451465	exit	26641	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112977908716143	exec_attempt	26642	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112977908985466	exec_success	26642	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112978709687457	exit	26642	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112978710155167	exec_attempt	26643	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112978710323152	exec_success	26643	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112978710788683	exit	26643	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112978711018852	exec_attempt	26644	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112978711129259	exec_success	26644	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112979511838531	exit	26644	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112979512420865	exec_attempt	26645	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112979512553283	exec_success	26645	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112979512932574	exit	26645	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112979513390837	exec_attempt	26646	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112979513664689	exec_success	26646	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112980314381459	exit	26646	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112980314893161	exec_attempt	26647	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112980315037691	exec_success	26647	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112980315480333	exit	26647	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112980315874466	exec_attempt	26648	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112980315998806	exec_success	26648	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112981116667585	exit	26648	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112981117069650	exec_attempt	26649	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112981117357139	exec_success	26649	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112981117770514	exit	26649	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112981117981641	exec_attempt	26650	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112981118087907	exec_success	26650	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112981918638707	exit	26650	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112981919150067	exec_attempt	26651	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112981919285678	exec_success	26651	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112981919677050	exit	26651	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112981920228293	exec_attempt	26652	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112981920338079	exec_success	26652	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112982720961599	exit	26652	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112982721441285	exec_attempt	26653	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112982721730513	exec_success	26653	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112982722167394	exit	26653	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112982722538896	exec_attempt	26654	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112982722649731	exec_success	26654	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112983523259498	exit	26654	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112983523641374	exec_attempt	26655	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112983523931120	exec_success	26655	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112983524364629	exit	26655	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112983524580704	exec_attempt	26656	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112983524679119	exec_success	26656	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112984325307190	exit	26656	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112984325720820	exec_attempt	26657	26598	bash	bash	0	/bin/true	
+S29_slow_spawn_loop	112984325850241	exec_success	26657	26598	bash	true	0	/bin/true	
+S29_slow_spawn_loop	112984326239377	exit	26657	26598	bash	true	0		exit_code=0
+S29_slow_spawn_loop	112984326551079	exec_attempt	26658	26598	bash	bash	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112984326820427	exec_success	26658	26598	bash	sleep	0	/usr/bin/sleep	
+S29_slow_spawn_loop	112985127429541	exit	26658	26598	bash	sleep	0		exit_code=0
+S29_slow_spawn_loop	112985127913550	exit	26598	26333		bash	0		exit_code=0

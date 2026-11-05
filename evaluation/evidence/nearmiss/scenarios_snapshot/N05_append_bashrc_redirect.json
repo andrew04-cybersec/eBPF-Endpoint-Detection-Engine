@@ -1,0 +1,19 @@
+{
+ "id": "N05_append_bashrc_redirect",
+ "title": "A shell redirect appends a line to a .bashrc in a fake home",
+ "kind": "benign",
+ "group": null,
+ "technique": null,
+ "threat_model": "No attacker. A user appends a line to their own .bashrc with a shell redirect.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_N05",
+ "expected": [],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": null,
+ "notes": "setup.sh creates a fake home directly under /home with a .bashrc of a few lines, and the action appends one comment line with >> from the action's bash, as S19 does. Predicted: persistence_write (T1546.004) alerts, because the redirect is a write open with the comm bash, which is not an expected writer. S19 was detected on the same rule. It is a false positive by the rules of a benign scenario.",
+ "attribution": "marker",
+ "locations": [
+  "home"
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "id": "S31_payload_transfer",
+ "title": "Transferred Payload Execution",
+ "kind": "attack",
+ "group": "independent",
+ "technique": "T1105",
+ "threat_model": "An attacker brings a payload onto the compromised host, makes it executable, and launches it.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S31_PAYLOAD_TRANSFER",
+ "expected": [{"detection": "download_chmod_exec", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 15,
+ "known_gap": null,
+ "notes": "Local source-to-destination copy substitutes for a completed remote payload transfer.",
+ "requires": ["bash", "cp", "chmod", "mkdir", "rm"],
+ "attribution": "marker"
+}

@@ -1,0 +1,134 @@
+{
+ "aborted": null,
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 167625631956275,
+    "before_ns": 167625630880625,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 167625631080788
+   },
+   {
+    "after_ns": 167625632643100,
+    "before_ns": 167625631959375,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 167625632079606
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "harness_processes": [
+  {
+   "pid": 64898,
+   "role": "driver",
+   "start_ns_max": null,
+   "start_ns_min": null
+  },
+  {
+   "pid": 64902,
+   "role": "loader",
+   "start_ns_max": 167625480400928,
+   "start_ns_min": 167625479097607
+  },
+  {
+   "pid": 64904,
+   "role": "normalizer",
+   "start_ns_max": 167625481971508,
+   "start_ns_min": 167625481746723
+  },
+  {
+   "pid": 64906,
+   "role": "runner",
+   "start_ns_max": 167625483820013,
+   "start_ns_min": 167625483616397
+  },
+  {
+   "pid": 64907,
+   "role": "stamper",
+   "start_ns_max": 167625484508270,
+   "start_ns_min": 167625483824276
+  },
+  {
+   "pid": 64903,
+   "role": "tee_events",
+   "start_ns_max": 167625480793688,
+   "start_ns_min": 167625480403945
+  },
+  {
+   "pid": 64905,
+   "role": "tee_normalized",
+   "start_ns_max": 167625482201685,
+   "start_ns_min": 167625481975203
+  },
+  {
+   "pid": 64899,
+   "role": "setup E01_everyday_workload",
+   "start_ns_max": 167625460843782,
+   "start_ns_min": 167625460371130
+  },
+  {
+   "pid": 83098,
+   "role": "teardown E01_everyday_workload",
+   "start_ns_max": 171228520493734,
+   "start_ns_min": 171228519827220
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 167625457456646,
+   "ran_to_ns": 167625457460779,
+   "role": "ip"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 167625630880625,
+   "ran_to_ns": 167625631956275,
+   "role": "clock check true 1"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 167625631959375,
+   "ran_to_ns": 167625632643100,
+   "role": "clock check true 2"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 171227722625130,
+   "ran_to_ns": 171227754785691,
+   "role": "bpftool"
+  }
+ ],
+ "leftovers_removed_by_driver": [],
+ "order": [
+  "E01_everyday_workload"
+ ],
+ "pipeline_exit_codes": {
+  "loader": 0,
+  "normalizer": 0,
+  "runner": 0,
+  "stamper": 0,
+  "tee_events": 0,
+  "tee_normalized": 0
+ },
+ "scenarios": {
+  "E01_everyday_workload": {
+   "end_ns": 171225720690841,
+   "exit_status": 0,
+   "start_ns": 167625653392542,
+   "timed_out": false
+  }
+ },
+ "setup_status": {
+  "E01_everyday_workload": 0
+ },
+ "skipped": {},
+ "teardown_status": {
+  "E01_everyday_workload": 0
+ }
+}

@@ -1,0 +1,39 @@
+PASS  normalized events present  67 events, 0 bad lines
+PASS  every alert line is a JSON object  3 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2, 3]
+info  total alerts in the run: {'download_chmod_exec': 3} (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+PASS  case a (curl, absolute): curl ran
+PASS  case a (curl, absolute): chmod ran
+PASS  case a (curl, absolute): downloaded file was executed  1 exec_success with filename /opt/evt_d3.i9yQ5E/a_curl/app_a
+PASS  case a (curl, absolute): exactly one download_chmod_exec alert  1 alerts
+PASS  case a (curl, absolute): evidence is curl, chmod, final exec  ['curl', 'chmod', 'app_a']
+PASS  case a (curl, absolute): evidence is in time order  [42896386139678, 42896395065188, 42896397483961]
+PASS  case b (wget, absolute): wget ran
+PASS  case b (wget, absolute): chmod ran
+PASS  case b (wget, absolute): downloaded file was executed  1 exec_success with filename /opt/evt_d3.i9yQ5E/b_wget/app_b
+PASS  case b (wget, absolute): exactly one download_chmod_exec alert  1 alerts
+PASS  case b (wget, absolute): evidence is wget, chmod, final exec  ['wget', 'chmod', 'app_b']
+PASS  case b (wget, absolute): evidence is in time order  [42896399667722, 42896404050860, 42896405482187]
+info  filename recorded by the loader for the relative exec: ['./payload_c.sh']
+PASS  case c (curl, relative): curl ran
+PASS  case c (curl, relative): chmod ran
+PASS  case c (curl, relative): downloaded file was executed  1 exec_success with filename ./payload_c.sh
+PASS  case c (curl, relative): exactly one download_chmod_exec alert  1 alerts
+PASS  case c (curl, relative): evidence is curl, chmod, final exec  ['curl', 'chmod', 'payload_c.sh']
+PASS  case c (curl, relative): evidence is in time order  [42896412019752, 42896418603723, 42896420505237]
+PASS  control d1: the exec without chmod was attempted  1 exec_attempt
+PASS  control d1: the exec without chmod failed
+PASS  control d1: no alert  0 alerts
+PASS  control d2: chmod and exec of a local file ran
+PASS  control d2: no alert  0 alerts
+PASS  control d3: download and chmod ran
+PASS  control d3: file was not executed
+PASS  control d3: no alert  0 alerts
+PASS  runner printed its summary
+info  runner: alerts emitted: 3, download_chmod_exec 3
+info  runner: unevaluable: 2, placeholder_parent 1, relative_path 1
+
+32 checks, 0 failed

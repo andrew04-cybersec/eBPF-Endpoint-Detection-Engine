@@ -1,0 +1,389 @@
+{
+ "alerts_total": 154,
+ "bad_alert_lines": 0,
+ "benign": {
+  "alerts": 154,
+  "fp_per_hour": 153.995,
+  "seconds": 3600.107
+ },
+ "bpf_stats": {
+  "ambiguous": [],
+  "available": true,
+  "not_found": [],
+  "programs": [
+   {
+    "kernel_name": "handle_connect",
+    "mean_ns_per_run": 417.0,
+    "name": "handle_connect",
+    "own_data": null,
+    "run_cnt": 3382,
+    "run_time_ns": 1410427,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_attempt",
+    "mean_ns_per_run": 12025.2,
+    "name": "handle_exec_attempt",
+    "own_data": {
+     "count": 42402,
+     "what": "exec_attempt events"
+    },
+    "run_cnt": 42402,
+    "run_time_ns": 509890876,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_success",
+    "mean_ns_per_run": 15418.1,
+    "name": "handle_exec_success",
+    "own_data": {
+     "count": 18255,
+     "what": "exec_success events"
+    },
+    "run_cnt": 18255,
+    "run_time_ns": 281457452,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exit",
+    "mean_ns_per_run": 22343.7,
+    "name": "handle_exit",
+    "own_data": null,
+    "run_cnt": 18323,
+    "run_time_ns": 409403441,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_exit",
+    "mean_ns_per_run": 406.4,
+    "name": "handle_openat_exit",
+    "own_data": {
+     "count": 516734,
+     "what": "openat_seen"
+    },
+    "run_cnt": 516721,
+    "run_time_ns": 209987889,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_save",
+    "mean_ns_per_run": 339.5,
+    "name": "handle_openat_save",
+    "own_data": {
+     "count": 516734,
+     "what": "openat_seen"
+    },
+    "run_cnt": 516727,
+    "run_time_ns": 175412838,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setgid",
+    "mean_ns_per_run": 44318.0,
+    "name": "handle_setgid",
+    "own_data": null,
+    "run_cnt": 1,
+    "run_time_ns": 44318,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setresgid",
+    "mean_ns_per_run": 1098.1,
+    "name": "handle_setresgid",
+    "own_data": null,
+    "run_cnt": 5049,
+    "run_time_ns": 5544432,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setresuid",
+    "mean_ns_per_run": 20461.9,
+    "name": "handle_setresuid",
+    "own_data": null,
+    "run_cnt": 5049,
+    "run_time_ns": 103312363,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setreuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setreuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setuid",
+    "mean_ns_per_run": 40515.0,
+    "name": "handle_setuid",
+    "own_data": null,
+    "run_cnt": 1,
+    "run_time_ns": 40515,
+    "status": "counts"
+   }
+  ],
+  "raw_names": [
+   "handle_connect",
+   "handle_exec_attempt",
+   "handle_exec_success",
+   "handle_exit",
+   "handle_openat_exit",
+   "handle_openat_save",
+   "handle_setgid",
+   "handle_setresgid",
+   "handle_setresuid",
+   "handle_setreuid",
+   "handle_setuid"
+  ],
+  "reason": null,
+  "selected_by": "names"
+ },
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 160410390311058,
+    "before_ns": 160410389361392,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 160410389498630
+   },
+   {
+    "after_ns": 160410391390576,
+    "before_ns": 160410390314273,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 160410390668856
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "groups": {
+  "gap": {
+   "detected": 0,
+   "missed": 0,
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "scenarios": 0
+  },
+  "ordinary": {
+   "detected": 0,
+   "missed": 0,
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "scenarios": 0
+  }
+ },
+ "label_set_sha256": "70385b2d0099eba187df859d889e5e171b0da6651c4f030a875a86fdc9c22960",
+ "latency": {
+  "all": {
+   "max_ms": 83.191,
+   "n": 154,
+   "p50_ms": 1.317,
+   "p95_ms": 3.172
+  },
+  "mode": "buffered: the stages run as in the live tests, with no python3 -u and no stdbuf",
+  "negative": 0,
+  "true_positive": {
+   "max_ms": null,
+   "n": 0,
+   "p50_ms": null,
+   "p95_ms": null
+  }
+ },
+ "not_run": [],
+ "not_run_reasons": {},
+ "per_detection": {
+  "rapid_spawn": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 153,
+   "precision_lenient": {
+    "den": 153,
+    "num": 0,
+    "value": 0.0
+   },
+   "precision_strict": {
+    "den": 153,
+    "num": 0,
+    "value": 0.0
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  },
+  "sensitive_file_access": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 1,
+   "precision_lenient": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  }
+ },
+ "per_technique": {},
+ "pooled": {
+  "acceptable": 0,
+  "fp": 154,
+  "precision_lenient": {
+   "den": 154,
+   "num": 0,
+   "value": 0.0
+  },
+  "precision_strict": {
+   "den": 154,
+   "num": 0,
+   "value": 0.0
+  },
+  "recall": {
+   "den": 0,
+   "num": 0,
+   "value": null
+  },
+  "tp": 0
+ },
+ "predictions": {
+  "label_set_sha256": "70385b2d0099eba187df859d889e5e171b0da6651c4f030a875a86fdc9c22960",
+  "mismatches": [
+   "E01_everyday_workload"
+  ],
+  "rows": [
+   {
+    "actual": "false alerts",
+    "id": "E01_everyday_workload",
+    "other_actual": [
+     "rapid_spawn",
+     "sensitive_file_access"
+    ],
+    "other_predicted": [],
+    "predicted": "no alerts",
+    "status": "MISMATCH"
+   }
+  ]
+ },
+ "resources": {
+  "drops": {
+   "dropped_records": 0,
+   "loader_lines": [
+    "loader: file_stats mode=exit openat_seen=516734 openat_blank=0 file_open_emitted=1362 write_list_emitted=0 write_list_skipped_readonly=16"
+   ],
+   "lost_events": 0
+  },
+  "events": {
+   "mean_per_s": 25.098,
+   "n": 90427,
+   "p95_per_s": 36,
+   "peak_per_s": 924,
+   "seconds": 3603
+  },
+  "processes": {
+   "loader": {
+    "cpu_percent_mean": 0.064,
+    "cpu_percent_p95": 0.997,
+    "max_rss_kb": 10804,
+    "peak_vmhwm_kb": 14880,
+    "samples": 3593
+   },
+   "normalizer": {
+    "cpu_percent_mean": 0.13,
+    "cpu_percent_p95": 0.999,
+    "max_rss_kb": 14056,
+    "peak_vmhwm_kb": 14056,
+    "samples": 3593
+   },
+   "runner": {
+    "cpu_percent_mean": 0.199,
+    "cpu_percent_p95": 0.999,
+    "max_rss_kb": 109708,
+    "peak_vmhwm_kb": 109708,
+    "samples": 3593
+   }
+  }
+ },
+ "scenarios": {
+  "E01_everyday_workload": {
+   "acceptable": {},
+   "alerts_attributed": 154,
+   "detected": null,
+   "fp": {
+    "rapid_spawn": 153,
+    "sensitive_file_access": 1
+   },
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "false alerts",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 3600.107
+  }
+ },
+ "unattributed_in_window": [],
+ "unattributed_outside_windows": [],
+ "warnings": [],
+ "window_attribution": {
+  "harness_alerts": [],
+  "label": "approximate; scripted workload, one machine, WSL2",
+  "machine_noise": [],
+  "scenarios": {
+   "E01_everyday_workload": {
+    "alerts_by_detection": {
+     "rapid_spawn": 153,
+     "sensitive_file_access": 1
+    },
+    "events_by_type": {
+     "exec_attempt": 42399,
+     "exec_success": 18252,
+     "exit": 18293,
+     "file_open": 1362,
+     "net_connect": 12,
+     "priv_change": 10100
+    },
+    "events_per_hour_by_type": {
+     "exec_attempt": 42397.736,
+     "exec_success": 18251.456,
+     "exit": 18292.455,
+     "file_open": 1361.959,
+     "net_connect": 12.0,
+     "priv_change": 10099.699
+    },
+    "fp": 154,
+    "fp_per_hour": 153.995,
+    "rule_of_three_per_hour": null,
+    "window_hours": 1.00003
+   }
+  }
+ }
+}

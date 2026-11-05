@@ -1,0 +1,24 @@
+PASS  normalized events present  34 events, 0 bad lines
+PASS  every alert line is a JSON object  1 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  every alert is named shell_from_service
+PASS  alert_seq counts 1..N in order  [1]
+info  total alerts in the run: 1 (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+PASS  nginx-named parent exec seen once  pids [14259]
+PASS  nginx-named parent forked a distinct child shell  child pids [14260]
+PASS  control parent exec seen once  pids [14262]
+PASS  control parent forked a distinct child shell  child pids [14263]
+PASS  plain shell control ran  1 matching exec_success
+PASS  one alert for the nginx-named parent  1 alerts
+PASS  alert process is the child shell
+PASS  alert ancestry is shell then nginx  ['sh', 'nginx', None]
+PASS  alert evidence has the exec_success
+info  ancestry_stop: placeholder
+PASS  no alert for the control parent  0 alerts
+PASS  no alert for the control shell command
+PASS  no alert for the plain shell command
+PASS  runner printed its summary
+
+19 checks, 0 failed

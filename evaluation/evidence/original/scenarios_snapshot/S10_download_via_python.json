@@ -1,0 +1,23 @@
+{
+ "id": "S10_download_via_python",
+ "title": "Download with python3, make executable, run",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1105",
+ "threat_model": "An attacker downloads a second-stage script with the interpreter already on the machine instead of curl or wget, marks it executable and runs it.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S10",
+ "expected": [
+  {
+   "detection": "download_chmod_exec",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": "download_chmod_exec tracks only curl and wget as downloaders, so a download made by python3 creates no entry and the chmod and the exec match nothing.",
+ "notes": "The server is python3 -m http.server on 127.0.0.1 port 18742, started by setup.sh before the pipeline. The connect is to loopback, which outbound_after_exec skips. Nothing else in the rules applies.",
+ "requires": [
+  "python3"
+ ]
+}

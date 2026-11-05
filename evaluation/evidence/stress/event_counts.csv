@@ -1,0 +1,9 @@
+row,target_per_s,window_s,completed_spawns,events_excluding_lost,exec_attempt,exec_success,exec_success_of_true_by_modal_parent,exit,file_open,net_connect,priv_change,lost_records,events_reported_by_steps_json,events_match,spawn_exec_success_ge_completed
+step1,100,29.991,3000,9000,3000,3000,3000,3000,0,0,0,0,9000,yes,yes
+step2,250,29.997,7500,22500,7500,7500,7500,7500,0,0,0,0,22500,yes,yes
+step3,500,29.999,15000,45018,15002,15002,15000,15003,9,0,2,0,45018,yes,yes
+step4,1000,30.0,30000,90000,30000,30000,30000,30000,0,0,0,0,90000,yes,yes
+step5,2000,30.0,60000,180001,60000,60000,60000,60001,0,0,0,0,180001,yes,yes
+step6,4000,30.004,119997,359991,119997,119997,119997,119997,0,0,0,0,359991,yes,yes
+outside_steps,,,,12,4,4,0,4,0,0,0,0,,,
+total,,,235497,706522,235503,235503,235497,235505,9,0,2,0,706522,yes,

@@ -1,0 +1,24 @@
+{
+ "id": "S09_nested_script_files",
+ "title": "The same nesting through script files with no inline code",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1059",
+ "threat_model": "An attacker runs the same layers of interpreters, but from script files, so that no command line carries an inline-code option.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S09",
+ "expected": [
+  {
+   "detection": "interpreter_chain",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 40,
+ "known_gap": "interpreter_chain requires an inline-code option in some member of the chain. A chain of script files has none, so it is not seen however long it is.",
+ "notes": "setup.sh writes bash, python3, sh and python3 script files with no -c or -e anywhere. The action's own bash -c carries a -c, which would make the chain alert if it were a member, so the action runs the first script through timeout, which forks its child and is not a watched program: the run of the chain ends at timeout and the wrapper is not part of it. The label stays expected because the attacker's goal is the same as in S08.",
+ "requires": [
+  "python3",
+  "timeout"
+ ]
+}

@@ -1,0 +1,296 @@
+{
+ "aborted": null,
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 112812479960118,
+    "before_ns": 112812478973856,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 112812479194994
+   },
+   {
+    "after_ns": 112812480730487,
+    "before_ns": 112812479962356,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 112812480140613
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "leftovers_removed_by_driver": [],
+ "order": [
+  "S01_shell_from_service_after_loader",
+  "S02_shell_from_service_before_loader",
+  "S03_download_chmod_exec",
+  "S04_exec_from_tmp_via_interpreter",
+  "S05_benign_smoke",
+  "S06_service_runs_python",
+  "S07_service_shell_python",
+  "S08_nested_inline_interpreters",
+  "S09_nested_script_files",
+  "S10_download_via_python",
+  "S11_download_relative_path",
+  "S12_run_from_shm",
+  "S13_download_to_tmp_and_run",
+  "S14_read_shadow",
+  "S15_read_ssh_private_key",
+  "S16_read_shadow_renamed_reader",
+  "S17_service_reads_passwd",
+  "S18_write_cron_file",
+  "S19_append_bashrc",
+  "S20_write_authorized_keys",
+  "S21_write_systemd_unit",
+  "S22_move_file_into_cron_dir",
+  "S23_write_cron_file_renamed_writer",
+  "S24_regain_root_via_saved_uid",
+  "S25_regain_root_renamed_helper",
+  "S26_reverse_shell_style_connect",
+  "S27_delayed_connect",
+  "S28_burst_of_spawns",
+  "S29_slow_spawn_loop"
+ ],
+ "pipeline_exit_codes": {
+  "loader": 0,
+  "normalizer": 0,
+  "runner": 0,
+  "stamper": 0,
+  "tee_events": 0,
+  "tee_normalized": 0
+ },
+ "scenarios": {
+  "S01_shell_from_service_after_loader": {
+   "end_ns": 112812514993008,
+   "exit_status": 0,
+   "start_ns": 112812499123068,
+   "timed_out": false
+  },
+  "S02_shell_from_service_before_loader": {
+   "end_ns": 112815551451840,
+   "exit_status": 0,
+   "start_ns": 112814532353846,
+   "timed_out": false
+  },
+  "S03_download_chmod_exec": {
+   "end_ns": 112817653384257,
+   "exit_status": 0,
+   "start_ns": 112817621311813,
+   "timed_out": false
+  },
+  "S04_exec_from_tmp_via_interpreter": {
+   "end_ns": 112819692281646,
+   "exit_status": 0,
+   "start_ns": 112819660342639,
+   "timed_out": false
+  },
+  "S05_benign_smoke": {
+   "end_ns": 112841785232918,
+   "exit_status": 0,
+   "start_ns": 112821713059905,
+   "timed_out": false
+  },
+  "S06_service_runs_python": {
+   "end_ns": 112843833569519,
+   "exit_status": 0,
+   "start_ns": 112843800585550,
+   "timed_out": false
+  },
+  "S07_service_shell_python": {
+   "end_ns": 112845912123829,
+   "exit_status": 0,
+   "start_ns": 112845879940798,
+   "timed_out": false
+  },
+  "S08_nested_inline_interpreters": {
+   "end_ns": 112847968286750,
+   "exit_status": 0,
+   "start_ns": 112847936329250,
+   "timed_out": false
+  },
+  "S09_nested_script_files": {
+   "end_ns": 112850039769376,
+   "exit_status": 0,
+   "start_ns": 112849975315413,
+   "timed_out": false
+  },
+  "S10_download_via_python": {
+   "end_ns": 112852329212124,
+   "exit_status": 0,
+   "start_ns": 112852113706594,
+   "timed_out": false
+  },
+  "S11_download_relative_path": {
+   "end_ns": 112854355417936,
+   "exit_status": 0,
+   "start_ns": 112854339532695,
+   "timed_out": false
+  },
+  "S12_run_from_shm": {
+   "end_ns": 112856374777336,
+   "exit_status": 0,
+   "start_ns": 112856371083557,
+   "timed_out": false
+  },
+  "S13_download_to_tmp_and_run": {
+   "end_ns": 112858419559117,
+   "exit_status": 0,
+   "start_ns": 112858387420239,
+   "timed_out": false
+  },
+  "S14_read_shadow": {
+   "end_ns": 112860442240922,
+   "exit_status": 0,
+   "start_ns": 112860438451787,
+   "timed_out": false
+  },
+  "S15_read_ssh_private_key": {
+   "end_ns": 112862483171241,
+   "exit_status": 0,
+   "start_ns": 112862466978372,
+   "timed_out": false
+  },
+  "S16_read_shadow_renamed_reader": {
+   "end_ns": 112864496326445,
+   "exit_status": 0,
+   "start_ns": 112864492640920,
+   "timed_out": false
+  },
+  "S17_service_reads_passwd": {
+   "end_ns": 112866534849030,
+   "exit_status": 0,
+   "start_ns": 112866502696559,
+   "timed_out": false
+  },
+  "S18_write_cron_file": {
+   "end_ns": 112868544065549,
+   "exit_status": 0,
+   "start_ns": 112868540223426,
+   "timed_out": false
+  },
+  "S19_append_bashrc": {
+   "end_ns": 112870564724647,
+   "exit_status": 0,
+   "start_ns": 112870561085270,
+   "timed_out": false
+  },
+  "S20_write_authorized_keys": {
+   "end_ns": 112872585798333,
+   "exit_status": 0,
+   "start_ns": 112872582126565,
+   "timed_out": false
+  },
+  "S21_write_systemd_unit": {
+   "end_ns": 112874594455792,
+   "exit_status": 0,
+   "start_ns": 112874590891495,
+   "timed_out": false
+  },
+  "S22_move_file_into_cron_dir": {
+   "end_ns": 112876603086348,
+   "exit_status": 0,
+   "start_ns": 112876599209553,
+   "timed_out": false
+  },
+  "S23_write_cron_file_renamed_writer": {
+   "end_ns": 112878687806361,
+   "exit_status": 0,
+   "start_ns": 112878655440860,
+   "timed_out": false
+  },
+  "S24_regain_root_via_saved_uid": {
+   "end_ns": 112880756542610,
+   "exit_status": 0,
+   "start_ns": 112880722656465,
+   "timed_out": false
+  },
+  "S25_regain_root_renamed_helper": {
+   "end_ns": 112882821482624,
+   "exit_status": 0,
+   "start_ns": 112882789303705,
+   "timed_out": false
+  },
+  "S26_reverse_shell_style_connect": {
+   "end_ns": 112884865699181,
+   "exit_status": 0,
+   "start_ns": 112884849493809,
+   "timed_out": false
+  },
+  "S27_delayed_connect": {
+   "end_ns": 112956903535097,
+   "exit_status": 0,
+   "start_ns": 112886878757217,
+   "timed_out": false
+  },
+  "S28_burst_of_spawns": {
+   "end_ns": 112959042399352,
+   "exit_status": 0,
+   "start_ns": 112958978011542,
+   "timed_out": false
+  },
+  "S29_slow_spawn_loop": {
+   "end_ns": 112985139909405,
+   "exit_status": 0,
+   "start_ns": 112961055565836,
+   "timed_out": false
+  }
+ },
+ "setup_status": {
+  "S01_shell_from_service_after_loader": 0,
+  "S02_shell_from_service_before_loader": 0,
+  "S03_download_chmod_exec": 0,
+  "S04_exec_from_tmp_via_interpreter": 0,
+  "S05_benign_smoke": 0,
+  "S06_service_runs_python": 0,
+  "S07_service_shell_python": 0,
+  "S09_nested_script_files": 0,
+  "S10_download_via_python": 0,
+  "S11_download_relative_path": 0,
+  "S12_run_from_shm": 0,
+  "S13_download_to_tmp_and_run": 0,
+  "S15_read_ssh_private_key": 0,
+  "S16_read_shadow_renamed_reader": 0,
+  "S17_service_reads_passwd": 0,
+  "S19_append_bashrc": 0,
+  "S20_write_authorized_keys": 0,
+  "S22_move_file_into_cron_dir": 0,
+  "S23_write_cron_file_renamed_writer": 0,
+  "S24_regain_root_via_saved_uid": 0,
+  "S25_regain_root_renamed_helper": 0,
+  "S26_reverse_shell_style_connect": 0,
+  "S27_delayed_connect": 0
+ },
+ "skipped": {},
+ "teardown_status": {
+  "S01_shell_from_service_after_loader": 0,
+  "S02_shell_from_service_before_loader": 0,
+  "S03_download_chmod_exec": 0,
+  "S04_exec_from_tmp_via_interpreter": 0,
+  "S05_benign_smoke": 0,
+  "S06_service_runs_python": 0,
+  "S07_service_shell_python": 0,
+  "S09_nested_script_files": 0,
+  "S10_download_via_python": 0,
+  "S11_download_relative_path": 0,
+  "S12_run_from_shm": 0,
+  "S13_download_to_tmp_and_run": 0,
+  "S15_read_ssh_private_key": 0,
+  "S16_read_shadow_renamed_reader": 0,
+  "S17_service_reads_passwd": 0,
+  "S18_write_cron_file": 0,
+  "S19_append_bashrc": 0,
+  "S20_write_authorized_keys": 0,
+  "S21_write_systemd_unit": 0,
+  "S22_move_file_into_cron_dir": 0,
+  "S23_write_cron_file_renamed_writer": 0,
+  "S24_regain_root_via_saved_uid": 0,
+  "S25_regain_root_renamed_helper": 0,
+  "S26_reverse_shell_style_connect": 0,
+  "S27_delayed_connect": 0
+ }
+}

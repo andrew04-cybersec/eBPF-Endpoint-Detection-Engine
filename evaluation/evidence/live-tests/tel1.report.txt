@@ -1,0 +1,30 @@
+PASS  every line is valid JSON  210 lines, 0 bad []
+PASS  envelope and per-type fields present with correct JSON types  0 events with problems, first: []
+INFO  event counts: {'exit': 71, 'exec_attempt': 70, 'exec_success': 69}
+PASS  every exec_success has a matching earlier exec_attempt  0 unmatched
+PASS  every pid that exec'd has an exit event  0 without exit: []
+PASS  failed exec: one attempt for the nonexistent path  1 found
+PASS  failed exec: no exec_success for that attempt
+PASS  failed exec: exit status 127 follows  exit event: {'schema_version': 1, 'type': 'exit', 'ts_ns': 13097328648985, 'pid': 5234, 'tid': 5234, 'comm': 'bash', 'exit_code': 32512, 'exit_status': 127, 'exit_signal': 0, 'ppid': 5218, 'uid': 0, 'gid': 0, 'start_time_ns': 13097328314804, 'lossy_encoding': False}
+INFO  1 exec attempts have no success (includes PATH search misses)
+PASS  successful exec: attempt, success and exit for the marked command  1 attempts
+PASS  chain: one sh attempt
+PASS  chain: ls is a child of the sh process  1 found
+PASS  chain: cat ran under the sh process (child or in place)  1 found
+PASS  burst: attempts, successes and exits all match the burst size  attempts 50, successes 50, exits 50, distinct pids 50, expected 50
+PASS  uid: exec_success after setpriv carries the dropped uid  [1000]
+INFO  EVT_EXIT7: raw exit_code=1792 (0x700), exit_status=7, exit_signal=0
+PASS  exit_code: EVT_EXIT7 gives one exit with status 7 and signal 0  1 exit events
+INFO  EVT_KILL9: raw exit_code=9 (0x9), exit_status=0, exit_signal=9
+PASS  exit_code: EVT_KILL9 gives one exit with status 0 and signal 9  1 exit events
+PASS  threads: a multi-threaded process produces exactly one exit event  1 exit events
+PASS  truncation: too many arguments sets argv_truncated and keeps the cap  [(16, True)]
+PASS  truncation: a long argument sets argv_truncated and is cut to the cap  [(True, [9, 11, 127])]
+PASS  truncation: burst attempts are not marked truncated
+PASS  encoding: invalid UTF-8 becomes U+FFFD and sets lossy_encoding  [['/bin/echo', 'EVT_BADUTF8', '��']]
+INFO  lost events: 0, total dropped 0
+PASS  no records were dropped during the main run
+INFO  events with user_read_failed: 0
+PASS  threads (all-thread mode): one exit per thread, so more than one for the process  4 exit events, tids [5311, 5312, 5313, 5314]
+
+22 checks, 0 failed

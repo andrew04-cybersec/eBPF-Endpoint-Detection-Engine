@@ -1,0 +1,26 @@
+{
+ "id": "S26_reverse_shell_style_connect",
+ "title": "A shell opens a TCP connection to another address",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1095",
+ "threat_model": "An attacker's shell connects out over a raw TCP connection, the shape of a reverse shell, without any application protocol.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S26",
+ "expected": [
+  {
+   "detection": "outbound_after_exec",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 40,
+ "known_gap": null,
+ "notes": "setup.sh starts a python listener bound to the machine's first non-loopback IPv4 address on a port it picks, and records the address and the port in files. The action runs bash -c with exec 3<>/dev/tcp/ADDRESS/PORT, which is a connect made by the shell within seconds of its exec. The scenario is not run if the machine has no such address.",
+ "needs": [
+  "non_loopback_ipv4"
+ ],
+ "requires": [
+  "python3"
+ ]
+}

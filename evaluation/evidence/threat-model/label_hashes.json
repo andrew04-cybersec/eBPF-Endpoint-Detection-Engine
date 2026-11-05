@@ -1,0 +1,18 @@
+{
+ "predictions_sha256": "a03007712efbb92d5273cecb6e1a079169822f4afd713040c0f05c4ef2948ae5",
+ "redacted_fields": [
+  "predictions_path",
+  "scenarios_dir"
+ ],
+ "scenarios": {
+  "S30_service_shell": "ad7b79df5ed92454eb2c10e3fd20c381bfac433bea6f213ced355b239ec86801",
+  "S31_payload_transfer": "f3c5dd18f9305fc0b65f0b5590e86929ad26e0cc0a75889de55a04b22d19e56e",
+  "S32_password_material": "e02f1e358465ef6928bf4614da919085490b633bd238d5936e925381dbeb9a90",
+  "S33_private_key_harvest": "cb25e9474957273b4a0995d099a6732deae77c04d411c950b883b106d4cd3c52",
+  "S34_raw_command_channel": "ae90b01219eafb9c15ec6e7a8d618101ddf78ae6d6ebfbf510c2bf4b0eaf5408",
+  "S35_cron_persistence": "be6a29f0ff75020e65b379f30aeb723eaf23fb50b65db26d707944946ccec8f5",
+  "S36_shell_startup": "1d07550e44d720fbe0349e9e7e42dba1d2945406ef0298eb1f4a65c88ef31eea",
+  "S37_dynamic_linker_hijack": "70a0edff324f2dda229182ad0899056ea823c7ce2cf08225920a7f2a6f5e1d65"
+ },
+ "set": "9b3bcb6d47ddf6a1aad681e31522a2a929b980b71b28b122f561a2bc6e3eebcb"
+}

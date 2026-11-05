@@ -1,0 +1,33 @@
+PASS  normalized events present  28 events, 0 bad lines
+PASS  every alert line is a JSON object  3 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2, 3]
+info  total alerts in the run: {'exec_from_tmp': 3} (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+PASS  /tmp copy ran by absolute path  1 exec_success
+PASS  /tmp copy: exactly one exec_from_tmp alert  1 alerts
+PASS  /tmp alert evidence has the exec_success
+PASS  /tmp alert process is the copy
+PASS  /var/tmp copy ran by absolute path  1 exec_success
+PASS  /var/tmp copy: exactly one exec_from_tmp alert  1 alerts
+PASS  /var/tmp alert evidence has the exec_success
+PASS  /var/tmp alert process is the copy
+PASS  /dev/shm copy ran by absolute path  1 exec_success
+PASS  /dev/shm copy: exactly one exec_from_tmp alert  1 alerts
+PASS  /dev/shm alert evidence has the exec_success
+PASS  /dev/shm alert process is the copy
+PASS  control copy ran by absolute path  1 exec_success
+PASS  no alert for the control directory  0 alerts
+PASS  failed exec attempt was recorded  1 exec_attempt
+PASS  failed exec has no exec_success
+info  derived exec_failed events for it: 1
+PASS  no alert for the failed exec  0 alerts
+PASS  relative-path copy ran  1 exec_success
+info  filename recorded by the loader for the relative run: './evt_d2_true_rel'
+info  exec_from_tmp alerts for the relative run: 0
+PASS  relative filename did not alert
+PASS  runner counted relative_path as unevaluable  relative_path 1
+PASS  runner printed its summary
+
+26 checks, 0 failed

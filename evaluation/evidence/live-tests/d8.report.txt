@@ -1,0 +1,91 @@
+PASS  normalized events present  93 events, 0 bad lines
+PASS  every alert line is a JSON object  11 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+info  total alerts in the run: {'persistence_write': 7, 'persistence_command': 3, 'rapid_spawn': 1} (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+info  persist_ counters from replaying the saved events: {'persist_duplicate_write': 1, 'persist_expected_writer': 1, 'persist_failed_open': 1, 'persist_read_only': 1}
+PASS  case a (bash redirect into /etc/cron.d): the writer ran once  1 exec_success
+PASS  case a (bash redirect into /etc/cron.d): the write open was recorded with write flags  1 file_open events, flags [577], ret [3]
+PASS  case a (bash redirect into /etc/cron.d): 1 persistence_write alert  1 alerts
+info  case a (bash redirect into /etc/cron.d): alert persistence_write, process bash, target /etc/cron.d/evt_d8_cron, category cron
+PASS  case b (bash redirect into /etc/systemd/system): the writer ran once  1 exec_success
+PASS  case b (bash redirect into /etc/systemd/system): the write open was recorded with write flags  1 file_open events, flags [577], ret [3]
+PASS  case b (bash redirect into /etc/systemd/system): 1 persistence_write alert  1 alerts
+info  case b (bash redirect into /etc/systemd/system): alert persistence_write, process bash, target /etc/systemd/system/evt_d8_unit.service, category systemd
+PASS  case c1 (append to .bashrc): the writer ran once  1 exec_success
+PASS  case c1 (append to .bashrc): the write open was recorded with write flags  1 file_open events, flags [1089], ret [3]
+PASS  case c1 (append to .bashrc): 1 persistence_write alert  1 alerts
+info  case c1 (append to .bashrc): alert persistence_write, process bash, target /home/evt_d8user/.bashrc, category shell_startup
+PASS  case c2 (write .profile): the writer ran once  1 exec_success
+PASS  case c2 (write .profile): the write open was recorded with write flags  1 file_open events, flags [577], ret [3]
+PASS  case c2 (write .profile): 1 persistence_write alert  1 alerts
+info  case c2 (write .profile): alert persistence_write, process bash, target /home/evt_d8user/.profile, category shell_startup
+PASS  case c3 (write .ssh/authorized_keys): the writer ran once  1 exec_success
+PASS  case c3 (write .ssh/authorized_keys): the write open was recorded with write flags  1 file_open events, flags [577], ret [3]
+PASS  case c3 (write .ssh/authorized_keys): 1 persistence_write alert  1 alerts
+info  case c3 (write .ssh/authorized_keys): alert persistence_write, process bash, target /home/evt_d8user/.ssh/authorized_keys, category ssh_keys
+PASS  case c4 (write a user systemd unit): the writer ran once  1 exec_success
+PASS  case c4 (write a user systemd unit): the write open was recorded with write flags  1 file_open events, flags [577], ret [3]
+PASS  case c4 (write a user systemd unit): 1 persistence_write alert  1 alerts
+info  case c4 (write a user systemd unit): alert persistence_write, process bash, target /home/evt_d8user/.config/systemd/user/evt_d8.service, category user_autostart
+PASS  case d (cat of the cron file): the reader ran once  1 exec_success
+PASS  case d (cat of the cron file): no persistence alert  0 alerts
+info  case d (cat of the cron file): 0 file_open events from the reader
+PASS  case d (cat of the unit file): the reader ran once  1 exec_success
+PASS  case d (cat of the unit file): no persistence alert  0 alerts
+info  case d (cat of the unit file): 0 file_open events from the reader
+PASS  case d (cat of the .bashrc): the reader ran once  1 exec_success
+PASS  case d (cat of the .bashrc): no persistence alert  0 alerts
+info  case d (cat of the .bashrc): 0 file_open events from the reader
+PASS  case d (cat of the .profile): the reader ran once  1 exec_success
+PASS  case d (cat of the .profile): no persistence alert  0 alerts
+info  case d (cat of the .profile): 0 file_open events from the reader
+PASS  case d (cat of the authorized_keys): the reader ran once  1 exec_success
+PASS  case d (cat of the authorized_keys): no persistence alert  0 alerts
+info  case d (cat of the authorized_keys): 1 file_open events from the reader
+PASS  case d (cat of the user unit): the reader ran once  1 exec_success
+PASS  case d (cat of the user unit): no persistence alert  0 alerts
+info  case d (cat of the user unit): 0 file_open events from the reader
+PASS  case e (copy of bash named dpkg): the writer ran once  1 exec_success
+PASS  case e (copy of bash named dpkg): the write open was recorded with write flags  1 file_open events, flags [577], ret [3]
+PASS  case e (copy of bash named dpkg): 0 persistence_write alert  0 alerts
+PASS  case e: comm is dpkg  comm dpkg
+PASS  case e: persist_expected_writer counted  1
+PASS  case f (python opens /etc/ld.so.preload r+): ran once  1 exec_success
+PASS  case f: one open with write flags and ret < 0  ret [-2] flags [524290]
+PASS  case f: no persistence alert
+PASS  case f: persist_failed_open counted  1
+PASS  case f: /etc/ld.so.preload was not created
+PASS  case g (two appends to one file): the writer ran once  1 exec_success
+PASS  case g (two appends to one file): the write open was recorded with write flags  2 file_open events, flags [1089, 1089], ret [3, 3]
+PASS  case g (two appends to one file): 1 persistence_write alert  1 alerts
+info  case g (two appends to one file): alert persistence_write, process bash, target /etc/cron.d/evt_d8_cron, category cron
+PASS  case g: both opens recorded  2 file_open events
+PASS  case g: persist_duplicate_write counted  1
+PASS  case h1 (crontab FILE): ran once  1 exec_success
+PASS  case h1 (crontab FILE): 1 persistence_command alert  1 alerts
+info  case h1 (crontab FILE): alert persistence_command, process crontab, target /opt/evt_d8p.N9J0uE/crontab /opt/evt_d8p.N9J0uE/cronfile, category -
+PASS  case h1 (crontab FILE): no persistence_write alert
+PASS  case h2 (crontab -): ran once  1 exec_success
+PASS  case h2 (crontab -): 1 persistence_command alert  1 alerts
+info  case h2 (crontab -): alert persistence_command, process crontab, target /opt/evt_d8p.N9J0uE/crontab -, category -
+PASS  case h2 (crontab -): no persistence_write alert
+PASS  case h3 (crontab -l): ran once  1 exec_success
+PASS  case h3 (crontab -l): 0 persistence_command alert  0 alerts
+PASS  case h3 (crontab -l): no persistence_write alert
+PASS  case h4 (systemctl enable): ran once  1 exec_success
+PASS  case h4 (systemctl enable): 1 persistence_command alert  1 alerts
+info  case h4 (systemctl enable): alert persistence_command, process systemctl, target /opt/evt_d8p.N9J0uE/systemctl enable evt_d8_unit.service, category -
+PASS  case h4 (systemctl enable): no persistence_write alert
+PASS  case h5 (systemctl status): ran once  1 exec_success
+PASS  case h5 (systemctl status): 0 persistence_command alert  0 alerts
+PASS  case h5 (systemctl status): no persistence_write alert
+PASS  case i (write to an ordinary file): the writer ran once  1 exec_success
+PASS  case i: no persistence alert  0 alerts
+PASS  every persistence alert has its process in the graph  10 alerts
+PASS  no leftover files after cleanup  left: []
+PASS  runner printed its summary
+
+70 checks, 0 failed

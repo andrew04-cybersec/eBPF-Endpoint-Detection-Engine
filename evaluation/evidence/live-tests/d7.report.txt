@@ -1,0 +1,41 @@
+PASS  normalized events present  83 events, 0 bad lines
+PASS  every alert line is a JSON object  5 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2, 3, 4, 5]
+info  total alerts in the run: {'outbound_after_exec': 4, 'exec_from_tmp': 1} (the machine may produce alerts of its own)
+info  listener <private-test-addr>:46107, window 60000000000 ns; IPv6 is not exercised live
+info  lost events in the normalized stream: 0
+PASS  case a (python3 to the non-loopback address): the process ran once  1 exec_success
+PASS  case a (python3 to the non-loopback address): a connect to <private-test-addr>:46107 was recorded  1 net_connect events
+PASS  case a (python3 to the non-loopback address): 1 outbound_after_exec alert  1 alerts
+info  alert: destination <private-test-addr>:46107, process python3, exec to connect gap 0.025 seconds
+PASS  case b (python3 to 127.0.0.1): the process ran once  1 exec_success
+PASS  case b (python3 to 127.0.0.1): a connect to 127.0.0.1:46107 was recorded  1 net_connect events
+PASS  case b (python3 to 127.0.0.1): 0 outbound_after_exec alert  0 alerts
+PASS  case c (bash /dev/tcp): the process ran once  1 exec_success
+PASS  case c (bash /dev/tcp): a connect to <private-test-addr>:46107 was recorded  1 net_connect events
+PASS  case c (bash /dev/tcp): 1 outbound_after_exec alert  1 alerts
+info  alert: destination <private-test-addr>:46107, process bash, exec to connect gap 0.003 seconds
+PASS  case c: bash itself made the connect
+PASS  case d (copy of curl in /dev/shm): the process ran once  1 exec_success
+PASS  case d (copy of curl in /dev/shm): a connect to <private-test-addr>:46107 was recorded  1 net_connect events
+PASS  case d (copy of curl in /dev/shm): 1 outbound_after_exec alert  1 alerts
+info  alert: destination <private-test-addr>:46107, process evt_d7_fetch, exec to connect gap 0.004 seconds
+PASS  case e (normal curl, control): the process ran once  1 exec_success
+PASS  case e (normal curl, control): a connect to <private-test-addr>:46107 was recorded  1 net_connect events
+PASS  case e (normal curl, control): 0 outbound_after_exec alert  0 alerts
+PASS  case f (python3 connecting five times): the process ran once  1 exec_success
+PASS  case f (python3 connecting five times): a connect to <private-test-addr>:46107 was recorded  5 net_connect events
+PASS  case f (python3 connecting five times): 1 outbound_after_exec alert  1 alerts
+info  alert: destination <private-test-addr>:46107, process python3, exec to connect gap 0.041 seconds
+PASS  case g (python3 connecting after the window): the process ran once  1 exec_success
+PASS  case g (python3 connecting after the window): a connect to <private-test-addr>:46107 was recorded  1 net_connect events
+PASS  case g (python3 connecting after the window): 0 outbound_after_exec alert  0 alerts
+info  case g: exec to connect gap 65.026 seconds
+PASS  case g: the recorded gap is outside the window  gap 65026172449 ns, window 60000000000 ns
+PASS  runner printed its summary
+info  runner: alerts emitted: 5, exec_from_tmp 1, outbound_after_exec 4
+info  runner: unevaluable: 11, ancestry_incomplete 10, placeholder_parent 1
+
+29 checks, 0 failed

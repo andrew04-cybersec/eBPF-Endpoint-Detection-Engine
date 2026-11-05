@@ -1,0 +1,8 @@
+run_id	alert_seq	detection	technique	trigger_ts_ns	arrival_ns	latency_ms	trigger_comm	trigger_exe	window	class
+20261031-171536-stress	1	rapid_spawn	T1059	176535808858141	176535810248261	1.390120	true	/bin/true	step1	in_step_window
+20261031-171536-stress	2	rapid_spawn	T1059	176575656085166	176575660615562	4.530396	true	/bin/true	step2	in_step_window
+20261031-171536-stress	3	rapid_spawn	T1059	176615605378341	176615612708718	7.330377	true	/bin/true	step3	in_step_window
+20261031-171536-stress	4	sensitive_file_access	T1003.008	176619210085438	176619210420680	0.335242	cron		step3	in_step_window
+20261031-171536-stress	5	rapid_spawn	T1059	176655580521377	176655581373729	0.852352	true	/bin/true	step4	in_step_window
+20261031-171536-stress	6	rapid_spawn	T1059	176695568382340	176695569613531	1.231191	true	/bin/true	step5	in_step_window
+20261031-171536-stress	7	rapid_spawn	T1059	176735564606864	176735569138040	4.531176	true	/bin/true	step6	in_step_window

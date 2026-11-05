@@ -1,0 +1,23 @@
+{
+ "id": "S08_nested_inline_interpreters",
+ "title": "Shell, python3, shell and python3 nested with inline code",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1059",
+ "threat_model": "An attacker runs code through layers of interpreters, each started with inline code, so that no single command line shows the whole chain.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S08",
+ "expected": [
+  {
+   "detection": "interpreter_chain",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "The action's own bash -c is the root of the chain and counts as a member with its -c. It runs python3 -c, which runs sh -c through os.system, which runs python3 -c, as in case a of the interpreter_chain live test. The string given to os.system ends in ; : so that the sh keeps its child. The rule alerts at the sh (length 3) and at the last python3 (length 4).",
+ "requires": [
+  "python3"
+ ]
+}

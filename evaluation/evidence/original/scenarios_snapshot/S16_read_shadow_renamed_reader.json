@@ -1,0 +1,20 @@
+{
+ "id": "S16_read_shadow_renamed_reader",
+ "title": "Read the shadow file with a copy of cat named sudo",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1003.008",
+ "threat_model": "An attacker names the reading program after a program that is allowed to read the file, so that a name-based allow list ignores it.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S16",
+ "expected": [
+  {
+   "detection": "sensitive_file_access",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": "sensitive_file_access skips readers whose comm is on its expected-reader list, and the comm is the name of the file that was run, so a copy named sudo is suppressed.",
+ "notes": "setup.sh copies /bin/cat to a file named sudo in the work directory, and the action runs it by that explicit path. The name is only a file name, and nothing is run with the real sudo."
+}

@@ -1,0 +1,28 @@
+{
+ "id": "E01_everyday_workload",
+ "title": "One hour of scripted everyday developer commands",
+ "kind": "benign",
+ "group": null,
+ "technique": null,
+ "threat_model": "No attacker. A developer works for an hour: builds a small C project with make, uses git on a scratch repository, runs a short Python script file, archives and searches files, and edits ordinary text files, with think-time pauses between tasks.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_E01",
+ "expected": [],
+ "acceptable": [],
+ "timeout_seconds": 3900,
+ "known_gap": null,
+ "notes": "Attributed by window, so the marker is not used to count alerts. The seed comes from the --seed option of run_eval.py as EVT_EVAL_SEED and picks every random choice. action.sh writes the driver into the work directory with a heredoc, because no environment variable names the scenario folder, and runs it through timeout so the action's own bash -c is not a member of any interpreter chain. Every child starts from an argument list with TMPDIR, HOME and the git configuration kept inside the work directory. The log of one line per command is the standard output of the action, which run_eval.py saves as logs/E01_everyday_workload.action.log in the results folder, and teardown removes the work directory only. The workload is frozen once committed and is not tuned to avoid alerts.",
+ "requires": [
+  "make",
+  "gcc",
+  "git",
+  "python3",
+  "tar",
+  "find",
+  "grep",
+  "ps",
+  "sed",
+  "timeout"
+ ],
+ "attribution": "window"
+}

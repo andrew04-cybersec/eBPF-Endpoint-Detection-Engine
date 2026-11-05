@@ -10,6 +10,10 @@ The design, evaluation and failures are written up in an 11-page paper:
 - [Markdown source](article/ebpf-edr-flagship-short.md)
 - [Build instructions](article/README.md)
 
+## Evaluation evidence
+
+Scores, reports, summaries and checksums for the paper's numbers are in [evaluation/evidence](evaluation/evidence/README.md), which also lists which files support which claim. The raw event logs of the runs were not published, so the results can be checked for consistency but not regenerated from that folder.
+
 ## What was measured
 
 All results come from one WSL2 machine (kernel 6.6.87.2-microsoft-standard-WSL2) with predictions frozen in Git before each run.

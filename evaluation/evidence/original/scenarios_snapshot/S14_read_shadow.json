@@ -1,0 +1,20 @@
+{
+ "id": "S14_read_shadow",
+ "title": "Read the shadow password file",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1003.008",
+ "threat_model": "An attacker with root reads the file that holds the password hashes, to crack them offline.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S14",
+ "expected": [
+  {
+   "detection": "sensitive_file_access",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "cat opens /etc/shadow and its output is discarded. cat is not on the expected-reader list, so the open alerts. The marker reaches the alert through the action's bash -c in the ancestry."
+}

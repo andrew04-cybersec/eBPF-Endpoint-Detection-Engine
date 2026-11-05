@@ -1,0 +1,27 @@
+{
+ "id": "S07_service_shell_python",
+ "title": "A service-named process runs a shell that runs python3",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1059.004",
+ "threat_model": "An attacker who controls a network service makes it run a shell, and the shell runs an interpreter, so there is a shell and a python3 below the service's name.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S07",
+ "expected": [
+  {
+   "detection": "shell_from_service",
+   "min_count": 1
+  },
+  {
+   "detection": "unusual_ancestry",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "The sh is a direct child of the service, which is the case of shell_from_service, and unusual_ancestry leaves that case to it. The python3 below the sh is an interpreter below a service, which is the case of unusual_ancestry. Both are expected. interpreter_chain sees a run of 2 (python3, sh) that ends at nginx, below its minimum of 3, so no other alert is expected.",
+ "requires": [
+  "python3"
+ ]
+}

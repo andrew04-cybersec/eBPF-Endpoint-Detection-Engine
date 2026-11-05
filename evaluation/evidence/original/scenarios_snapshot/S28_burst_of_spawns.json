@@ -1,0 +1,20 @@
+{
+ "id": "S28_burst_of_spawns",
+ "title": "One shell starts a program sixty times in a burst",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1059",
+ "threat_model": "An attacker's script starts many short programs in a burst, for example to scan or to run a command over a list.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S28",
+ "expected": [
+  {
+   "detection": "rapid_spawn",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "One bash runs /bin/true COUNT times in a loop with no pause. COUNT is set at the top of action.sh, and a unit test requires it to be at least twice SPAWN_THRESHOLD. The children are started by the action's own bash, a process the loader saw start."
+}

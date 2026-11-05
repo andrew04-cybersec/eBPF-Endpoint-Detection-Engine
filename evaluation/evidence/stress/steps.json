@@ -1,0 +1,329 @@
+{
+ "aborted": null,
+ "bpf_available": true,
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 176535465757336,
+    "before_ns": 176535464912587,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 176535465127807
+   },
+   {
+    "after_ns": 176535466852624,
+    "before_ns": 176535465759076,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 176535465977327
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "folder": "20261031-171536-stress",
+ "gap_seconds": 10,
+ "guard": null,
+ "kernel": "6.6.87.2-microsoft-standard-WSL2",
+ "loader_lines": [
+  "loader: file_stats mode=exit openat_seen=708546 openat_blank=0 file_open_emitted=9 write_list_emitted=0 write_list_skipped_readonly=9"
+ ],
+ "pipeline_exit_codes": {
+  "loader": 0,
+  "normalizer": 0,
+  "runner": 0,
+  "stamper": 0,
+  "tee_events": 0,
+  "tee_normalized": 0
+ },
+ "rates": [
+  100,
+  250,
+  500,
+  1000,
+  2000,
+  4000
+ ],
+ "spawn_parent_count": 1,
+ "spawn_parent_pid": 84256,
+ "step_seconds": 30,
+ "steps": [
+  {
+   "achieved": 100.0,
+   "alerts": 1,
+   "alerts_by_detection": {
+    "rapid_spawn": 1
+   },
+   "attempted": 3000,
+   "completed": 3000,
+   "cpu": {
+    "loader": {
+     "cpu_mean": 0.516,
+     "cpu_p95": 0.999,
+     "max_rss_kb": 10796,
+     "samples": 30
+    },
+    "normalizer": {
+     "cpu_mean": 1.687,
+     "cpu_p95": 1.999,
+     "max_rss_kb": 13120,
+     "samples": 30
+    },
+    "runner": {
+     "cpu_mean": 2.031,
+     "cpu_p95": 2.998,
+     "max_rss_kb": 27200,
+     "samples": 30
+    }
+   },
+   "dropped_records": 0,
+   "end_ns": 176565559228860,
+   "events": 9000,
+   "events_per_s": 300.091,
+   "index": 1,
+   "late_skipped": 0,
+   "lost_events": 0,
+   "peak_events_per_s": 300,
+   "reason": null,
+   "runner_max_rss_kb": 27200,
+   "start_ns": 176535568361815,
+   "status": "ok",
+   "target": 100,
+   "window_seconds": 29.991
+  },
+  {
+   "achieved": 250.0,
+   "alerts": 1,
+   "alerts_by_detection": {
+    "rapid_spawn": 1
+   },
+   "attempted": 7500,
+   "completed": 7500,
+   "cpu": {
+    "loader": {
+     "cpu_mean": 1.177,
+     "cpu_p95": 1.999,
+     "max_rss_kb": 10796,
+     "samples": 29
+    },
+    "normalizer": {
+     "cpu_mean": 3.602,
+     "cpu_p95": 3.998,
+     "max_rss_kb": 13920,
+     "samples": 29
+    },
+    "runner": {
+     "cpu_mean": 4.564,
+     "cpu_p95": 4.998,
+     "max_rss_kb": 44640,
+     "samples": 29
+    }
+   },
+   "dropped_records": 0,
+   "end_ns": 176605556444024,
+   "events": 22500,
+   "events_per_s": 750.082,
+   "index": 2,
+   "late_skipped": 0,
+   "lost_events": 0,
+   "peak_events_per_s": 750,
+   "reason": null,
+   "runner_max_rss_kb": 44640,
+   "start_ns": 176575559742411,
+   "status": "ok",
+   "target": 250,
+   "window_seconds": 29.997
+  },
+  {
+   "achieved": 500.0,
+   "alerts": 2,
+   "alerts_by_detection": {
+    "rapid_spawn": 1,
+    "sensitive_file_access": 1
+   },
+   "attempted": 15000,
+   "completed": 15000,
+   "cpu": {
+    "loader": {
+     "cpu_mean": 1.998,
+     "cpu_p95": 2.999,
+     "max_rss_kb": 10796,
+     "samples": 30
+    },
+    "normalizer": {
+     "cpu_mean": 6.442,
+     "cpu_p95": 6.997,
+     "max_rss_kb": 16524,
+     "samples": 30
+    },
+    "runner": {
+     "cpu_mean": 8.888,
+     "cpu_p95": 10.993,
+     "max_rss_kb": 74208,
+     "samples": 30
+    }
+   },
+   "dropped_records": 0,
+   "end_ns": 176645555565833,
+   "events": 45018,
+   "events_per_s": 1500.668,
+   "index": 3,
+   "late_skipped": 0,
+   "lost_events": 0,
+   "peak_events_per_s": 1518,
+   "reason": null,
+   "runner_max_rss_kb": 74208,
+   "start_ns": 176615556935069,
+   "status": "ok",
+   "target": 500,
+   "window_seconds": 29.999
+  },
+  {
+   "achieved": 1000.0,
+   "alerts": 1,
+   "alerts_by_detection": {
+    "rapid_spawn": 1
+   },
+   "attempted": 30000,
+   "completed": 30000,
+   "cpu": {
+    "loader": {
+     "cpu_mean": 4.203,
+     "cpu_p95": 4.998,
+     "max_rss_kb": 10796,
+     "samples": 30
+    },
+    "normalizer": {
+     "cpu_mean": 14.226,
+     "cpu_p95": 17.992,
+     "max_rss_kb": 19964,
+     "samples": 30
+    },
+    "runner": {
+     "cpu_mean": 20.426,
+     "cpu_p95": 26.987,
+     "max_rss_kb": 130264,
+     "samples": 30
+    }
+   },
+   "dropped_records": 0,
+   "end_ns": 176685555839316,
+   "events": 90000,
+   "events_per_s": 3000.04,
+   "index": 4,
+   "late_skipped": 0,
+   "lost_events": 0,
+   "peak_events_per_s": 3000,
+   "reason": null,
+   "runner_max_rss_kb": 130264,
+   "start_ns": 176655556234947,
+   "status": "ok",
+   "target": 1000,
+   "window_seconds": 30.0
+  },
+  {
+   "achieved": 2000.0,
+   "alerts": 1,
+   "alerts_by_detection": {
+    "rapid_spawn": 1
+   },
+   "attempted": 60000,
+   "completed": 60000,
+   "cpu": {
+    "loader": {
+     "cpu_mean": 7.582,
+     "cpu_p95": 8.996,
+     "max_rss_kb": 10796,
+     "samples": 30
+    },
+    "normalizer": {
+     "cpu_mean": 24.951,
+     "cpu_p95": 29.984,
+     "max_rss_kb": 23596,
+     "samples": 30
+    },
+    "runner": {
+     "cpu_mean": 37.839,
+     "cpu_p95": 45.981,
+     "max_rss_kb": 218412,
+     "samples": 30
+    }
+   },
+   "dropped_records": 0,
+   "end_ns": 176725556333625,
+   "events": 180001,
+   "events_per_s": 5999.993,
+   "index": 5,
+   "late_skipped": 0,
+   "lost_events": 0,
+   "peak_events_per_s": 6001,
+   "reason": null,
+   "runner_max_rss_kb": 218412,
+   "start_ns": 176695556132447,
+   "status": "ok",
+   "target": 2000,
+   "window_seconds": 30.0
+  },
+  {
+   "achieved": 3999.4,
+   "alerts": 1,
+   "alerts_by_detection": {
+    "rapid_spawn": 1
+   },
+   "attempted": 119997,
+   "completed": 119997,
+   "cpu": {
+    "loader": {
+     "cpu_mean": 13.474,
+     "cpu_p95": 14.993,
+     "max_rss_kb": 10796,
+     "samples": 30
+    },
+    "normalizer": {
+     "cpu_mean": 42.697,
+     "cpu_p95": 43.973,
+     "max_rss_kb": 23596,
+     "samples": 30
+    },
+    "runner": {
+     "cpu_mean": 70.059,
+     "cpu_p95": 73.96,
+     "max_rss_kb": 235108,
+     "samples": 30
+    }
+   },
+   "dropped_records": 0,
+   "end_ns": 176765560356442,
+   "events": 359991,
+   "events_per_s": 11998.196,
+   "index": 6,
+   "late_skipped": 3,
+   "lost_events": 0,
+   "peak_events_per_s": 12516,
+   "reason": null,
+   "runner_max_rss_kb": 235108,
+   "start_ns": 176735556595344,
+   "status": "ok",
+   "target": 4000,
+   "window_seconds": 30.004
+  }
+ ],
+ "stress_status": 0,
+ "stress_timed_out": false,
+ "totals": {
+  "alerts": 7,
+  "alerts_in_steps": 7,
+  "alerts_outside_steps": 0,
+  "bad_alert_lines": 0,
+  "dropped_records": 0,
+  "events": 706522,
+  "lost_events": 0,
+  "unplaced_dropped_records": 0,
+  "unplaced_lost_events": 0
+ },
+ "workers": 32
+}

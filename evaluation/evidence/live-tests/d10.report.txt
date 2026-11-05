@@ -1,0 +1,61 @@
+PASS  normalized events present  106 events, 0 bad lines
+PASS  every alert line is a JSON object  2 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2]
+info  total alerts in the run: {'interpreter_chain': 2} (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+info  chain_ counters from replaying all the saved events (the machine's own processes are included): {'chain_incomplete': 12}
+PASS  replaying the saved events through the detection alone gives the same interpreter_chain alerts  saved 2, replayed 2
+PASS  case a (bash, python3, sh, python3, all inline): the case ran as one process tree (one root)  1 process keys at the root, 4 marked processes
+PASS  case a (bash, python3, sh, python3, all inline): the processes form a straight chain ['bash', 'python3', 'sh', 'python3']  found ['bash', 'python3', 'sh', 'python3'], 4 processes in the tree
+PASS  case a (bash, python3, sh, python3, all inline): no command line of the case was cut by the argument cap  cut command lines of []
+PASS  case a (bash, python3, sh, python3, all inline): run length and end for each watched process  found {0: (1, 'unjudged'), 1: (2, 'unjudged'), 2: (3, 'unjudged'), 3: (4, 'unjudged')}
+PASS  case a (bash, python3, sh, python3, all inline): 2 interpreter_chain alerts, at the processes [2, 3]  alerts per process index {2: 1, 3: 1}
+info  case a (bash, python3, sh, python3, all inline): alert at the sh (member 3 of the chain): members [('sh', 'shell', 'inline'), ('python3', 'python', 'inline'), ('bash', 'shell', 'inline')], families ['python', 'shell'], end placeholder
+PASS  case a (bash, python3, sh, python3, all inline): alert at the sh (member 3 of the chain): run of 3 with two families and an inline option, the root bash -c included  3 members, families ['python', 'shell']
+PASS  case a (bash, python3, sh, python3, all inline): alert at the sh (member 3 of the chain): ancestry names are ['sh', 'python3', 'bash']  ancestry ['sh', 'python3', 'bash', None]
+PASS  case a (bash, python3, sh, python3, all inline): alert at the sh (member 3 of the chain): evidence is the exec_attempt then the exec_success of that process  evidence ['exec_attempt', 'exec_success']
+info  case a (bash, python3, sh, python3, all inline): alert at the python3 (member 4 of the chain): members [('python3', 'python', 'inline'), ('sh', 'shell', 'inline'), ('python3', 'python', 'inline'), ('bash', 'shell', 'inline')], families ['python', 'shell'], end placeholder
+PASS  case a (bash, python3, sh, python3, all inline): alert at the python3 (member 4 of the chain): run of 4 with two families and an inline option, the root bash -c included  4 members, families ['python', 'shell']
+PASS  case a (bash, python3, sh, python3, all inline): alert at the python3 (member 4 of the chain): ancestry names are ['python3', 'sh', 'python3', 'bash']  ancestry ['python3', 'sh', 'python3', 'bash', None]
+PASS  case a (bash, python3, sh, python3, all inline): alert at the python3 (member 4 of the chain): evidence is the exec_attempt then the exec_success of that process  evidence ['exec_attempt', 'exec_success']
+PASS  case a (bash, python3, sh, python3, all inline): chain_incomplete is 2 when the case alone is replayed  {'chain_incomplete': 2}
+PASS  case b (two levels): the case ran as one process tree (one root)  1 process keys at the root, 2 marked processes
+PASS  case b (two levels): the processes form a straight chain ['bash', 'python3']  found ['bash', 'python3'], 2 processes in the tree
+PASS  case b (two levels): no command line of the case was cut by the argument cap  cut command lines of []
+PASS  case b (two levels): run length and end for each watched process  found {0: (1, 'unjudged'), 1: (2, 'unjudged')}
+PASS  case b (two levels): 0 interpreter_chain alerts, at the processes []  alerts per process index {}
+PASS  case b (two levels): chain_incomplete is 2 when the case alone is replayed  {'chain_incomplete': 2}
+PASS  case c (one family): the case ran as one process tree (one root)  1 process keys at the root, 3 marked processes
+PASS  case c (one family): the processes form a straight chain ['bash', 'bash', 'bash']  found ['bash', 'bash', 'bash'], 3 processes in the tree
+PASS  case c (one family): no command line of the case was cut by the argument cap  cut command lines of []
+PASS  case c (one family): run length and end for each watched process  found {0: (1, 'unjudged'), 1: (2, 'unjudged'), 2: (3, 'unjudged')}
+PASS  case c (one family): 0 interpreter_chain alerts, at the processes []  alerts per process index {}
+PASS  case c (one family): chain_incomplete is 2 when the case alone is replayed  {'chain_incomplete': 2}
+PASS  case d (no inline option): the case ran as one process tree (one root)  1 process keys at the root, 4 marked processes
+PASS  case d (no inline option): the processes form a straight chain ['bash', 'python3', 'sh', 'python3']  found ['bash', 'python3', 'sh', 'python3'], 4 processes in the tree
+PASS  case d (no inline option): no command line of the case was cut by the argument cap  cut command lines of []
+PASS  case d (no inline option): run length and end for each watched process  found {0: (1, 'unjudged'), 1: (2, 'unjudged'), 2: (3, 'unjudged'), 3: (4, 'unjudged')}
+PASS  case d (no inline option): 0 interpreter_chain alerts, at the processes []  alerts per process index {}
+PASS  case d (no inline option): no command line of the case has an inline-code option  inline flags [False, False, False, False]
+PASS  case d (no inline option): chain_incomplete is 2 when the case alone is replayed  {'chain_incomplete': 2}
+PASS  case e1 (broken by true): the case ran as one process tree (one root)  1 process keys at the root, 3 marked processes
+PASS  case e1 (broken by true): the processes form a straight chain ['bash', 'python3', 'true']  found ['bash', 'python3', 'true'], 3 processes in the tree
+PASS  case e1 (broken by true): no command line of the case was cut by the argument cap  cut command lines of []
+PASS  case e1 (broken by true): run length and end for each watched process  found {0: (1, 'unjudged'), 1: (2, 'unjudged')}
+PASS  case e1 (broken by true): 0 interpreter_chain alerts, at the processes []  alerts per process index {}
+PASS  case e1 (broken by true): chain_incomplete is 2 when the case alone is replayed  {'chain_incomplete': 2}
+PASS  case e2 (broken by xargs): the case ran as one process tree (one root)  1 process keys at the root, 5 marked processes
+PASS  case e2 (broken by xargs): the processes form a straight chain ['bash', 'python3', 'xargs', 'sh', 'python3']  found ['bash', 'python3', 'xargs', 'sh', 'python3'], 5 processes in the tree
+PASS  case e2 (broken by xargs): no command line of the case was cut by the argument cap  cut command lines of []
+PASS  case e2 (broken by xargs): run length and end for each watched process  found {0: (1, 'unjudged'), 1: (2, 'unjudged'), 3: (1, 'not_watched'), 4: (2, 'not_watched')}
+PASS  case e2 (broken by xargs): 0 interpreter_chain alerts, at the processes []  alerts per process index {}
+PASS  case e2 (broken by xargs): chain_incomplete is 2 when the case alone is replayed  {'chain_incomplete': 2}
+info  interpreter_chain alerts outside the cases (the machine's own processes): 0
+info  alerts of other detections on the case processes: {}
+PASS  every interpreter_chain alert of the cases has its process in the graph  2 alerts
+PASS  no leftover files after cleanup  left: []
+PASS  runner printed its summary
+
+52 checks, 0 failed

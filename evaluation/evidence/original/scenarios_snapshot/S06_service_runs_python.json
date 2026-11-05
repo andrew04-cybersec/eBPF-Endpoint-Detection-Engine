@@ -1,0 +1,23 @@
+{
+ "id": "S06_service_runs_python",
+ "title": "A service-named process runs python3",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1059",
+ "threat_model": "An attacker who controls a network service makes it run an interpreter directly, so a python3 process is a child of a process that carries the service's name.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S06",
+ "expected": [
+  {
+   "detection": "unusual_ancestry",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "The service is a copy of bash named nginx in the scenario work directory, started by the action after the loader. Its command string ends in ; : so that it forks python3 and the python3 is a direct child with the marker as an argument. shell_from_service does not apply because python3 is not a shell, and interpreter_chain sees a run of 1 because nginx is not a watched program, so no alert is listed as acceptable.",
+ "requires": [
+  "python3"
+ ]
+}

@@ -1,0 +1,42 @@
+PASS  normalized events present  49 events, 0 bad lines
+PASS  every alert line is a JSON object  3 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2, 3]
+info  total alerts in the run: {'sensitive_file_access': 3} (the machine may produce alerts of its own)
+info  lost events in the normalized stream: 0
+PASS  case a (cat reads /etc/shadow): the reader ran once  1 exec_success
+PASS  case a: the open was recorded with ret >= 0  1 file_open events, ret [3]
+PASS  case a: 1 sensitive_file_access alert  1 alerts
+info  case a: alert ancestry ['cat', None], ancestry_stop placeholder
+PASS  case b (copy named sudo reads /etc/shadow): the reader ran once  1 exec_success
+PASS  case b: the open was recorded with ret >= 0  1 file_open events, ret [3]
+PASS  case b: 0 sensitive_file_access alert  0 alerts
+PASS  case c (cat reads the private key): the reader ran once  1 exec_success
+PASS  case c: the open was recorded with ret >= 0  1 file_open events, ret [3]
+PASS  case c: 1 sensitive_file_access alert  1 alerts
+info  case c: alert ancestry ['cat', None], ancestry_stop placeholder
+PASS  case d (cat reads the public key and known_hosts): the reader ran once  1 exec_success
+PASS  case d: both opens were recorded
+PASS  case d: no alert
+PASS  cases e to g: the nginx copy and the unlisted copy ran once
+PASS  own shell: cat /etc/passwd ran once as a distinct child  1 exec_success
+PASS  nginx copy: cat /etc/passwd ran once as a distinct child  1 exec_success
+PASS  unlisted copy: cat /etc/passwd ran once as a distinct child  1 exec_success
+PASS  case e (own shell): the open was recorded with ret >= 0  1 file_open events, ret [3]
+PASS  case e (own shell): 0 sensitive_file_access alert  0 alerts
+PASS  case f (nginx copy): the open was recorded with ret >= 0  1 file_open events, ret [3]
+PASS  case f (nginx copy): 1 sensitive_file_access alert  1 alerts
+info  case f (nginx copy): alert ancestry ['cat', 'nginx', None], ancestry_stop placeholder
+PASS  case g (unlisted copy): the open was recorded with ret >= 0  1 file_open events, ret [3]
+PASS  case g (unlisted copy): 0 sensitive_file_access alert  0 alerts
+PASS  case h (cat reads a missing key): the reader ran once  1 exec_success
+PASS  case h: the open was recorded with ret < 0  ret [-2]
+PASS  case h: no alert
+PASS  runner printed its summary
+PASS  runner counted expected_reader  expected_reader 1
+PASS  runner counted failed_open  failed_open 1
+info  runner: alerts emitted: 3, sensitive_file_access 3
+info  runner: unevaluable: 4, ancestry_incomplete 2, expected_reader 1, failed_open 1
+
+33 checks, 0 failed

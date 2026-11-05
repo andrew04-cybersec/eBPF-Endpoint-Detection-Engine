@@ -1,0 +1,11 @@
+{
+ "predictions_sha256": "c0d6bfcc9c123255580bcaff8426f6051011ad64dc9bbbfb9d4dc8c6e0e5a451",
+ "redacted_fields": [
+  "predictions_path",
+  "scenarios_dir"
+ ],
+ "scenarios": {
+  "E01_everyday_workload": "5e63fc47636a5a12eb48a9db53c4e5948d929fc9410c38d885b652e31df9cbcf"
+ },
+ "set": "70385b2d0099eba187df859d889e5e171b0da6651c4f030a875a86fdc9c22960"
+}

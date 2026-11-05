@@ -1,0 +1,18 @@
+{
+ "id": "S35_cron_persistence",
+ "title": "Scheduled Cron Persistence",
+ "kind": "attack",
+ "group": "independent",
+ "technique": "T1053.003",
+ "threat_model": "An attacker establishes persistence by creating a recurring cron job.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S35_CRON_PERSISTENCE",
+ "expected": [{"detection": "persistence_command", "min_count": 1}, {"detection": "persistence_write", "min_count": 1}],
+ "acceptable": [],
+ "timeout_seconds": 15,
+ "known_gap": null,
+ "notes": "Creates an isolated cron definition invoking a harmless marker-writing script; does not depend on a cron tick.",
+ "locations": ["cron"],
+ "requires": ["bash", "mkdir", "chmod", "rm", "cat"],
+ "attribution": "marker"
+}

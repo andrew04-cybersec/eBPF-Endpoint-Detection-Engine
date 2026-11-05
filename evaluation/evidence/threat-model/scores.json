@@ -1,0 +1,968 @@
+{
+ "alerts_total": 3,
+ "bad_alert_lines": 0,
+ "benign": {
+  "alerts": 0,
+  "fp_per_hour": null,
+  "seconds": 0.0
+ },
+ "bpf_stats": {
+  "ambiguous": [],
+  "available": true,
+  "not_found": [],
+  "programs": [
+   {
+    "kernel_name": "handle_connect",
+    "mean_ns_per_run": 572.5,
+    "name": "handle_connect",
+    "own_data": null,
+    "run_cnt": 15,
+    "run_time_ns": 8587,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_attempt",
+    "mean_ns_per_run": 14823.0,
+    "name": "handle_exec_attempt",
+    "own_data": {
+     "count": 66,
+     "what": "exec_attempt events"
+    },
+    "run_cnt": 66,
+    "run_time_ns": 978317,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_success",
+    "mean_ns_per_run": 12966.9,
+    "name": "handle_exec_success",
+    "own_data": {
+     "count": 39,
+     "what": "exec_success events"
+    },
+    "run_cnt": 39,
+    "run_time_ns": 505709,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exit",
+    "mean_ns_per_run": 20008.0,
+    "name": "handle_exit",
+    "own_data": null,
+    "run_cnt": 31,
+    "run_time_ns": 620248,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_exit",
+    "mean_ns_per_run": 365.5,
+    "name": "handle_openat_exit",
+    "own_data": {
+     "count": 3028,
+     "what": "openat_seen"
+    },
+    "run_cnt": 3014,
+    "run_time_ns": 1101666,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_save",
+    "mean_ns_per_run": 242.0,
+    "name": "handle_openat_save",
+    "own_data": {
+     "count": 3028,
+     "what": "openat_seen"
+    },
+    "run_cnt": 3014,
+    "run_time_ns": 729479,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setgid",
+    "mean_ns_per_run": null,
+    "name": "handle_setgid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setresgid",
+    "mean_ns_per_run": null,
+    "name": "handle_setresgid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setresuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setresuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setreuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setreuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   }
+  ],
+  "raw_names": [
+   "handle_connect",
+   "handle_exec_attempt",
+   "handle_exec_success",
+   "handle_exit",
+   "handle_openat_exit",
+   "handle_openat_save",
+   "handle_setgid",
+   "handle_setresgid",
+   "handle_setresuid",
+   "handle_setreuid",
+   "handle_setuid"
+  ],
+  "reason": null,
+  "selected_by": "names"
+ },
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 175229787054457,
+    "before_ns": 175229785453812,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 175229785674879
+   },
+   {
+    "after_ns": 175229787791883,
+    "before_ns": 175229787057892,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 175229787159411
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "groups": {
+  "gap": {
+   "detected": 0,
+   "missed": 0,
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "scenarios": 0
+  },
+  "independent": {
+   "detected": 2,
+   "missed": 6,
+   "recall": {
+    "den": 8,
+    "num": 2,
+    "value": 0.25
+   },
+   "scenarios": 8
+  },
+  "ordinary": {
+   "detected": 0,
+   "missed": 0,
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "scenarios": 0
+  }
+ },
+ "label_set_sha256": "9b3bcb6d47ddf6a1aad681e31522a2a929b980b71b28b122f561a2bc6e3eebcb",
+ "latency": {
+  "all": {
+   "max_ms": 0.604,
+   "n": 3,
+   "p50_ms": 0.431,
+   "p95_ms": 0.604
+  },
+  "mode": "buffered: the stages run as in the live tests, with no python3 -u and no stdbuf",
+  "negative": 0,
+  "true_positive": {
+   "max_ms": 0.604,
+   "n": 3,
+   "p50_ms": 0.431,
+   "p95_ms": 0.604
+  }
+ },
+ "not_run": [],
+ "not_run_reasons": {},
+ "per_detection": {
+  "download_chmod_exec": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 1,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "tp": 0
+  },
+  "exec_from_tmp": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  },
+  "interpreter_chain": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  },
+  "outbound_after_exec": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 1,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "tp": 0
+  },
+  "persistence_command": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 1,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "tp": 0
+  },
+  "persistence_write": {
+   "acceptable": 0,
+   "detected": 2,
+   "expected": 3,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 3,
+    "num": 2,
+    "value": 0.666667
+   },
+   "tp": 2
+  },
+  "rapid_spawn": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  },
+  "sensitive_file_access": {
+   "acceptable": 0,
+   "detected": 1,
+   "expected": 2,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 2,
+    "num": 1,
+    "value": 0.5
+   },
+   "tp": 1
+  },
+  "shell_from_service": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 1,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   },
+   "tp": 0
+  },
+  "unusual_ancestry": {
+   "acceptable": 0,
+   "detected": 0,
+   "expected": 0,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "precision_strict": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "recall": {
+    "den": 0,
+    "num": 0,
+    "value": null
+   },
+   "tp": 0
+  }
+ },
+ "per_technique": {
+  "T1003.008": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 0,
+   "missed": 1,
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   }
+  },
+  "T1053.003": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 0,
+   "missed": 1,
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   }
+  },
+  "T1059.004": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 0,
+   "missed": 1,
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   }
+  },
+  "T1095": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 0,
+   "missed": 1,
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   }
+  },
+  "T1105": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 0,
+   "missed": 1,
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   }
+  },
+  "T1546.004": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 1,
+   "missed": 0,
+   "recall": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   }
+  },
+  "T1552.004": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 1,
+   "missed": 0,
+   "recall": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   }
+  },
+  "T1574.006": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "independent": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    }
+   },
+   "detected": 0,
+   "missed": 1,
+   "recall": {
+    "den": 1,
+    "num": 0,
+    "value": 0.0
+   }
+  }
+ },
+ "pooled": {
+  "acceptable": 0,
+  "fp": 0,
+  "precision_lenient": {
+   "den": 3,
+   "num": 3,
+   "value": 1.0
+  },
+  "precision_strict": {
+   "den": 3,
+   "num": 3,
+   "value": 1.0
+  },
+  "recall": {
+   "den": 8,
+   "num": 2,
+   "value": 0.25
+  },
+  "tp": 3
+ },
+ "predictions": {
+  "label_set_sha256": "9b3bcb6d47ddf6a1aad681e31522a2a929b980b71b28b122f561a2bc6e3eebcb",
+  "mismatches": [
+   "S30_service_shell",
+   "S31_payload_transfer",
+   "S32_password_material",
+   "S34_raw_command_channel",
+   "S35_cron_persistence",
+   "S37_dynamic_linker_hijack"
+  ],
+  "rows": [
+   {
+    "actual": "missed",
+    "id": "S30_service_shell",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MISMATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S31_payload_transfer",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MISMATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S32_password_material",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MISMATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S33_private_key_harvest",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S34_raw_command_channel",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MISMATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S35_cron_persistence",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MISMATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S36_shell_startup",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S37_dynamic_linker_hijack",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MISMATCH"
+   }
+  ]
+ },
+ "resources": {
+  "drops": {
+   "dropped_records": 0,
+   "loader_lines": [
+    "loader: file_stats mode=exit openat_seen=3028 openat_blank=0 file_open_emitted=6 write_list_emitted=2 write_list_skipped_readonly=7"
+   ],
+   "lost_events": 0
+  },
+  "events": {
+   "mean_per_s": 7.889,
+   "n": 142,
+   "p95_per_s": 40,
+   "peak_per_s": 40,
+   "seconds": 18
+  },
+  "processes": {
+   "loader": {
+    "cpu_percent_mean": 0.0,
+    "cpu_percent_p95": 0.0,
+    "max_rss_kb": 10960,
+    "peak_vmhwm_kb": 14880,
+    "samples": 19
+   },
+   "normalizer": {
+    "cpu_percent_mean": 0.055,
+    "cpu_percent_p95": 0.999,
+    "max_rss_kb": 12640,
+    "peak_vmhwm_kb": 12640,
+    "samples": 19
+   },
+   "runner": {
+    "cpu_percent_mean": 0.111,
+    "cpu_percent_p95": 1.997,
+    "max_rss_kb": 13120,
+    "peak_vmhwm_kb": 13120,
+    "samples": 19
+   }
+  }
+ },
+ "scenarios": {
+  "S30_service_shell": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "missed",
+   "technique": "T1059.004",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "shell_from_service",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 1.066
+  },
+  "S31_payload_transfer": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "missed",
+   "technique": "T1105",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "download_chmod_exec",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.008
+  },
+  "S32_password_material": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "missed",
+   "technique": "T1003.008",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "sensitive_file_access",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.016
+  },
+  "S33_private_key_harvest": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1552.004",
+   "timed_out": false,
+   "tp": {
+    "sensitive_file_access": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.032
+  },
+  "S34_raw_command_channel": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "missed",
+   "technique": "T1095",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "outbound_after_exec",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.114
+  },
+  "S35_cron_persistence": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": false,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "missed",
+   "technique": "T1053.003",
+   "timed_out": false,
+   "tp": {
+    "persistence_write": 1
+   },
+   "unmet": [
+    {
+     "detection": "persistence_command",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.004
+  },
+  "S36_shell_startup": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1546.004",
+   "timed_out": false,
+   "tp": {
+    "persistence_write": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.016
+  },
+  "S37_dynamic_linker_hijack": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "independent",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "missed",
+   "technique": "T1574.006",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "persistence_write",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.032
+  }
+ },
+ "unattributed_in_window": [],
+ "unattributed_outside_windows": [],
+ "warnings": []
+}

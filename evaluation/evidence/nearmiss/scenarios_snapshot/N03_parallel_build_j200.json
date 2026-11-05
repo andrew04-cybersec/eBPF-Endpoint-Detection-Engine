@@ -1,0 +1,19 @@
+{
+ "id": "N03_parallel_build_j200",
+ "title": "A build with 400 independent targets runs with make -j200",
+ "kind": "benign",
+ "group": null,
+ "technique": null,
+ "threat_model": "No attacker. A developer runs a large parallel build, so make starts hundreds of trivial commands within a second or two.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_N03",
+ "expected": [],
+ "acceptable": [],
+ "timeout_seconds": 180,
+ "known_gap": null,
+ "notes": "setup.sh writes a Makefile in the work directory with 400 independent targets whose recipes are @true, and the action runs make -j200 on it. The marker is a command-line variable of make, and the children carry it through their ancestry as well. Predicted: rapid_spawn alerts, because one parent starts more than 25 distinct children inside 2 seconds. Event loss is possible with this many processes at once, and it must be checked in the lost events of the run and in the report, not assumed.",
+ "attribution": "marker",
+ "requires": [
+  "make"
+ ]
+}

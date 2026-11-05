@@ -1,0 +1,16 @@
+{
+ "id": "N08_root_cat_shadow",
+ "title": "Root reads /etc/shadow with cat",
+ "kind": "benign",
+ "group": null,
+ "technique": null,
+ "threat_model": "No attacker. An administrator reads /etc/shadow as root with cat, for example to check an account.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_N08",
+ "expected": [],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": null,
+ "notes": "The action runs cat /etc/shadow with the output sent to /dev/null, as S14 does. Nothing is created, so there is no teardown. Predicted: sensitive_file_access (T1003.008), tier 1, alerts, because cat is not in EXPECTED_READERS. The marker reaches the alert through the ancestry.",
+ "attribution": "marker"
+}

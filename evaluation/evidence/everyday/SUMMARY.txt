@@ -1,0 +1,8 @@
+runs: 3
+  ../evidence-eb-e3-everyday-101/20261031-124113-eval/scores.json E01_everyday_workload: 1.0000 hours, 154 false positives, 153.995 per hour
+  ../evidence-eb-e3-everyday-102/20261031-134223-eval/scores.json E01_everyday_workload: 1.0000 hours, 158 false positives, 157.997 per hour
+  ../evidence-eb-e3-everyday-103/20261031-144329-eval/scores.json E01_everyday_workload: 1.0000 hours, 154 false positives, 153.997 per hour
+total hours: 3.0001
+total false positives: 466
+false positives per hour: 155.330
+rate: approximate; scripted workload, one machine, WSL2

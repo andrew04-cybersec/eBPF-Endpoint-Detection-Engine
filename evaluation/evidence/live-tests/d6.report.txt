@@ -1,0 +1,37 @@
+PASS  normalized events present  937 events, 0 bad lines
+PASS  every alert line is a JSON object  3 alerts, 0 bad lines
+PASS  every alert has every required field  alerts missing a field: []
+PASS  every alert has technique null
+PASS  alert_seq counts 1..N in order  [1, 2, 3]
+info  total alerts in the run: {'rapid_spawn': 3} (the machine may produce alerts of its own)
+info  threshold 25, window 2000000000 ns
+info  lost events in the normalized stream: 0
+PASS  EVT_D6_A: the bash -c ran once  1 exec_success
+PASS  case a (60 fast children): the parent started 60 distinct children  60 children
+info  case a (60 fast children): highest in-window child count 60
+PASS  case a (60 fast children): 1 rapid_spawn alert  1 alerts
+info  case a (60 fast children): alert ancestry ['true', 'bash', None], ancestry_stop placeholder, evidence 10, evidence_dropped 0
+PASS  case a (60 fast children): evidence ends with the crossing exec
+PASS  EVT_D6_B: the bash -c ran once  1 exec_success
+PASS  case b (threshold minus one): the parent started 24 distinct children  24 children
+info  case b (threshold minus one): highest in-window child count 24
+PASS  case b (threshold minus one): 0 rapid_spawn alert  0 alerts
+PASS  case b (threshold minus one): no child other than /bin/true was started
+PASS  EVT_D6_C: the bash -c ran once  1 exec_success
+PASS  case c (slow loop): the parent started 100 distinct children  100 children
+info  case c (slow loop): highest in-window child count 20
+PASS  case c (slow loop): 0 rapid_spawn alert  0 alerts
+PASS  case c (slow loop): the peak stayed below the threshold
+PASS  EVT_D6_D: the bash -c ran once  1 exec_success
+PASS  case d (two bursts and a sleep): the parent started 121 distinct children  121 children
+info  case d (two bursts and a sleep): highest in-window child count 61
+PASS  case d (two bursts and a sleep): 2 rapid_spawn alert  2 alerts
+info  case d (two bursts and a sleep): alert ancestry ['true', 'bash', None], ancestry_stop placeholder, evidence 10, evidence_dropped 0
+PASS  case d (two bursts and a sleep): evidence ends with the crossing exec
+info  case d (two bursts and a sleep): alert ancestry ['true', 'bash', None], ancestry_stop placeholder, evidence 10, evidence_dropped 0
+PASS  case d (two bursts and a sleep): evidence ends with the crossing exec
+PASS  runner printed its summary
+info  runner: alerts emitted: 3, rapid_spawn 3
+info  runner: unevaluable: 8, ancestry_incomplete 4, placeholder_parent 4
+
+23 checks, 0 failed

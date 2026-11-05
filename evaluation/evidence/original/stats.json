@@ -1,0 +1,127 @@
+{
+ "alerts": {
+  "download_chmod_exec": 3,
+  "exec_from_tmp": 2,
+  "interpreter_chain": 2,
+  "outbound_after_exec": 1,
+  "persistence_write": 4,
+  "privilege_escalation": 1,
+  "rapid_spawn": 1,
+  "sensitive_file_access": 3,
+  "shell_from_service": 2,
+  "unusual_ancestry": 2
+ },
+ "counters": {
+  "chain_incomplete": 36,
+  "connect_loopback": 4,
+  "connect_outside_window": 1,
+  "persist_expected_writer": 1,
+  "persist_read_only": 4,
+  "priv_already_root": 2,
+  "priv_expected_escalator": 1,
+  "priv_transition_after_alert": 1,
+  "priv_transition_after_request": 1,
+  "unevaluable": 77,
+  "unevaluable_ancestry_incomplete": 45,
+  "unevaluable_expected_reader": 1,
+  "unevaluable_placeholder_parent": 30,
+  "unevaluable_relative_path": 1
+ },
+ "detection_errors": 0,
+ "detections": [
+  {
+   "alerts": 2,
+   "counters": {
+    "unevaluable": 30,
+    "unevaluable_placeholder_parent": 30
+   },
+   "errors": 0,
+   "name": "shell_from_service"
+  },
+  {
+   "alerts": 2,
+   "counters": {
+    "unevaluable": 1,
+    "unevaluable_relative_path": 1
+   },
+   "errors": 0,
+   "name": "exec_from_tmp"
+  },
+  {
+   "alerts": 3,
+   "counters": {},
+   "errors": 0,
+   "name": "download_chmod_exec"
+  },
+  {
+   "alerts": 2,
+   "counters": {
+    "unevaluable": 42,
+    "unevaluable_ancestry_incomplete": 42
+   },
+   "errors": 0,
+   "name": "unusual_ancestry"
+  },
+  {
+   "alerts": 3,
+   "counters": {
+    "unevaluable": 4,
+    "unevaluable_ancestry_incomplete": 3,
+    "unevaluable_expected_reader": 1
+   },
+   "errors": 0,
+   "name": "sensitive_file_access"
+  },
+  {
+   "alerts": 1,
+   "counters": {},
+   "errors": 0,
+   "name": "rapid_spawn"
+  },
+  {
+   "alerts": 1,
+   "counters": {
+    "connect_loopback": 4,
+    "connect_outside_window": 1
+   },
+   "errors": 0,
+   "name": "outbound_after_exec"
+  },
+  {
+   "alerts": 4,
+   "counters": {
+    "persist_expected_writer": 1,
+    "persist_read_only": 4
+   },
+   "errors": 0,
+   "name": "persistence"
+  },
+  {
+   "alerts": 1,
+   "counters": {
+    "priv_already_root": 2,
+    "priv_expected_escalator": 1,
+    "priv_transition_after_alert": 1,
+    "priv_transition_after_request": 1
+   },
+   "errors": 0,
+   "name": "privilege_escalation"
+  },
+  {
+   "alerts": 2,
+   "counters": {
+    "chain_incomplete": 36
+   },
+   "errors": 0,
+   "name": "interpreter_chain"
+  }
+ ],
+ "events_processed": 851,
+ "graph": {
+  "edges": 215,
+  "lost_events": 0,
+  "nodes": 218,
+  "placeholders": 3
+ },
+ "unattributed_counters": {}
+}

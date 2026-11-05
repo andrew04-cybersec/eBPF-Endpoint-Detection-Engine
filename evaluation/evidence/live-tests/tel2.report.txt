@@ -1,0 +1,50 @@
+PASS  every line is valid JSON  312 lines, 0 bad []
+PASS  envelope and per-type fields present with correct JSON types  0 events with problems, first: []
+INFO  event counts: {'exit': 100, 'exec_attempt': 99, 'exec_success': 98, 'file_open': 6, 'priv_change': 7, 'net_connect': 2}
+PASS  every exec_success has a matching earlier exec_attempt  0 unmatched
+PASS  every pid that exec'd has an exit event  0 without exit: []
+PASS  failed exec: one attempt for the nonexistent path  1 found
+PASS  failed exec: no exec_success for that attempt
+PASS  failed exec: exit status 127 follows  exit event: {'schema_version': 1, 'type': 'exit', 'ts_ns': 19501206566457, 'pid': 5649, 'tid': 5649, 'comm': 'bash', 'exit_code': 32512, 'exit_status': 127, 'exit_signal': 0, 'ppid': 5634, 'uid': 0, 'gid': 0, 'start_time_ns': 19501205399303, 'lossy_encoding': False}
+INFO  1 exec attempts have no success (includes PATH search misses)
+PASS  successful exec: attempt, success and exit for the marked command  1 attempts
+PASS  chain: one sh attempt
+PASS  chain: ls is a child of the sh process  1 found
+PASS  chain: cat ran under the sh process (child or in place)  1 found
+PASS  burst: attempts, successes and exits all match the burst size  attempts 50, successes 50, exits 50, distinct pids 50, expected 50
+PASS  uid: exec_success after setpriv carries the dropped uid  [1000]
+INFO  EVT_EXIT7: raw exit_code=1792 (0x700), exit_status=7, exit_signal=0
+PASS  exit_code: EVT_EXIT7 gives one exit with status 7 and signal 0  1 exit events
+INFO  EVT_KILL9: raw exit_code=9 (0x9), exit_status=0, exit_signal=9
+PASS  exit_code: EVT_KILL9 gives one exit with status 0 and signal 9  1 exit events
+PASS  threads: a multi-threaded process produces exactly one exit event  1 exit events
+PASS  truncation: too many arguments sets argv_truncated and keeps the cap  [(16, True)]
+PASS  truncation: a long argument sets argv_truncated and is cut to the cap  [(True, [9, 11, 127])]
+PASS  truncation: burst attempts are not marked truncated
+PASS  encoding: invalid UTF-8 becomes U+FFFD and sets lossy_encoding  [['/bin/echo', 'EVT_BADUTF8', '��']]
+PASS  file_open: every reported path is on the sensitive list  []
+PASS  file_open: entry mode records no return value
+PASS  file_open: cat /etc/shadow gives one file_open for that process, opened read-only  1 cat runs, 1 events, flags [0]
+PASS  file_open: cat /etc/passwd gives one file_open for that process, opened read-only  1 cat runs, 1 events, flags [0]
+PASS  file_open: an ordinary file gives no file_open  1 cat runs, 0 events
+PASS  file_open: a listed path that does not exist is still reported (/root/.ssh/evt_missing_key)  1 cat runs, 1 events
+PASS  file_open: a listed path that does not exist is still reported (/home/evt_nouser/.ssh/id_rsa)  1 cat runs, 1 events
+PASS  net_connect: IPv4 loopback connect to port 38495 is reported once with address and port  1 processes, 1 events
+PASS  net_connect: IPv6 loopback connect to port 39589 is reported once with address and port  1 processes, 1 events
+PASS  priv_change: setpriv --reuid reports the requested uid  1 setpriv runs, [('setresuid', [1000, 1000, 1000])]
+PASS  priv_change: setgid, setresgid, setreuid, setresuid and setuid are all reported in order  got [('setgid', [1000]), ('setresgid', [1000, 1000, 1000]), ('setreuid', [1000, 1000]), ('setresuid', [1000, 1000, 1000]), ('setuid', [1000])]
+INFO  lost events: 0, total dropped 0
+PASS  no records were dropped during the main run
+INFO  events with user_read_failed: 0
+PASS  threads (all-thread mode): one exit per thread, so more than one for the process  4 exit events, tids [5754, 5755, 5756, 5757]
+PASS  file_open (exit mode): every line is valid JSON with correct fields  0 bad lines, 0 with field problems
+PASS  file_open (exit mode): /etc/shadow is reported with a return value of zero or more  [3]
+PASS  file_open (exit mode): a missing listed path is reported with a negative return value  [-2]
+PASS  file_open (exit mode): an ordinary file gives no file_open
+PASS  file_open (exit mode): no records were dropped
+
+38 checks, 0 failed
+tests/out/20261026-041442/loader.stderr:loader: file_stats mode=entry openat_seen=3094 openat_blank=95 file_open_emitted=6
+tests/out/20261026-041442/loader_fileentry.stderr:loader: file_stats mode=entry openat_seen=982 openat_blank=28 file_open_emitted=4
+tests/out/20261026-041442/loader_fileexit.stderr:loader: file_stats mode=exit openat_seen=986 openat_blank=0 file_open_emitted=4
+tests/out/20261026-041442/loader_threads.stderr:loader: file_stats mode=entry openat_seen=115 openat_blank=3 file_open_emitted=0

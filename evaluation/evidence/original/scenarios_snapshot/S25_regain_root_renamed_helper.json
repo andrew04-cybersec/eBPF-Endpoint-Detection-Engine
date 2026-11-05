@@ -1,0 +1,23 @@
+{
+ "id": "S25_regain_root_renamed_helper",
+ "title": "Regain root through a program named sudo",
+ "kind": "attack",
+ "group": "gap",
+ "technique": "T1068",
+ "threat_model": "An attacker runs the same escalation through a program with a name that an allow list for escalation helpers ignores.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S25",
+ "expected": [
+  {
+   "detection": "privilege_escalation",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": "privilege_escalation skips requests whose comm is on its expected-escalator list, and the comm is the name of the file that was run, so a symlink to python3 named sudo is suppressed.",
+ "notes": "As S24, but python3 is run through a symlink named sudo in the work directory (as in case c of the live test). The real sudo is not run.",
+ "requires": [
+  "python3"
+ ]
+}

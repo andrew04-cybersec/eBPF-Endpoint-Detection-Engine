@@ -1,0 +1,23 @@
+{
+ "id": "S20_write_authorized_keys",
+ "title": "Write an SSH authorized_keys file",
+ "kind": "attack",
+ "group": "ordinary",
+ "technique": "T1098.004",
+ "threat_model": "An attacker adds their own public key to a user's authorized keys so that they can log in again.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S20",
+ "expected": [
+  {
+   "detection": "persistence_write",
+   "min_count": 1
+  }
+ ],
+ "acceptable": [],
+ "timeout_seconds": 30,
+ "known_gap": null,
+ "notes": "The file is .ssh/authorized_keys in a fake home directly under /home and holds only a comment line. sensitive_file_access does not apply because authorized_keys is excluded from its private key rule.",
+ "locations": [
+  "home"
+ ]
+}

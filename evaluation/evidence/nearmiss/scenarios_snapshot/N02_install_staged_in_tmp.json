@@ -1,0 +1,20 @@
+{
+ "id": "N02_install_staged_in_tmp",
+ "title": "A staged copy of true is run from a temporary directory",
+ "kind": "benign",
+ "group": null,
+ "technique": null,
+ "threat_model": "No attacker. A user stages a copy of a harmless program in a temporary directory and runs it by its full path, as an installer or a test might. The activity resembles the target of exec_from_tmp.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_N02",
+ "expected": [],
+ "acceptable": [],
+ "timeout_seconds": 60,
+ "known_gap": null,
+ "notes": "tmp_staging and the tmp location are declared. The copy of /usr/bin/true is staged in the unique directory the harness provides under /tmp, and it is run by its absolute path with the marker as its argument, because the detection counts a relative path as unevaluable. Predicted: exec_from_tmp (T1059, weak fit) alerts, which is a false positive by the rules of a benign scenario. The prediction assumes /tmp is not mounted noexec.",
+ "attribution": "marker",
+ "tmp_staging": true,
+ "locations": [
+  "tmp"
+ ]
+}

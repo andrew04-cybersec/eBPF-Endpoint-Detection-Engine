@@ -1,0 +1,443 @@
+diff --git a/evaluation/evaluate.py b/evaluation/evaluate.py
+index 3e34066..49b8725 100644
+--- a/evaluation/evaluate.py
++++ b/evaluation/evaluate.py
+@@ -121,7 +121,33 @@ def latency_stats(values):
+             "max_ms": rounded(max(values)) if values else None}
+ 
+ 
+-def score_alerts(scenarios, windows, alerts):
++def key_start(key):
++    """kernel start time in ns from a process key (None for anything else)"""
++    _, _, tail = key.partition(":") if isinstance(key, str) else ("", "", "")
++    return int(tail) if tail.isdigit() else None
++
++
++def is_harness(alert, harness):
++    """
++    true if process that triggered the alert is the one that run_eval.py started itself from the harness_processes list of scenario_windows.json; the alert's own process only and its ancestry isnt looked at
++    entry with start time bracket must match pid and have a key start time inside it so an entry without a bracket matches by pid alone
++    """
++    process = alert.get("process")
++    if not isinstance(process, dict) or not isinstance(harness, list):
++        return False
++    pid, start = process.get("pid"), key_start(process.get("process_key"))
++    for h in harness:
++        if not isinstance(h, dict) or type(h.get("pid")) is not int or h["pid"] != pid:
++            continue
++        low, high = h.get("start_ns_min"), h.get("start_ns_max")
++        if low is None or high is None:
++            return True
++        if start is not None and low <= start <= high:
++            return True
++    return False
++
++
++def score_alerts(scenarios, windows, alerts, harness=None, harness_out=None):
+     """attribute alerts to scenarios by window and marker and count them; returns: per scenario results, in-window list, outside list, and latencies"""
+     ran = [s for s in scenarios if s["id"] in windows]
+     per = {s["id"]: {"tp": {}, "acceptable": {}, "fp": {}, "alerts": 0} for s in ran}
+@@ -139,7 +165,13 @@ def score_alerts(scenarios, windows, alerts):
+             outside.append(brief(alert))
+             continue
+         scenario = by_id[sid]
+-        if not has_marker(alert, scenario["marker"]):
++        #window scenario needs no marker so an alert in its window counts unless its own process is a harness process; those go to harness_out instead
++        if scenario.get("attribution") == "window":
++            if is_harness(alert, harness):
++                if harness_out is not None:
++                    harness_out.append(brief(alert, sid))
++                continue
++        elif not has_marker(alert, scenario["marker"]):
+             in_window.append(brief(alert, sid))
+             continue
+         kind = classify(scenario, alert)
+@@ -153,7 +185,9 @@ def score_alerts(scenarios, windows, alerts):
+ 
+ def score(data):
+     scenarios, windows = data["scenarios"], data["windows"]
+-    per, in_window, outside, lat_all, lat_tp = score_alerts(scenarios, windows, data["alerts"])
++    harness = data["windows_file"].get("harness_processes") if isinstance(data["windows_file"], dict) else None
++    harness_alerts = []
++    per, in_window, outside, lat_all, lat_tp = score_alerts(scenarios, windows, data["alerts"], harness, harness_alerts)
+     out = {"scenarios": {}, "not_run": [], "not_run_reasons": {}, "warnings": list(data["warnings"])}
+     skipped = data["windows_file"].get("skipped") if isinstance(data["windows_file"], dict) else None
+     skipped = skipped if isinstance(skipped, dict) else {}
+@@ -243,9 +277,55 @@ def score(data):
+     out["bpf_stats"] = bpf_stats(data["bpf"], cross_checks(data))
+     out["label_set_sha256"] = data["hashes"].get("set") if isinstance(data["hashes"], dict) else None
+     out["predictions"] = compare_predictions(data["predictions"], out)
++    ran_window = [s for s in scenarios if s.get("attribution") == "window" and s["id"] in windows]
++    if ran_window:
++        if not isinstance(harness, list):
++            out["warnings"].append("WARNING: the folder has no harness process list, so no alert in a window scenario could be set aside as a harness alert")
++        out["window_attribution"] = window_section(ran_window, windows, per, harness_alerts, outside, data.get("events_path"))
+     return out
+ 
+ 
++def window_event_counts(path, spans):
++    """events per type inside each span {id: (start_ns, end_ns)} from raw events file and every process counts here (harness's own included)"""
++    counts = {sid: {} for sid in spans}
++    try:
++        with open(path, encoding="utf-8", errors="replace") as f:
++            for line in f:
++                try:
++                    ev = json.loads(line)
++                except ValueError:
++                    continue
++                if not isinstance(ev, dict) or type(ev.get("ts_ns")) is not int or not isinstance(ev.get("type"), str):
++                    continue
++                for sid, (first, last) in spans.items():
++                    if first <= ev["ts_ns"] <= last:
++                        counts[sid][ev["type"]] = counts[sid].get(ev["type"], 0) + 1
++    except OSError:
++        pass
++    return counts
++
++
++def window_section(ran, windows, per, harness_alerts, outside, events_path):
++    """
++    numbers for the scenarios attributed by window; every alert inside the window that isnt a harness alert counts as false positive with no marker test
++    harness alerts and alerts outside every window are listed and not counted so the rate is per hour of window and approximate upper bound of 3 divided by hours is given when the count is zero
++    """
++    spans = {s["id"]: (windows[s["id"]]["start_ns"], windows[s["id"]]["end_ns"]) for s in ran}
++    events = window_event_counts(events_path, spans) if events_path else {sid: {} for sid in spans}
++    rows = {}
++    for s in ran:
++        sid = s["id"]
++        hours = (spans[sid][1] - spans[sid][0]) / 1e9 / 3600.0
++        fp = per[sid]["alerts"]
++        rows[sid] = {"window_hours": rounded(hours, 6), "events_by_type": dict(sorted(events[sid].items())),
++                     "events_per_hour_by_type": {k: rounded(v / hours, 3) for k, v in sorted(events[sid].items())} if hours > 0 else {},
++                     "alerts_by_detection": dict(sorted(per[sid]["fp"].items())), "fp": fp,
++                     "fp_per_hour": rounded(fp / hours, 3) if hours > 0 else None,
++                     "rule_of_three_per_hour": rounded(3.0 / hours, 3) if fp == 0 and hours > 0 else None}
++    return {"scenarios": rows, "harness_alerts": harness_alerts, "machine_noise": outside,
++            "label": "approximate; scripted workload, one machine, WSL2"}
++
++
+ def compare_predictions(predictions, scored):
+     """predicted against actual for every scenario and a mismatch is listed and never scored; None is returned for folder with no predictions"""
+     if not isinstance(predictions, dict) or not isinstance(predictions.get("predictions"), dict):
+@@ -438,7 +518,8 @@ def load_results(folder, scenarios_dir, predictions_path=None):
+             "alerts": alerts, "bad_alert_lines": bad, "env": read_env(os.path.join(folder, "env.txt")),
+             "resources": load_resources(os.path.join(folder, "resources.csv")), "event_ts": stamps, "lost_events": lost,
+             "lost_dropped": dropped, "loader_lines": loader_lines, "bpf": read_json(os.path.join(folder, "bpf_stats.json")),
+-            "event_types": types, "openat_seen": openat_seen, "predictions": predictions, "warnings": warnings}
++            "event_types": types, "openat_seen": openat_seen, "predictions": predictions, "warnings": warnings,
++            "events_path": os.path.join(folder, "events.jsonl")}
+ 
+ 
+ def fmt_ratio(r):
+@@ -513,6 +594,28 @@ def render_report(folder_name, scores, data):
+     lines += ["## Benign runs", "",
+               "False positive alerts in benign scenarios: %d over %s s of benign run time; false positives per hour: %s." % (
+                   b["alerts"], fmt(b["seconds"]), fmt(b["fp_per_hour"])), ""]
++    w = s.get("window_attribution")
++    if w:
++        lines += ["## Benign runs attributed by window (scripted workload)", "",
++                  "Rule: an alert inside the window counts against the rate unless the process that triggered it is a process run_eval.py started itself (harness, listed and not counted); an alert outside every window is machine noise (listed and not counted). No marker is used.",
++                  "Label: %s." % w["label"], ""]
++        for sid, r in sorted(w["scenarios"].items()):
++            lines += ["### " + sid, "",
++                      "Window: %s hours." % fmt(r["window_hours"]),
++                      "Events per hour by type (all processes, the harness included): " + (", ".join("%s %s" % kv for kv in r["events_per_hour_by_type"].items()) or "none") + ".",
++                      "Alerts per detection: %s." % counts(r["alerts_by_detection"]),
++                      "False positives: %d. False positives per hour: %s." % (r["fp"], fmt(r["fp_per_hour"]))]
++            if r["rule_of_three_per_hour"] is not None:
++                lines += ["Zero false positives: the rule of three gives an approximate upper bound of %s per hour (3 divided by %s hours); approximate, scripted workload, one machine, WSL2." % (
++                    fmt(r["rule_of_three_per_hour"]), fmt(r["window_hours"]))]
++            lines += [""]
++        lines += ["Harness alerts inside a window (not counted): %d." % len(w["harness_alerts"])]
++        lines += ["- %s %s ts_ns %s window %s exe %s: %s" % (a["alert_seq"], a["detection"], a["ts_ns"], a["window"], a["exe"], a["cmdline"])
++                  for a in w["harness_alerts"][:LIST_LIMIT]]
++        lines += ["", "Machine noise, outside every window (not counted): %d." % len(w["machine_noise"])]
++        lines += ["- %s %s ts_ns %s exe %s: %s" % (a["alert_seq"], a["detection"], a["ts_ns"], a["exe"], a["cmdline"])
++                  for a in w["machine_noise"][:LIST_LIMIT]]
++        lines += [""]
+     lat = s["latency"]
+     lines += ["## Latency (alert arrival at the harness minus the ts_ns of the triggering event)", "",
+               "Pipeline mode for these numbers: %s. Negative values (clock disagreement): %d." % (fmt(lat["mode"]), lat["negative"]), ""]
+@@ -573,9 +676,21 @@ def write_outputs(folder, scores, report):
+         f.write(report)
+ 
+ 
++def recorded_locations(folder):
++    """scenarios directory and predictions file that run_eval.py that is recorded in label_hashes.json and each as None when it wasnt recorded or isnt on this machine; a folder from before the paths were recorded gives (None, None) and scored against standard scenarios directory as it always was"""
++    hashes = read_json(os.path.join(folder, "label_hashes.json"), {})
++    if not isinstance(hashes, dict):
++        return None, None
++    where, predictions = hashes.get("scenarios_dir"), hashes.get("predictions_path")
++    return (where if isinstance(where, str) and os.path.isdir(where) else None,
++            predictions if isinstance(predictions, str) and os.path.isfile(predictions) else None)
++
++
+ def score_folder(folder, scenarios_dir=None):
+-    scenarios_dir = os.path.join(EVAL_DIR, "scenarios") if scenarios_dir is None else scenarios_dir
+-    data = load_results(folder, scenarios_dir)
++    recorded_dir, recorded_predictions = recorded_locations(folder)
++    if scenarios_dir is None:
++        scenarios_dir = recorded_dir or os.path.join(EVAL_DIR, "scenarios")
++    data = load_results(folder, scenarios_dir, recorded_predictions)
+     scores = score(data)
+     report = render_report(os.path.basename(os.path.normpath(folder)), scores, data)
+     write_outputs(folder, scores, report)
+diff --git a/evaluation/run_eval.py b/evaluation/run_eval.py
+index fb67650..54d257a 100644
+--- a/evaluation/run_eval.py
++++ b/evaluation/run_eval.py
+@@ -291,12 +291,15 @@ def plan_lines(scenarios, results_name="<timestamp>-eval", found=None, lookup=fi
+     return lines
+ 
+ 
+-def run_script(argv, env, log_path, timeout, clock=time.monotonic_ns):
++def run_script(argv, env, log_path, timeout, clock=time.monotonic_ns, record=None):
+     """run one script in its own process group with a timeout and write its output to log_path and finally return (start_ns, end_ns, exit status, and timed_out)"""
+     timed_out = False
+     with open(log_path, "ab") as log:
+         start = clock()
+         proc = subprocess.Popen(argv, env=env, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
++        #when caller passes a list... the pid and the clock readings around the start are kept; the kernel start time of the new process lies between the two readings
++        if record is not None:
++            record.append({"pid": proc.pid, "before_ns": start, "after_ns": clock()})
+         try:
+             status = proc.wait(timeout=timeout)
+         except subprocess.TimeoutExpired:
+@@ -316,13 +319,27 @@ def run_script(argv, env, log_path, timeout, clock=time.monotonic_ns):
+     return start, end, status, timed_out
+ 
+ 
+-def script_env(sc, address=None, bases=None):
++def script_env(sc, address=None, bases=None, seed=None):
+     env = dict(os.environ)
+     env.update(scenario_lib.scenario_env(sc["id"], bases=bases, address=address))
+     env["EVT_EVAL_MARKER"] = sc["marker"]
++    #seed inherited from the calling shell is dropped so the only way to set one is --seed option which is recorded in env.txt
++    env.pop("EVT_EVAL_SEED", None)
++    if seed is not None:
++        env["EVT_EVAL_SEED"] = str(seed)
+     return env
+ 
+ 
++def resolve_predictions(option, scenarios_dir):
++    """
++    path of predictions file for a run (or None for no predictions) where the option is the --predictions value or None for the default; default is predictions.json next to the folder that holds the scenarios directory which for standard scenarios directory is evaluation/predictions.json
++    """
++    if option is not None:
++        return None if option == "none" else os.path.abspath(option)
++    beside = os.path.join(os.path.dirname(os.path.abspath(scenarios_dir)), "predictions.json")
++    return beside if os.path.isfile(beside) else None
++
++
+ def wait_for_text(path, text, timeout, alive=None):
+     deadline = time.monotonic() + timeout
+     while time.monotonic() < deadline:
+@@ -345,6 +362,8 @@ class Pipeline:
+         self.results = results
+         self.procs = {}
+         self.files = []
++        #pid and clock readings around each start are kept for harness process list in scenario_windows.json
++        self.launched = {}
+ 
+     def start(self):
+         previous = None
+@@ -354,8 +373,10 @@ class Pipeline:
+                 stderr = open(os.path.join(self.results, name + ".stderr"), "wb")
+                 self.files.append(stderr)
+             last = name == "stamper"
++            before = time.monotonic_ns()
+             proc = subprocess.Popen(argv, stdin=previous.stdout if previous else subprocess.DEVNULL,
+                                     stdout=None if last else subprocess.PIPE, stderr=stderr, start_new_session=True)
++            self.launched[name] = {"pid": proc.pid, "before_ns": before, "after_ns": time.monotonic_ns()}
+             if previous is not None:
+                 previous.stdout.close()
+             self.procs[name] = proc
+@@ -392,6 +413,20 @@ class Pipeline:
+         return codes
+ 
+ 
++def harness_processes(stages, scripts, helpers, driver_pid):
++    """
++    processes run_eval.py started itself as a list of dicts for the scorer; stages maps a role to {pid, before_ns, after_ns} and scripts is a list of (role, that dict)
++    process is matched by pid and by kernel start time inside [start_ns_min, start_ns_max] where the clock of the start time in the process key so a reused pid doesnt match; the driver predates the run and is matched by pid alone
++    helpers are (role, from_ns, to_ns) commands that give no pid before they end and ran outside every scenario window so they are kept as intervals for the record only
++    """
++    rows = [{"role": "driver", "pid": driver_pid, "start_ns_min": None, "start_ns_max": None}]
++    for role, p in sorted(stages.items()) + list(scripts):
++        rows.append({"role": role, "pid": p["pid"], "start_ns_min": p["before_ns"], "start_ns_max": p["after_ns"]})
++    for role, start, end in helpers:
++        rows.append({"role": role, "pid": None, "ran_from_ns": start, "ran_to_ns": end})
++    return rows
++
++
+ def write_env(results, info, hashes):
+     lines = ["%s: %s" % (k, v) for k, v in info.items()]
+     lines += ["sha256 %s: %s" % (path, digest) for path, digest in sorted(hashes.items())]
+@@ -431,7 +466,7 @@ def raise_interrupt(signum, frame):
+     raise KeyboardInterrupt()
+ 
+ 
+-def execute(scenarios, scenarios_dir, results_root):
++def execute(scenarios, scenarios_dir, results_root, predictions=None, seed=None):
+     """the order of steps is in plan_lines and every exit path goes through the finally block"""
+     results = os.path.join(results_root, time.strftime("%Y%m%d-%H%M%S") + "-eval")
+     os.makedirs(results)
+@@ -441,11 +476,20 @@ def execute(scenarios, scenarios_dir, results_root):
+         shutil.copyfile(os.path.join(sc["_dir"], "scenario.json"), os.path.join(results, "scenarios_snapshot", sc["id"] + ".json"))
+     hashes = scenario_lib.label_hashes(scenarios)
+     hashes["predictions_sha256"] = None
+-    if os.path.isfile(PREDICTIONS):
+-        shutil.copyfile(PREDICTIONS, os.path.join(results, "predictions.json"))
+-        hashes["predictions_sha256"] = scenario_lib.sha256_file(PREDICTIONS)
++    predictions_path = resolve_predictions(predictions, scenarios_dir)
++    if predictions_path is not None and os.path.isfile(predictions_path):
++        shutil.copyfile(predictions_path, os.path.join(results, "predictions.json"))
++        hashes["predictions_sha256"] = scenario_lib.sha256_file(predictions_path)
++    else:
++        predictions_path = None
++    #scorer reads these two paths back so a folder from another set is compared with its own scenarios and predictions
++    hashes["scenarios_dir"] = os.path.abspath(scenarios_dir)
++    hashes["predictions_path"] = predictions_path
+     write_json(os.path.join(results, "label_hashes.json"), hashes)
++    helpers, setup_runs, teardown_runs = [], [], []
++    ip_start = time.monotonic_ns()
+     skipped, address = evaluate_needs(scenarios)
++    helpers.append(("ip", ip_start, time.monotonic_ns()))
+     for sid, reason in sorted(skipped.items()):
+         print("not run: %s: %s" % (sid, reason), file=sys.stderr)
+     todo = [sc for sc in scenarios if sc["id"] not in skipped]
+@@ -460,7 +504,9 @@ def execute(scenarios, scenarios_dir, results_root):
+             if sc["_scripts"]["setup"]:
+                 setups.append(sc["id"])
+                 log = os.path.join(results, "logs", sc["id"] + ".setup.log")
+-                _, _, status, timed_out = run_script(["bash", sc["_scripts"]["setup"]], script_env(sc, address), log, SCRIPT_TIMEOUT_SECONDS)
++                started = []
++                _, _, status, timed_out = run_script(["bash", sc["_scripts"]["setup"]], script_env(sc, address, seed=seed), log, SCRIPT_TIMEOUT_SECONDS, record=started)
++                setup_runs += [("setup " + sc["id"], p) for p in started]
+                 state["setup"][sc["id"]] = status
+                 if status != 0 or timed_out:
+                     raise HarnessError("setup of %s failed (status %s, timed out %s); see logs/%s.setup.log" % (sc["id"], status, timed_out, sc["id"]))
+@@ -479,6 +525,7 @@ def execute(scenarios, scenarios_dir, results_root):
+             subprocess.run(["/bin/true", marker], check=False)
+             after = time.monotonic_ns()
+             brackets.append((marker, before, after))
++            helpers.append(("clock check true " + str(i), before, after))
+         wait_for_text(os.path.join(results, "events.jsonl"), brackets[-1][0], CLOCK_CHECK_WAIT_SECONDS)
+         state["clock_check"] = check_clock(os.path.join(results, "events.jsonl"), brackets)
+         if not state["clock_check"]["passed"]:
+@@ -486,10 +533,12 @@ def execute(scenarios, scenarios_dir, results_root):
+         for sc in todo:
+             state["order"].append(sc["id"])
+             log = os.path.join(results, "logs", sc["id"] + ".action.log")
+-            start, end, status, timed_out = run_script(action_argv(sc), script_env(sc, address), log, sc["timeout_seconds"])
++            start, end, status, timed_out = run_script(action_argv(sc), script_env(sc, address, seed=seed), log, sc["timeout_seconds"])
+             state["windows"][sc["id"]] = {"start_ns": start, "end_ns": end, "exit_status": status, "timed_out": timed_out}
+             time.sleep(SETTLE_SECONDS)
++        bpf_start = time.monotonic_ns()
+         bpf = read_bpf_stats(pipeline.procs["loader"].pid)
++        helpers.append(("bpftool", bpf_start, time.monotonic_ns()))
+     except (KeyboardInterrupt, HarnessError) as e:
+         state["aborted"] = "interrupted" if isinstance(e, KeyboardInterrupt) else str(e)
+         print("run stopped: %s" % state["aborted"], file=sys.stderr)
+@@ -512,7 +561,9 @@ def execute(scenarios, scenarios_dir, results_root):
+             if sc["id"] in touched and sc["_scripts"]["teardown"]:
+                 log = os.path.join(results, "logs", sc["id"] + ".teardown.log")
+                 try:
+-                    state["teardown"][sc["id"]] = run_script(["bash", sc["_scripts"]["teardown"]], script_env(sc, address), log, SCRIPT_TIMEOUT_SECONDS)[2]
++                    started = []
++                    state["teardown"][sc["id"]] = run_script(["bash", sc["_scripts"]["teardown"]], script_env(sc, address, seed=seed), log, SCRIPT_TIMEOUT_SECONDS, record=started)[2]
++                    teardown_runs += [("teardown " + sc["id"], p) for p in started]
+                 except Exception as e:
+                     state["teardown"][sc["id"]] = repr(e)
+         left = []
+@@ -543,6 +594,8 @@ def execute(scenarios, scenarios_dir, results_root):
+                 "clk_tck": os.sysconf("SC_CLK_TCK"), "bpftool": find_bpftool(), "settle_seconds": SETTLE_SECONDS,
+                 "sample_interval_seconds": sampler.SAMPLE_INTERVAL_SECONDS,
+                 "loader_sha256": scenario_lib.sha256_file(LOADER) if os.path.isfile(LOADER) else "missing"}
++        if seed is not None:
++            info["seed"] = seed
+         for name, argv in pipeline_commands(results):
+             info["pipeline " + name] = " ".join(argv)
+         write_env(results, info, code_hashes())
+@@ -550,7 +603,8 @@ def execute(scenarios, scenarios_dir, results_root):
+         write_json(os.path.join(results, "scenario_windows.json"), {
+             "scenarios": state["windows"], "order": state["order"], "skipped": skipped, "clock_check": state["clock_check"], "aborted": state["aborted"],
+             "pipeline_exit_codes": state["exit_codes"], "setup_status": state["setup"], "teardown_status": state["teardown"],
+-            "leftovers_removed_by_driver": state["leftovers_removed_by_driver"]})
++            "leftovers_removed_by_driver": state["leftovers_removed_by_driver"],
++            "harness_processes": harness_processes(pipeline.launched, setup_runs + teardown_runs, helpers, os.getpid())})
+         derive_alerts(results)
+     scores, _ = evaluate.score_folder(results, scenarios_dir)
+     give_to_owner(results)
+@@ -566,6 +620,9 @@ def main(argv=None):
+     ap.add_argument("--dry-run", action="store_true", help="validate the scenarios and print the plan and the commands; start nothing")
+     ap.add_argument("--scenarios-dir", default=os.path.join(EVAL_DIR, "scenarios"))
+     ap.add_argument("--results-root", default=os.path.join(EVAL_DIR, "results"))
++    ap.add_argument("--predictions", default=None, metavar="PATH|none",
++                    help="predictions file to copy into the results folder, or none; the default is the predictions.json next to the folder that holds the scenarios directory")
++    ap.add_argument("--seed", type=int, default=None, help="non-negative integer given to every script as EVT_EVAL_SEED and written to env.txt")
+     args = ap.parse_args(argv)
+ 
+     scenarios, problems = scenario_lib.load_scenarios(args.scenarios_dir)
+@@ -573,8 +630,17 @@ def main(argv=None):
+         for p in problems or ["no scenarios found in " + args.scenarios_dir]:
+             print("scenario problem: " + p, file=sys.stderr)
+         return 2
++    if args.seed is not None and args.seed < 0:
++        print("--seed must not be negative", file=sys.stderr)
++        return 2
++    chosen = resolve_predictions(args.predictions, args.scenarios_dir)
++    if args.predictions not in (None, "none") and not os.path.isfile(chosen):
++        print("--predictions file %s does not exist" % args.predictions, file=sys.stderr)
++        return 2
+     if args.dry_run:
+         print("\n".join(plan_lines(scenarios)))
++        print("predictions: %s" % (chosen if chosen and os.path.isfile(chosen) else "none"))
++        print("seed: %s" % ("none" if args.seed is None else args.seed))
+         return 0
+     if os.geteuid() != 0:
+         print("run this with sudo", file=sys.stderr)
+@@ -591,7 +657,7 @@ def main(argv=None):
+         for p in found:
+             print("  " + p, file=sys.stderr)
+         return 2
+-    return execute(scenarios, args.scenarios_dir, args.results_root)
++    return execute(scenarios, args.scenarios_dir, args.results_root, predictions=args.predictions, seed=args.seed)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/evaluation/scenario_lib.py b/evaluation/scenario_lib.py
+index d458e27..9f7a4e1 100644
+--- a/evaluation/scenario_lib.py
++++ b/evaluation/scenario_lib.py
+@@ -9,14 +9,16 @@ import sys
+ EVAL_DIR = os.path.dirname(os.path.abspath(__file__))
+ ROOT = os.path.dirname(EVAL_DIR)
+ sys.path.insert(0, os.path.join(ROOT, "detections"))
+-import attack_map  # noqa: E402
++import attack_map  #noqa: E402
+ 
+ DETECTION_NAMES = tuple(sorted(set(attack_map.DETECTIONS) | set(attack_map.CATEGORY_TABLES)))
+ 
+ REQUIRED = ("id", "title", "kind", "technique", "threat_model", "phase", "marker", "expected", "acceptable",
+             "timeout_seconds", "known_gap", "notes", "group")
+-OPTIONAL = ("requires", "tmp_staging", "locations", "needs")
++OPTIONAL = ("requires", "tmp_staging", "locations", "needs", "attribution")
+ GROUPS = ("ordinary", "gap")
++#how the scorer attributes alerts to a scenario; scenario without the key is attributed by marker and window is for the long benign workload
++ATTRIBUTIONS = ("marker", "window")
+ LOCATIONS = ("tmp", "shm", "cron", "systemd", "home")
+ NEEDS = ("non_loopback_ipv4",)
+ KINDS = ("attack", "benign")
+@@ -345,6 +347,11 @@ def validate(scenarios):
+         if not (isinstance(needs, list) and all(x in NEEDS for x in needs)):
+             problems.append("%s: needs must be a list of %s" % (label, ", ".join(NEEDS)))
+             needs = []
++        if "attribution" in sc:
++            if sc["attribution"] not in ATTRIBUTIONS:
++                problems.append("%s: attribution must be one of %s" % (label, ", ".join(ATTRIBUTIONS)))
++            elif sc["attribution"] == "window" and sc["kind"] != "benign":
++                problems.append("%s: attribution window is only allowed for a benign scenario" % label)
+         if sc["kind"] == "attack" and sc["group"] not in GROUPS:
+             problems.append("%s: group of an attack must be ordinary or gap" % label)
+         elif sc["kind"] == "benign" and sc["group"] is not None:

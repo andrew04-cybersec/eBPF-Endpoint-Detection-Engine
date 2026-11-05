@@ -1,0 +1,17 @@
+{
+ "id": "S30_service_shell",
+ "title": "Compromised Service Worker Shell Execution",
+ "kind": "attack",
+ "group": "independent",
+ "technique": "T1059.004",
+ "threat_model": "A compromised long-running service worker executes attacker commands through a Unix shell.",
+ "phase": "after_loader",
+ "marker": "EVT_EVAL_S30_SERVICE_SHELL",
+ "expected": [{"detection": "shell_from_service", "min_count": 1}],
+ "acceptable": ["interpreter_chain", "unusual_ancestry", "exec_from_tmp", "rapid_spawn"],
+ "timeout_seconds": 15,
+ "known_gap": null,
+ "notes": "Simulates shell execution from a long-running worker using harmless commands and a marker-bearing output artifact.",
+ "requires": ["bash", "sleep", "mkdir", "rm", "cat"],
+ "attribution": "marker"
+}

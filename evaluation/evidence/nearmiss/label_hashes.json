@@ -1,0 +1,18 @@
+{
+ "predictions_sha256": "ab6015b2f7ae0dd2567d532d2e95abcb3bfcecc32ed0e1bbe96a881e41e73262",
+ "redacted_fields": [
+  "predictions_path",
+  "scenarios_dir"
+ ],
+ "scenarios": {
+  "N01_install_local_prefix": "f468a5fa3542b1719ca0177b2ca54897365ca0eabe92f3749e23badb329a296f",
+  "N02_install_staged_in_tmp": "f7f5c22406030b81e38c5568a0abcf156ac4831bc68879996ec728768bd698d4",
+  "N03_parallel_build_j200": "fe29e9706bb268453a21aecb723bb01f55df9b2445d6a8060724e9f9416f661a",
+  "N04_sed_inplace_bashrc": "bacb1dcf3772f6fa6d3f0846de4a95b6491abf8cded586121de95127593692f7",
+  "N05_append_bashrc_redirect": "3ccbe2b099ede6ba26aa33d0eaafa884bb3d9d8c16c6117078f7aea523d80853",
+  "N06_sshkeygen_fake_home": "28bfdeae017f4fe8cd613133118e1c39e92bc6ac4ba453af69d46f30c2b3a023",
+  "N07_cat_ssh_key_nonlisted_reader": "4e693b794ab0ec61239afbd0cb3a3eaf882627288d07d69df17cba2778b3a3e7",
+  "N08_root_cat_shadow": "8213dd157a35c3224d3756626ad5b094038f1db8046b3476abdeb63402e49bb1"
+ },
+ "set": "f419657963f3ea5eb19d2327d62e7bf86e0013becea4fdfb974c47ebe9327fcc"
+}

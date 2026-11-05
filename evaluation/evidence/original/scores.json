@@ -1,0 +1,1537 @@
+{
+ "alerts_total": 21,
+ "bad_alert_lines": 0,
+ "benign": {
+  "alerts": 0,
+  "fp_per_hour": 0.0,
+  "seconds": 20.072
+ },
+ "bpf_stats": {
+  "ambiguous": [],
+  "available": true,
+  "not_found": [],
+  "programs": [
+   {
+    "kernel_name": "handle_connect",
+    "mean_ns_per_run": 8202.5,
+    "name": "handle_connect",
+    "own_data": null,
+    "run_cnt": 12,
+    "run_time_ns": 98430,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_attempt",
+    "mean_ns_per_run": 15306.4,
+    "name": "handle_exec_attempt",
+    "own_data": {
+     "count": 306,
+     "what": "exec_attempt events"
+    },
+    "run_cnt": 306,
+    "run_time_ns": 4683749,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exec_success",
+    "mean_ns_per_run": 13133.4,
+    "name": "handle_exec_success",
+    "own_data": {
+     "count": 213,
+     "what": "exec_success events"
+    },
+    "run_cnt": 213,
+    "run_time_ns": 2797409,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_exit",
+    "mean_ns_per_run": 18764.6,
+    "name": "handle_exit",
+    "own_data": null,
+    "run_cnt": 218,
+    "run_time_ns": 4090686,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_exit",
+    "mean_ns_per_run": 308.4,
+    "name": "handle_openat_exit",
+    "own_data": {
+     "count": 7774,
+     "what": "openat_seen"
+    },
+    "run_cnt": 7762,
+    "run_time_ns": 2393859,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_openat_save",
+    "mean_ns_per_run": 247.7,
+    "name": "handle_openat_save",
+    "own_data": {
+     "count": 7774,
+     "what": "openat_seen"
+    },
+    "run_cnt": 7762,
+    "run_time_ns": 1922633,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setgid",
+    "mean_ns_per_run": null,
+    "name": "handle_setgid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setresgid",
+    "mean_ns_per_run": 21307.0,
+    "name": "handle_setresgid",
+    "own_data": null,
+    "run_cnt": 2,
+    "run_time_ns": 42614,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setresuid",
+    "mean_ns_per_run": 8095.8,
+    "name": "handle_setresuid",
+    "own_data": null,
+    "run_cnt": 4,
+    "run_time_ns": 32383,
+    "status": "counts"
+   },
+   {
+    "kernel_name": "handle_setreuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setreuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   },
+   {
+    "kernel_name": "handle_setuid",
+    "mean_ns_per_run": null,
+    "name": "handle_setuid",
+    "own_data": null,
+    "run_cnt": null,
+    "run_time_ns": null,
+    "status": "no data from bpftool"
+   }
+  ],
+  "raw_names": [
+   "handle_connect",
+   "handle_exec_attempt",
+   "handle_exec_success",
+   "handle_exit",
+   "handle_openat_exit",
+   "handle_openat_save",
+   "handle_setgid",
+   "handle_setresgid",
+   "handle_setresuid",
+   "handle_setreuid",
+   "handle_setuid"
+  ],
+  "reason": null,
+  "selected_by": "names"
+ },
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 112812479960118,
+    "before_ns": 112812478973856,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 112812479194994
+   },
+   {
+    "after_ns": 112812480730487,
+    "before_ns": 112812479962356,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 112812480140613
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "groups": {
+  "gap": {
+   "detected": 0,
+   "missed": 10,
+   "recall": {
+    "den": 10,
+    "num": 0,
+    "value": 0.0
+   },
+   "scenarios": 10
+  },
+  "ordinary": {
+   "detected": 18,
+   "missed": 0,
+   "recall": {
+    "den": 18,
+    "num": 18,
+    "value": 1.0
+   },
+   "scenarios": 18
+  }
+ },
+ "label_set_sha256": "4dc82dc5803011cbe1724e41bb7edf12dad3603a8daee50041638eb7814b390c",
+ "latency": {
+  "all": {
+   "max_ms": 80.04,
+   "n": 21,
+   "p50_ms": 0.564,
+   "p95_ms": 20.985
+  },
+  "mode": "buffered: the stages run as in the live tests, with no python3 -u and no stdbuf",
+  "negative": 0,
+  "true_positive": {
+   "max_ms": 80.04,
+   "n": 21,
+   "p50_ms": 0.564,
+   "p95_ms": 20.985
+  }
+ },
+ "not_run": [],
+ "not_run_reasons": {},
+ "per_detection": {
+  "download_chmod_exec": {
+   "acceptable": 0,
+   "detected": 3,
+   "expected": 4,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 3,
+    "num": 3,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 3,
+    "num": 3,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 4,
+    "num": 3,
+    "value": 0.75
+   },
+   "tp": 3
+  },
+  "exec_from_tmp": {
+   "acceptable": 0,
+   "detected": 2,
+   "expected": 3,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 3,
+    "num": 2,
+    "value": 0.666667
+   },
+   "tp": 2
+  },
+  "interpreter_chain": {
+   "acceptable": 0,
+   "detected": 1,
+   "expected": 2,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 2,
+    "num": 1,
+    "value": 0.5
+   },
+   "tp": 2
+  },
+  "outbound_after_exec": {
+   "acceptable": 0,
+   "detected": 1,
+   "expected": 2,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 2,
+    "num": 1,
+    "value": 0.5
+   },
+   "tp": 1
+  },
+  "persistence_write": {
+   "acceptable": 0,
+   "detected": 4,
+   "expected": 6,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 4,
+    "num": 4,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 4,
+    "num": 4,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 6,
+    "num": 4,
+    "value": 0.666667
+   },
+   "tp": 4
+  },
+  "privilege_escalation": {
+   "acceptable": 0,
+   "detected": 1,
+   "expected": 2,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 2,
+    "num": 1,
+    "value": 0.5
+   },
+   "tp": 1
+  },
+  "rapid_spawn": {
+   "acceptable": 0,
+   "detected": 1,
+   "expected": 2,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 2,
+    "num": 1,
+    "value": 0.5
+   },
+   "tp": 1
+  },
+  "sensitive_file_access": {
+   "acceptable": 0,
+   "detected": 3,
+   "expected": 4,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 3,
+    "num": 3,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 3,
+    "num": 3,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 4,
+    "num": 3,
+    "value": 0.75
+   },
+   "tp": 3
+  },
+  "shell_from_service": {
+   "acceptable": 0,
+   "detected": 2,
+   "expected": 3,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 3,
+    "num": 2,
+    "value": 0.666667
+   },
+   "tp": 2
+  },
+  "unusual_ancestry": {
+   "acceptable": 0,
+   "detected": 2,
+   "expected": 2,
+   "fp": 0,
+   "precision_lenient": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "precision_strict": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "recall": {
+    "den": 2,
+    "num": 2,
+    "value": 1.0
+   },
+   "tp": 2
+  }
+ },
+ "per_technique": {
+  "T1003.008": {
+   "attacks": 3,
+   "by_group": {
+    "gap": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 2,
+     "num": 2,
+     "value": 1.0
+    }
+   },
+   "detected": 2,
+   "missed": 1,
+   "recall": {
+    "den": 3,
+    "num": 2,
+    "value": 0.666667
+   }
+  },
+  "T1053.003": {
+   "attacks": 3,
+   "by_group": {
+    "gap": {
+     "den": 2,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    }
+   },
+   "detected": 1,
+   "missed": 2,
+   "recall": {
+    "den": 3,
+    "num": 1,
+    "value": 0.333333
+   }
+  },
+  "T1059": {
+   "attacks": 7,
+   "by_group": {
+    "gap": {
+     "den": 3,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 4,
+     "num": 4,
+     "value": 1.0
+    }
+   },
+   "detected": 4,
+   "missed": 3,
+   "recall": {
+    "den": 7,
+    "num": 4,
+    "value": 0.571429
+   }
+  },
+  "T1059.004": {
+   "attacks": 3,
+   "by_group": {
+    "gap": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 2,
+     "num": 2,
+     "value": 1.0
+    }
+   },
+   "detected": 2,
+   "missed": 1,
+   "recall": {
+    "den": 3,
+    "num": 2,
+    "value": 0.666667
+   }
+  },
+  "T1068": {
+   "attacks": 2,
+   "by_group": {
+    "gap": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    }
+   },
+   "detected": 1,
+   "missed": 1,
+   "recall": {
+    "den": 2,
+    "num": 1,
+    "value": 0.5
+   }
+  },
+  "T1095": {
+   "attacks": 2,
+   "by_group": {
+    "gap": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    }
+   },
+   "detected": 1,
+   "missed": 1,
+   "recall": {
+    "den": 2,
+    "num": 1,
+    "value": 0.5
+   }
+  },
+  "T1098.004": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "ordinary": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    }
+   },
+   "detected": 1,
+   "missed": 0,
+   "recall": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   }
+  },
+  "T1105": {
+   "attacks": 4,
+   "by_group": {
+    "gap": {
+     "den": 1,
+     "num": 0,
+     "value": 0.0
+    },
+    "ordinary": {
+     "den": 3,
+     "num": 3,
+     "value": 1.0
+    }
+   },
+   "detected": 3,
+   "missed": 1,
+   "recall": {
+    "den": 4,
+    "num": 3,
+    "value": 0.75
+   }
+  },
+  "T1543.002": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "ordinary": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    }
+   },
+   "detected": 1,
+   "missed": 0,
+   "recall": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   }
+  },
+  "T1546.004": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "ordinary": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    }
+   },
+   "detected": 1,
+   "missed": 0,
+   "recall": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   }
+  },
+  "T1552.004": {
+   "attacks": 1,
+   "by_group": {
+    "gap": {
+     "den": 0,
+     "num": 0,
+     "value": null
+    },
+    "ordinary": {
+     "den": 1,
+     "num": 1,
+     "value": 1.0
+    }
+   },
+   "detected": 1,
+   "missed": 0,
+   "recall": {
+    "den": 1,
+    "num": 1,
+    "value": 1.0
+   }
+  }
+ },
+ "pooled": {
+  "acceptable": 0,
+  "fp": 0,
+  "precision_lenient": {
+   "den": 21,
+   "num": 21,
+   "value": 1.0
+  },
+  "precision_strict": {
+   "den": 21,
+   "num": 21,
+   "value": 1.0
+  },
+  "recall": {
+   "den": 28,
+   "num": 18,
+   "value": 0.642857
+  },
+  "tp": 21
+ },
+ "predictions": {
+  "label_set_sha256": "4dc82dc5803011cbe1724e41bb7edf12dad3603a8daee50041638eb7814b390c",
+  "mismatches": [],
+  "rows": [
+   {
+    "actual": "detected",
+    "id": "S01_shell_from_service_after_loader",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S02_shell_from_service_before_loader",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S03_download_chmod_exec",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S04_exec_from_tmp_via_interpreter",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "no alerts",
+    "id": "S05_benign_smoke",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "no alerts",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S06_service_runs_python",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S07_service_shell_python",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S08_nested_inline_interpreters",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S09_nested_script_files",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S10_download_via_python",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S11_download_relative_path",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S12_run_from_shm",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S13_download_to_tmp_and_run",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S14_read_shadow",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S15_read_ssh_private_key",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S16_read_shadow_renamed_reader",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S17_service_reads_passwd",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S18_write_cron_file",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S19_append_bashrc",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S20_write_authorized_keys",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S21_write_systemd_unit",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S22_move_file_into_cron_dir",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S23_write_cron_file_renamed_writer",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S24_regain_root_via_saved_uid",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S25_regain_root_renamed_helper",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S26_reverse_shell_style_connect",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S27_delayed_connect",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   },
+   {
+    "actual": "detected",
+    "id": "S28_burst_of_spawns",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "detected",
+    "status": "MATCH"
+   },
+   {
+    "actual": "missed",
+    "id": "S29_slow_spawn_loop",
+    "other_actual": [],
+    "other_predicted": [],
+    "predicted": "missed",
+    "status": "MATCH"
+   }
+  ]
+ },
+ "resources": {
+  "drops": {
+   "dropped_records": 0,
+   "loader_lines": [
+    "loader: file_stats mode=exit openat_seen=7774 openat_blank=0 file_open_emitted=12 write_list_emitted=4 write_list_skipped_readonly=8"
+   ],
+   "lost_events": 0
+  },
+  "events": {
+   "mean_per_s": 4.331,
+   "n": 758,
+   "p95_per_s": 15,
+   "peak_per_s": 186,
+   "seconds": 175
+  },
+  "processes": {
+   "loader": {
+    "cpu_percent_mean": 0.017,
+    "cpu_percent_p95": 0.0,
+    "max_rss_kb": 10960,
+    "peak_vmhwm_kb": 14880,
+    "samples": 176
+   },
+   "normalizer": {
+    "cpu_percent_mean": 0.017,
+    "cpu_percent_p95": 0.0,
+    "max_rss_kb": 12320,
+    "peak_vmhwm_kb": 12320,
+    "samples": 176
+   },
+   "runner": {
+    "cpu_percent_mean": 0.034,
+    "cpu_percent_p95": 0.0,
+    "max_rss_kb": 14080,
+    "peak_vmhwm_kb": 14080,
+    "samples": 176
+   }
+  }
+ },
+ "scenarios": {
+  "S01_shell_from_service_after_loader": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1059.004",
+   "timed_out": false,
+   "tp": {
+    "shell_from_service": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.016
+  },
+  "S02_shell_from_service_before_loader": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "The service was started before the loader, so the loader never saw it start. Its node in the graph is a placeholder with no name, and shell_from_service and unusual_ancestry cannot evaluate the shell (they count it as unevaluable).",
+   "outcome": "missed",
+   "technique": "T1059.004",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "shell_from_service",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 1.019
+  },
+  "S03_download_chmod_exec": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1105",
+   "timed_out": false,
+   "tp": {
+    "download_chmod_exec": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.032
+  },
+  "S04_exec_from_tmp_via_interpreter": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "The program that is executed is /usr/bin/python3, and the script is only an argument. exec_from_tmp looks at the executed filename only, so an interpreter running a script from /tmp is not seen.",
+   "outcome": "missed",
+   "technique": "T1059",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "exec_from_tmp",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.032
+  },
+  "S05_benign_smoke": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": null,
+   "fp": {},
+   "group": null,
+   "in_window_without_marker": 0,
+   "kind": "benign",
+   "known_gap": null,
+   "outcome": "clean",
+   "technique": null,
+   "timed_out": false,
+   "tp": {},
+   "unmet": [],
+   "window_seconds": 20.072
+  },
+  "S06_service_runs_python": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1059",
+   "timed_out": false,
+   "tp": {
+    "unusual_ancestry": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.033
+  },
+  "S07_service_shell_python": {
+   "acceptable": {},
+   "alerts_attributed": 2,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1059.004",
+   "timed_out": false,
+   "tp": {
+    "shell_from_service": 1,
+    "unusual_ancestry": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.032
+  },
+  "S08_nested_inline_interpreters": {
+   "acceptable": {},
+   "alerts_attributed": 2,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1059",
+   "timed_out": false,
+   "tp": {
+    "interpreter_chain": 2
+   },
+   "unmet": [],
+   "window_seconds": 0.032
+  },
+  "S09_nested_script_files": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "interpreter_chain requires an inline-code option in some member of the chain. A chain of script files has none, so it is not seen however long it is.",
+   "outcome": "missed",
+   "technique": "T1059",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "interpreter_chain",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.064
+  },
+  "S10_download_via_python": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "download_chmod_exec tracks only curl and wget as downloaders, so a download made by python3 creates no entry and the chmod and the exec match nothing.",
+   "outcome": "missed",
+   "technique": "T1105",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "download_chmod_exec",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.216
+  },
+  "S11_download_relative_path": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1105",
+   "timed_out": false,
+   "tp": {
+    "download_chmod_exec": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.016
+  },
+  "S12_run_from_shm": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1059",
+   "timed_out": false,
+   "tp": {
+    "exec_from_tmp": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.004
+  },
+  "S13_download_to_tmp_and_run": {
+   "acceptable": {},
+   "alerts_attributed": 2,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1105",
+   "timed_out": false,
+   "tp": {
+    "download_chmod_exec": 1,
+    "exec_from_tmp": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.032
+  },
+  "S14_read_shadow": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1003.008",
+   "timed_out": false,
+   "tp": {
+    "sensitive_file_access": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.004
+  },
+  "S15_read_ssh_private_key": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1552.004",
+   "timed_out": false,
+   "tp": {
+    "sensitive_file_access": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.016
+  },
+  "S16_read_shadow_renamed_reader": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "sensitive_file_access skips readers whose comm is on its expected-reader list, and the comm is the name of the file that was run, so a copy named sudo is suppressed.",
+   "outcome": "missed",
+   "technique": "T1003.008",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "sensitive_file_access",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.004
+  },
+  "S17_service_reads_passwd": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1003.008",
+   "timed_out": false,
+   "tp": {
+    "sensitive_file_access": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.032
+  },
+  "S18_write_cron_file": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1053.003",
+   "timed_out": false,
+   "tp": {
+    "persistence_write": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.004
+  },
+  "S19_append_bashrc": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1546.004",
+   "timed_out": false,
+   "tp": {
+    "persistence_write": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.004
+  },
+  "S20_write_authorized_keys": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1098.004",
+   "timed_out": false,
+   "tp": {
+    "persistence_write": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.004
+  },
+  "S21_write_systemd_unit": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1543.002",
+   "timed_out": false,
+   "tp": {
+    "persistence_write": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.004
+  },
+  "S22_move_file_into_cron_dir": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "persistence sees write opens only. A rename is not hooked, so a file moved into /etc/cron.d produces no write open. If the work directory and /etc/cron.d are on different filesystems, mv copies the file and the open of the destination would be seen.",
+   "outcome": "missed",
+   "technique": "T1053.003",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "persistence_write",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.004
+  },
+  "S23_write_cron_file_renamed_writer": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "persistence skips writers whose comm is on its expected-writer list, and the comm is the name of the file that was run, so a copy named dpkg is suppressed.",
+   "outcome": "missed",
+   "technique": "T1053.003",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "persistence_write",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.032
+  },
+  "S24_regain_root_via_saved_uid": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1068",
+   "timed_out": false,
+   "tp": {
+    "privilege_escalation": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.034
+  },
+  "S25_regain_root_renamed_helper": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "privilege_escalation skips requests whose comm is on its expected-escalator list, and the comm is the name of the file that was run, so a symlink to python3 named sudo is suppressed.",
+   "outcome": "missed",
+   "technique": "T1068",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "privilege_escalation",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 0.032
+  },
+  "S26_reverse_shell_style_connect": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1095",
+   "timed_out": false,
+   "tp": {
+    "outbound_after_exec": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.016
+  },
+  "S27_delayed_connect": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "outbound_after_exec only counts a connect that comes within CONNECT_WINDOW_NS (60 s) of the latest exec of the process. A shell that sleeps longer than that before it connects is not seen.",
+   "outcome": "missed",
+   "technique": "T1095",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "outbound_after_exec",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 70.025
+  },
+  "S28_burst_of_spawns": {
+   "acceptable": {},
+   "alerts_attributed": 1,
+   "detected": true,
+   "fp": {},
+   "group": "ordinary",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": null,
+   "outcome": "detected",
+   "technique": "T1059",
+   "timed_out": false,
+   "tp": {
+    "rapid_spawn": 1
+   },
+   "unmet": [],
+   "window_seconds": 0.064
+  },
+  "S29_slow_spawn_loop": {
+   "acceptable": {},
+   "alerts_attributed": 0,
+   "detected": false,
+   "fp": {},
+   "group": "gap",
+   "in_window_without_marker": 0,
+   "kind": "attack",
+   "known_gap": "rapid_spawn counts distinct children of one parent inside a sliding window of WINDOW_NS (2 s). Thirty spawns spread over about 24 seconds never put the threshold's worth of children inside one window.",
+   "outcome": "missed",
+   "technique": "T1059",
+   "timed_out": false,
+   "tp": {},
+   "unmet": [
+    {
+     "detection": "rapid_spawn",
+     "got": 0,
+     "min_count": 1
+    }
+   ],
+   "window_seconds": 24.084
+  }
+ },
+ "unattributed_in_window": [],
+ "unattributed_outside_windows": [],
+ "warnings": []
+}

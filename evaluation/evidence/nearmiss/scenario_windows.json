@@ -1,0 +1,253 @@
+{
+ "aborted": null,
+ "clock_check": {
+  "checks": [
+   {
+    "after_ns": 171233799981205,
+    "before_ns": 171233798962436,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_1",
+    "skew_ns": 0,
+    "ts_ns": 171233799179547
+   },
+   {
+    "after_ns": 171233800678027,
+    "before_ns": 171233799984348,
+    "found": true,
+    "inside": true,
+    "marker": "EVT_EVAL_CLOCK_2",
+    "skew_ns": 0,
+    "ts_ns": 171233800114207
+   }
+  ],
+  "max_skew_ns": 0,
+  "passed": true
+ },
+ "harness_processes": [
+  {
+   "pid": 83101,
+   "role": "driver",
+   "start_ns_max": null,
+   "start_ns_min": null
+  },
+  {
+   "pid": 83116,
+   "role": "loader",
+   "start_ns_max": 171233678273752,
+   "start_ns_min": 171233673834921
+  },
+  {
+   "pid": 83118,
+   "role": "normalizer",
+   "start_ns_max": 171233680601241,
+   "start_ns_min": 171233680305915
+  },
+  {
+   "pid": 83120,
+   "role": "runner",
+   "start_ns_max": 171233688209223,
+   "start_ns_min": 171233687901798
+  },
+  {
+   "pid": 83121,
+   "role": "stamper",
+   "start_ns_max": 171233688558302,
+   "start_ns_min": 171233688217768
+  },
+  {
+   "pid": 83117,
+   "role": "tee_events",
+   "start_ns_max": 171233678755421,
+   "start_ns_min": 171233678277634
+  },
+  {
+   "pid": 83119,
+   "role": "tee_normalized",
+   "start_ns_max": 171233680909247,
+   "start_ns_min": 171233680606591
+  },
+  {
+   "pid": 83102,
+   "role": "setup N01_install_local_prefix",
+   "start_ns_max": 171233466017444,
+   "start_ns_min": 171233465238130
+  },
+  {
+   "pid": 83107,
+   "role": "setup N03_parallel_build_j200",
+   "start_ns_max": 171233551447865,
+   "start_ns_min": 171233550835212
+  },
+  {
+   "pid": 83109,
+   "role": "setup N04_sed_inplace_bashrc",
+   "start_ns_max": 171233588165070,
+   "start_ns_min": 171233587794601
+  },
+  {
+   "pid": 83111,
+   "role": "setup N05_append_bashrc_redirect",
+   "start_ns_max": 171233626783295,
+   "start_ns_min": 171233626446206
+  },
+  {
+   "pid": 83113,
+   "role": "setup N07_cat_ssh_key_nonlisted_reader",
+   "start_ns_max": 171233636823519,
+   "start_ns_min": 171233636402287
+  },
+  {
+   "pid": 83550,
+   "role": "teardown N01_install_local_prefix",
+   "start_ns_max": 171251229532851,
+   "start_ns_min": 171251229014287
+  },
+  {
+   "pid": 83552,
+   "role": "teardown N02_install_staged_in_tmp",
+   "start_ns_max": 171251238889468,
+   "start_ns_min": 171251238599321
+  },
+  {
+   "pid": 83554,
+   "role": "teardown N03_parallel_build_j200",
+   "start_ns_max": 171251258600082,
+   "start_ns_min": 171251258278676
+  },
+  {
+   "pid": 83556,
+   "role": "teardown N04_sed_inplace_bashrc",
+   "start_ns_max": 171251267965753,
+   "start_ns_min": 171251267553666
+  },
+  {
+   "pid": 83558,
+   "role": "teardown N05_append_bashrc_redirect",
+   "start_ns_max": 171251277165497,
+   "start_ns_min": 171251276865914
+  },
+  {
+   "pid": 83560,
+   "role": "teardown N06_sshkeygen_fake_home",
+   "start_ns_max": 171251286346281,
+   "start_ns_min": 171251286089218
+  },
+  {
+   "pid": 83562,
+   "role": "teardown N07_cat_ssh_key_nonlisted_reader",
+   "start_ns_max": 171251295469692,
+   "start_ns_min": 171251295228265
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 171233463189192,
+   "ran_to_ns": 171233463195031,
+   "role": "ip"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 171233798962436,
+   "ran_to_ns": 171233799981205,
+   "role": "clock check true 1"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 171233799984348,
+   "ran_to_ns": 171233800678027,
+   "role": "clock check true 2"
+  },
+  {
+   "pid": null,
+   "ran_from_ns": 171250519412679,
+   "ran_to_ns": 171250543546837,
+   "role": "bpftool"
+  }
+ ],
+ "leftovers_removed_by_driver": [],
+ "order": [
+  "N01_install_local_prefix",
+  "N02_install_staged_in_tmp",
+  "N03_parallel_build_j200",
+  "N04_sed_inplace_bashrc",
+  "N05_append_bashrc_redirect",
+  "N06_sshkeygen_fake_home",
+  "N07_cat_ssh_key_nonlisted_reader",
+  "N08_root_cat_shadow"
+ ],
+ "pipeline_exit_codes": {
+  "loader": 0,
+  "normalizer": 0,
+  "runner": 0,
+  "stamper": 0,
+  "tee_events": 0,
+  "tee_normalized": 0
+ },
+ "scenarios": {
+  "N01_install_local_prefix": {
+   "end_ns": 171233832541233,
+   "exit_status": 0,
+   "start_ns": 171233816525955,
+   "timed_out": false
+  },
+  "N02_install_staged_in_tmp": {
+   "end_ns": 171235915090494,
+   "exit_status": 0,
+   "start_ns": 171235851005455,
+   "timed_out": false
+  },
+  "N03_parallel_build_j200": {
+   "end_ns": 171238254402736,
+   "exit_status": 0,
+   "start_ns": 171237939710601,
+   "timed_out": false
+  },
+  "N04_sed_inplace_bashrc": {
+   "end_ns": 171240391703581,
+   "exit_status": 0,
+   "start_ns": 171240327292844,
+   "timed_out": false
+  },
+  "N05_append_bashrc_redirect": {
+   "end_ns": 171242484228020,
+   "exit_status": 0,
+   "start_ns": 171242452110337,
+   "timed_out": false
+  },
+  "N06_sshkeygen_fake_home": {
+   "end_ns": 171244500308473,
+   "exit_status": 0,
+   "start_ns": 171244492568985,
+   "timed_out": false
+  },
+  "N07_cat_ssh_key_nonlisted_reader": {
+   "end_ns": 171246509457297,
+   "exit_status": 0,
+   "start_ns": 171246505896065,
+   "timed_out": false
+  },
+  "N08_root_cat_shadow": {
+   "end_ns": 171248518916377,
+   "exit_status": 0,
+   "start_ns": 171248515315280,
+   "timed_out": false
+  }
+ },
+ "setup_status": {
+  "N01_install_local_prefix": 0,
+  "N03_parallel_build_j200": 0,
+  "N04_sed_inplace_bashrc": 0,
+  "N05_append_bashrc_redirect": 0,
+  "N07_cat_ssh_key_nonlisted_reader": 0
+ },
+ "skipped": {},
+ "teardown_status": {
+  "N01_install_local_prefix": 0,
+  "N02_install_staged_in_tmp": 0,
+  "N03_parallel_build_j200": 0,
+  "N04_sed_inplace_bashrc": 0,
+  "N05_append_bashrc_redirect": 0,
+  "N06_sshkeygen_fake_home": 0,
+  "N07_cat_ssh_key_nonlisted_reader": 0
+ }
+}

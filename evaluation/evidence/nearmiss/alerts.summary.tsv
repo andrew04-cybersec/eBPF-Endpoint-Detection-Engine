@@ -1,0 +1,6 @@
+run_id	alert_seq	detection	technique	trigger_ts_ns	arrival_ns	latency_ms	trigger_comm	trigger_exe	window	class
+20261031-154507-eval	1	exec_from_tmp	T1059	171235884474772	171235884993875	0.519103	helper	/tmp/evt_eval_n02_install_staged_in_tmp/helper	N02_install_staged_in_tmp	fp
+20261031-154507-eval	2	rapid_spawn	T1059	171237963382860	171237964590121	1.207261	true	/usr/bin/true	N03_parallel_build_j200	fp
+20261031-154507-eval	3	persistence_write	T1546.004	171242474924581	171242475756672	0.832091	bash	/usr/bin/bash	N05_append_bashrc_redirect	fp
+20261031-154507-eval	4	sensitive_file_access	T1552.004	171246509099322	171246509709969	0.610647	cat	/usr/bin/cat	N07_cat_ssh_key_nonlisted_reader	fp
+20261031-154507-eval	5	sensitive_file_access	T1003.008	171248518428610	171248519010872	0.582262	cat	/usr/bin/cat	N08_root_cat_shadow	fp
